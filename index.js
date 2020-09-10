@@ -16,10 +16,10 @@ app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`))
 app.use(bodyParser.json())
 
 app.get("/", (req, res) => {
-    res.status(200).end({ message: 'Get utilizado.' })
+    res.status(200).send({ message: 'Get utilizado.' })
 })
 
 app.post("/hook", (req, res) => {
   console.log(req.body) // Call your action on the request here
-  res.status(200).end({ message: 'Post recibido.' }) // Responding is important
+  res.status(200).send({ message: 'Post recibido.' }) // Responding is important
 })
