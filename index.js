@@ -63,9 +63,6 @@ app.post("/hookWhatsapp", (req, res) => {
     headers: { 'Content-Type': 'application/xml' },
     isRaw: true
   });
-  
-  
-  
 })
 
 
