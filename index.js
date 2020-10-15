@@ -13,6 +13,10 @@ var io = require('socket.io').listen(server);
 
 io.set('origins', '*:*'); 
 
+const qs = require("querystring");
+const MessagingResponse = require('twilio').twiml.MessagingResponse;
+
+
 // Tell express to use body-parser's JSON parsing
 
 app.use(function(req, res, next) { 
@@ -46,9 +50,22 @@ app.get("/chat", (req, res) => {
 })
 
 app.post("/hookWhatsapp", (req, res) => {
-  console.log(req.body.Body) // Call your action on the request here
+  const formValues = qs.parse(req.body);
+
+  const twiml = new MessagingResponse();
+  twiml.message('You said: ' + formValues.Body);
+
+  context.res = {
+    status: 200,
+    body: twiml.toString(),
+    headers: { 'Content-Type': 'application/xml' },
+    isRaw: true
+  };
+  console.log(formValues.Body);
   io.sockets.emit('message', req.Body)
-  res.status(200).send({ message: 'Post recibido.' }) // Responding is important
+  context.done();
+  
+  
 })
 
 
