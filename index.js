@@ -46,8 +46,8 @@ app.get("/chat", (req, res) => {
 })
 
 app.post("/hookWhatsapp", (req, res) => {
-  console.log(req.body) // Call your action on the request here
-  io.sockets.emit('message', req.body.description)
+  console.log(req.Body) // Call your action on the request here
+  io.sockets.emit('message', req.Body)
   res.status(200).send({ message: 'Post recibido.' }) // Responding is important
 })
 
