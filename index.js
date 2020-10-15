@@ -55,7 +55,7 @@ app.post("/hookWhatsapp", (req, res) => {
   const twiml = new MessagingResponse();
   twiml.message('You said: ' + formValues.Body);
 
-  context.res = {
+  res = {
     status: 200,
     body: twiml.toString(),
     headers: { 'Content-Type': 'application/xml' },
@@ -63,7 +63,7 @@ app.post("/hookWhatsapp", (req, res) => {
   };
   console.log(formValues.Body);
   io.sockets.emit('message', req.Body)
-  context.done();
+  res.done();
   
   
 })
