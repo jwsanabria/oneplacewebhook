@@ -1,19 +1,19 @@
 // Require express and body-parser
 const express = require("express")
-const bodyParser = require("body-parser")
+  , http = require('http');
+const bodyParser = require('body-parser')
+
 
 // Initialize express and define a port
 const app = express()
 const PORT = process.env.PORT || 8080;
 
-var server = require('http').Server(app); 
-var io = require('socket.io')(server); 
+var server = http.createServer(app); 
+var io = require('socket.io').listen(server); 
 
 io.set('origins', '*:*'); 
 
 // Tell express to use body-parser's JSON parsing
-app.use(bodyParser.json())
-
 
 app.use(function(req, res, next) { 
   res.header('Access-Control-Allow-Origin', req.get('Origin') || '*'); 
@@ -30,24 +30,62 @@ app.use(function(req, res, next) {
 
 
 // Start express on the defined port
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`))
+server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`))
 
 
 app.use(bodyParser.json())
 
 app.get("/", (req, res) => {
-    res.status(200).send({ message: 'Get utilizado.' })
+    //res.status(200).send({ message: 'Get utilizado.' })
+    res.sendFile("index.html", { root: __dirname });
 })
 
-app.post("/hook", (req, res) => {
-  console.log(req.body) // Call your action on the request here
+app.get("/chat", (req, res) => {
+  //res.status(200).send({ message: 'Get utilizado.' })
+  res.sendFile("index2.html", { root: __dirname });
+})
+
+app.post("/hookWhatsapp", (req, res) => {
+  console.log(req.body.description) // Call your action on the request here
+  io.sockets.emit('message', req.body.description)
   res.status(200).send({ message: 'Post recibido.' }) // Responding is important
 })
 
 
+const accountSid = process.env.TWILIO_ACCOUNT_ID;
+const authToken = process.env.TWILIO_AUTH_TOKEN;
+const client = require('twilio')(accountSid, authToken);
+
 io.on('connection', function (socket) { 
-    socket.emit('news', { hello: 'world' }); 
-    socket.on('my other event', function (data) { 
-    console.log(data); 
-    }); 
+  socket.on('message', function (data) { 
+    client.messages.create({
+     body: data,
+     from: 'whatsapp:+14155238886',
+     to: 'whatsapp:+573164911001'
+   }).then(message => console.log(message.sid));
+  }); 
 });
+
+/*var clients = 0;
+io.on('connection', function(socket) {
+  console.log('A user connected');
+
+  //Send a message when 
+  setTimeout(function() {
+     //Sending an object when emmiting an event
+     socket.emit('testerEvent', { description: 'A custom event named testerEvent!'});
+  }, 4000);
+
+  socket.on('clientEvent', function(data) {
+    console.log(data);
+ });
+
+ clients++;
+ io.sockets.emit('broadcast',{ description: clients + ' clients connected!'});
+ socket.emit('newclientconnect',{ description: 'Hey, welcome!'});
+   socket.broadcast.emit('newclientconnect',{ description: clients + ' clients connected!'})
+   socket.on('disconnect', function () {
+      clients--;
+      socket.broadcast.emit('newclientconnect',{ description: clients + ' clients connected!'})
+   });
+});*/
