@@ -58,7 +58,7 @@ app.post("/hookWhatsapp", (req, res) => {
   const twiml = new MessagingResponse();
   twiml.message('You said: ' + formValues.Body);
 
-  console.log(formValues);
+  console.log(formValues.Body);
   console.log(JSON.stringify(req.body))
   io.sockets.emit('message', req.Body)
 
