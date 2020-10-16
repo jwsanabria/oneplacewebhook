@@ -1,7 +1,7 @@
 // Require express and body-parser
 const express = require("express")
   , http = require('http');
-const bodyParser = require('body-parser')
+//const bodyParser = require('body-parser')
 
 
 // Initialize express and define a port
@@ -37,7 +37,9 @@ app.use(function(req, res, next) {
 server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`))
 
 
-app.use(bodyParser.json())
+//app.use(bodyParser.json())
+app.use(express.json());
+app.use(express.urlencoded({extended: false}));
 
 app.get("/", (req, res) => {
     //res.status(200).send({ message: 'Get utilizado.' })
@@ -48,6 +50,7 @@ app.get("/chat", (req, res) => {
   //res.status(200).send({ message: 'Get utilizado.' })
   res.sendFile("index2.html", { root: __dirname });
 })
+
 
 app.post("/hookWhatsapp", (req, res) => {
   const formValues = qs.parse(req.body);
