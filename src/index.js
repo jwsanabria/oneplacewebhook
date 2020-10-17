@@ -2,7 +2,7 @@ const app = require('./server');
 const http = require('http');
 //const bodyParser = require('body-parser')
 
-var server = http.createServer(app); 
+var server = http.createServer(app);
 
 require('./database');
 
@@ -15,18 +15,18 @@ const MessagingResponse = require('twilio').twiml.MessagingResponse;
 
 // Tell express to use body-parser's JSON parsing
 
-app.use(function(req, res, next) { 
-  res.header('Access-Control-Allow-Origin', req.get('Origin') || '*'); 
-  res.header('Access-Control-Allow-Credentials', 'true'); 
-  res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE'); 
-  res.header('Access-Control-Expose-Headers', 'Content-Length'); 
-  res.header('Access-Control-Allow-Headers', 'Accept, Authorization, Content-Type, X-Requested-With, Range'); 
-  if (req.method === 'OPTIONS') { 
-  return res.send(200); 
-  } else { 
-  return next(); 
-  } 
-}); 
+app.use(function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', req.get('Origin') || '*');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
+  res.header('Access-Control-Expose-Headers', 'Content-Length');
+  res.header('Access-Control-Allow-Headers', 'Accept, Authorization, Content-Type, X-Requested-With, Range');
+  if (req.method === 'OPTIONS') {
+    return res.send(200);
+  } else {
+    return next();
+  }
+});
 
 
 // Start express on the defined port
@@ -47,26 +47,28 @@ app.get("/chat4", (req, res) => {
 
 
 app.post("/hookWhatsapp", (req, res) => {
+  console.log('webhook');
   const formValues = qs.parse(req.body);
-  console.log('formValues: ' + formValues);
-  
+  console.log('JSON.stringify(req.body): ' + JSON.stringify(req.body));
+  console.log('req.body: ' + JSON.parse(JSON.stringify(req.body)).Body);
 
   const twiml = new MessagingResponse();
   twiml.message('You said: ' + formValues.Body);
 
-  console.log(formValues.Body);
+  /*console.log(formValues.Body);
   console.log('formValues.Body: ' + formValues.Body);
   console.log(JSON.stringify(req.body))
-  console.log('JSON.stringify(req.body): ' +JSON.stringify(req.body) );
-  const message = JSON.parse(req.body);
-  console.log('message' + message);
-  io.sockets.emit('message', message.Body)
-
-  res.status(200).send({body: twiml.toString(),
+  console.log('JSON.stringify(req.body): ' + JSON.stringify(req.body));
+  //const message = JSON.parse(req.body);
+  //console.log('message' + message);
+  //io.sockets.emit('message', message.Body)
+*/
+  res.status(200).send({
+    body: twiml.toString(),
     headers: { 'Content-Type': 'application/xml' },
     isRaw: true
   });
-})
+});
 
 
 
@@ -74,7 +76,7 @@ app.post("/hookWhatsapp", (req, res) => {
 io.on('connection', function(socket) {
   console.log('A user connected');
 
-  //Send a message when 
+  //Send a message when
   setTimeout(function() {
      //Sending an object when emmiting an event
      socket.emit('testerEvent', { description: 'A custom event named testerEvent!'});
