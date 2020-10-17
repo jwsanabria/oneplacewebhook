@@ -1,4 +1,5 @@
 const socketIO = require('socket.io');
+require('dotenv').config()
 
 const connection = server => {
     const io = require('socket.io').listen(server); 
@@ -19,8 +20,8 @@ const connection = server => {
         socket.on('message', function (data) { 
             client.messages.create({
             body: data,
-            from: 'whatsapp:+14155238886',
-            to: 'whatsapp:+573164911001'
+            from: 'whatsapp:' + process.env.NUM_EMPRENDEDOR,
+            to: 'whatsapp:' + NUM_CLIENTE
         }).then(message => console.log(message.sid));
         }); 
     });
