@@ -48,14 +48,18 @@ app.get("/chat4", (req, res) => {
 
 app.post("/hookWhatsapp", (req, res) => {
   const formValues = qs.parse(req.body);
-  const message = JSON.parse(req.body);
+  console.log('formValues: ' + formValues);
+  
 
   const twiml = new MessagingResponse();
   twiml.message('You said: ' + formValues.Body);
 
   console.log(formValues.Body);
+  console.log('formValues.Body: ' + formValues.Body);
   console.log(JSON.stringify(req.body))
-  console.log(message)
+  console.log('JSON.stringify(req.body): ' +JSON.stringify(req.body) );
+  const message = JSON.parse(req.body);
+  console.log('message' + message);
   io.sockets.emit('message', message.Body)
 
   res.status(200).send({body: twiml.toString(),
