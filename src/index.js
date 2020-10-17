@@ -48,12 +48,11 @@ app.get("/chat4", (req, res) => {
 
 app.post("/hookWhatsapp", (req, res) => {
   console.log('webhook');
-  const formValues = qs.parse(req.body);
   console.log('JSON.stringify(req.body): ' + JSON.stringify(req.body));
   console.log('req.body: ' + JSON.parse(JSON.stringify(req.body)).Body);
 
   const twiml = new MessagingResponse();
-  twiml.message('You said: ' + formValues.Body);
+  twiml.message('You said: ' + JSON.parse(JSON.stringify(req.body)).Body);
 
   /*console.log(formValues.Body);
   console.log('formValues.Body: ' + formValues.Body);
