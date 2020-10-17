@@ -34,7 +34,7 @@ server.listen(app.get('port'), () => console.log(`🚀 Server running on port ${
 
 
 //app.use(bodyParser.json())
-app.get("/chat3", (req, res) => {
+/*app.get("/chat3", (req, res) => {
   //res.status(200).send({ message: 'Get utilizado.' })
   res.sendFile("../index.html", { root: __dirname });
 })
@@ -43,7 +43,7 @@ app.get("/chat3", (req, res) => {
 app.get("/chat4", (req, res) => {
   //res.status(200).send({ message: 'Get utilizado.' })
   res.sendFile("index2.html", { root: __dirname });
-})
+})*/
 
 
 app.post("/hookWhatsapp", (req, res) => {
