@@ -21,7 +21,7 @@ const connection = server => {
             client.messages.create({
             body: data,
             from: 'whatsapp:' + process.env.NUM_EMPRENDEDOR,
-            to: 'whatsapp:' + NUM_CLIENTE
+            to: 'whatsapp:' + process.env.NUM_CLIENTE
         }).then(message => console.log(message.sid));
         }); 
     });
