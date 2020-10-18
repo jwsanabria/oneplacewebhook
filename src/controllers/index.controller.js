@@ -1,6 +1,7 @@
 const MessagingResponse = require('twilio').twiml.MessagingResponse;
 const config = require('../config');
-var request = require("request");
+const request = require("request");
+const Message = require('../models/messages');
 
 const indexController = (req, res) =>{ 
     res.render('index');
@@ -10,13 +11,16 @@ const chatController = (req, res) => {
     res.render('chat');
 }
 
-const receivedWhatsapp = (req, res) => {
-    console.log('webhook');
+const receivedWhatsapp = async (req, res) => {
     console.log('JSON.stringify(req.body): ' + JSON.stringify(req.body));
     console.log('req.body: ' + JSON.parse(JSON.stringify(req.body)).Body);
-  
+    
+    const result = await Message.create({message: JSON.parse(JSON.stringify(req.body)).Body, from: JSON.parse(JSON.stringify(req.body)).From, to: JSON.parse(JSON.stringify(req.body)).To, social_network: "whatsapp"});
+
+    console.log(result.sid); 
+
     const twiml = new MessagingResponse();
-    twiml.message('You said: HOLA');
+    twiml.message('You said: ' + JSON.parse(JSON.stringify(req.body)).Body);
     require('../index').emitMessage(JSON.parse(JSON.stringify(req.body)).Body);
   
     res.status(200).send({
