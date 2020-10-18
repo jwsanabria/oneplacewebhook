@@ -1,3 +1,4 @@
+require('dotenv').config()
 const app = require('./server');
 const http = require('http');
 //const bodyParser = require('body-parser')
@@ -6,7 +7,13 @@ var server = http.createServer(app);
 
 require('./database');
 
-require('./sockets').connection(server);
+const io = require('socket.io').listen(server);
+require('./sockets').connection(io);
+//require('./sockets').connection(server);
+
+const emitMessage = (message) => {
+  io.sockets.emit('message', message)
+}
 
 
 const qs = require("querystring");
@@ -46,22 +53,7 @@ app.get("/chat4", (req, res) => {
 })*/
 
 
-app.post("/hookWhatsapp", (req, res) => {
-  console.log('webhook');
-  console.log('JSON.stringify(req.body): ' + JSON.stringify(req.body));
-  console.log('req.body: ' + JSON.parse(JSON.stringify(req.body)).Body);
 
-  const twiml = new MessagingResponse();
-  twiml.message('You said: HOLA');
-
-  io.sockets.emit('message', JSON.parse(JSON.stringify(req.body)).Body)
-
-  res.status(200).send({
-    body: twiml.toString(),
-    headers: { 'Content-Type': 'application/xml' },
-    isRaw: true
-  });
-});
 
 
 
@@ -88,3 +80,5 @@ io.on('connection', function(socket) {
       socket.broadcast.emit('newclientconnect',{ description: clients + ' clients connected!'})
    });
 });*/
+
+module.exports = { emitMessage }

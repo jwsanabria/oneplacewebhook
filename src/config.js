@@ -1,0 +1,11 @@
+
+module.exports = {
+    twilioAccountId: process.env.TWILIO_ACCOUNT_ID,
+    twilioAuthToken: process.env.TWILIO_AUTH_TOKEN,
+    twilioNumeroEmprendedor: process.env.NUM_EMPRENDEDOR,
+    twilioNumeroCliente: process.env.NUM_CLIENTE,
+    mongoDbUser: process.env.OP_MONGODB_USER,
+    mongoDbPassword: process.env.OP_MONGODB_PASSWORD,
+    montoDbDatabase: process.env.OP_MONGODB_DATABASE
+    
+}

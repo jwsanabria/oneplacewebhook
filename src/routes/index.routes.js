@@ -1,12 +1,11 @@
-const {Router} = require('express')
+const {Router} = require('express');
 const router = Router();
+const {indexController, chatController, receivedWhatsapp} = require('../controllers/index.controller');
 
-router.get('/', (req, res) => {
-    res.render('index');
-})
+router.get('/', indexController);
 
-router.get('/chat', (req, res) => {
-    res.render('chat');
-})
+router.get('/chat', chatController);
+
+router.post("/hookWhatsapp", receivedWhatsapp)
 
 module.exports = router;
