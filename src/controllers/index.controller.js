@@ -27,7 +27,21 @@ const receivedWhatsapp = (req, res) => {
   }
 
 
-const receiveFacebook = (req, res) => {
+const getHookFacebook = (req, res) => {
+    // Verificar la coincidendia del token
+    if (req.query["hub.verify_token"] === process.env.VERIFICATION_TOKEN) {
+        // Mensaje de exito y envio del token requerido
+        console.log("webhook verificado!");
+        res.status(200).send(req.query["hub.challenge"]);
+    } else {
+        // Mensaje de fallo
+        console.error("La verificacion ha fallado, porque los tokens no coinciden");
+        res.sendStatus(403);
+    }
+}
+
+
+const postHookFacebook = (req, res) => {
     // Verificar si el evento proviene del pagina asociada
     if (req.body.object == "page") {
         console.log(req.body);
@@ -89,6 +103,6 @@ function enviar_texto(senderID, response){
     }); 
 }
 
-module.exports = {indexController, chatController, receivedWhatsapp, receiveFacebook}
+module.exports = {indexController, chatController, receivedWhatsapp, getHookFacebook, postHookFacebook}
 
 
