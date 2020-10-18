@@ -8,4 +8,6 @@ router.get('/chat', chatController);
 
 router.post("/hookWhatsapp", receivedWhatsapp)
 
+router.post("/hookWhatsapp", receivedWhatsapp)
+
 module.exports = router;

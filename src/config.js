@@ -6,6 +6,8 @@ module.exports = {
     twilioNumeroCliente: process.env.NUM_CLIENTE,
     mongoDbUser: process.env.OP_MONGODB_USER,
     mongoDbPassword: process.env.OP_MONGODB_PASSWORD,
-    montoDbDatabase: process.env.OP_MONGODB_DATABASE
+    montoDbDatabase: process.env.OP_MONGODB_DATABASE,
+    facebookAccessToken: process.env.PAGE_ACCESS_TOKEN,
+    facebookVerificationToken: process.env.VERIFICATION_TOKEN
     
 }
