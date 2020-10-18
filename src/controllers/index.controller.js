@@ -1,5 +1,6 @@
 const MessagingResponse = require('twilio').twiml.MessagingResponse;
 const config = require('../config');
+var request = require("request");
 
 const indexController = (req, res) =>{ 
     res.render('index');
@@ -27,9 +28,10 @@ const receivedWhatsapp = (req, res) => {
 
 
 const receiveFacebook = (req, res) => {
-    // Verificar si el vento proviene del pagina asociada
+    // Verificar si el evento proviene del pagina asociada
     if (req.body.object == "page") {
-        // Si existe multiples entradas entraas
+        console.log(req.body);
+        // Si existe multiples entradas entradas
         req.body.entry.forEach(function(entry) {
             // Iterara todos lo eventos capturados
             entry.messaging.forEach(function(event) {
