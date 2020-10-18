@@ -29,7 +29,7 @@ const receivedWhatsapp = (req, res) => {
 
 const getHookFacebook = (req, res) => {
     // Verificar la coincidendia del token
-    if (req.query["hub.verify_token"] === process.env.VERIFICATION_TOKEN) {
+    if (req.query["hub.verify_token"] === config.facebookVerificationToken) {
         // Mensaje de exito y envio del token requerido
         console.log("webhook verificado!");
         res.status(200).send(req.query["hub.challenge"]);
