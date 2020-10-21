@@ -10,11 +10,12 @@ const WhastappMsgSchema = new Schema({
     Hour: {type: Date, default: Date.now}
 });
 
+/*
 const WhatsappUserAccountSchema = new Schema({
     UserId: {type: String, required: true},
     AccountType: {type: Number, required: true}, //1-WS, 2-FB
     AccountId: {type: String, required: true}
 });
-
-module.exports = mongoose.model('WhastappMsg', WhatsappUserAccountSchema)
-module.exports = mongoose.model('WhatsappUserAccount', WhatsappUserAccountSchema)
+*/
+module.exports = mongoose.model('WhastappMsg', WhastappMsgSchema);
+//module.exports = mongoose.model('WhatsappUserAccount', WhatsappUserAccountSchema);

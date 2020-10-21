@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 require('dotenv').config()
 
+console.log('Usuario: ' + process.env.OP_MONGODB_USER);
+
 mongoose.connect('mongodb+srv://'+ process.env.OP_MONGODB_USER + ':'+process.env.OP_MONGODB_PASSWORD+'@cluster0.ncadf.mongodb.net/'+process.env.OP_MONGODB_DATABASE+'?retryWrites=true&w=majority', {
     useNewUrlParser: true, 
     useUnifiedTopology: true,
