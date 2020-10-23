@@ -1,6 +1,7 @@
 const { MediaInstance } = require('twilio/lib/rest/api/v2010/account/message/media');
 const bdAccess = require('../models/BDWhatsapp');
-const conn = require('../database')
+const conn = require('../database');
+const BDWhatsapp = require('../models/BDWhatsapp');
 
 //Se busca en la tabla de cuentas por usuario qué cuentas le pertenecen
 function getWSUserAccounts(UserId)
@@ -12,16 +13,21 @@ function getWSUserAccounts(UserId)
 //Se filtra por los telefonos encontrados de esa persona. Se muestra  el último mensaje por cada persona
 function getWSContactMSG_ByUser(WSUserAccountId)
 {
-
+    var query = WhastappMsg.find({From: WSUserAccountId, To: WSUserAccountId})
 
 }
 
 //Se consulta la BD con esos dos parámetros, se ordena por fecha desc
-function getWSMessageByFromTo(From1, To1)
+function getWSMessageByFromTo(From, To)
 {
-    var query=bdAccess.WhastappMsg.find({ From: From1, To: To1});
-    console.log(query);
-
+    var c = bdAccess.find({ From: From, To: To }, function (err, docs) {
+        if(err) return console.log(err)
+        console.log(docs.length)
+        });
+    
+        c.then(docs => {
+            console.log(JSON.stringify(docs))
+          })
 }
 
 //Guardar en la BD el mensaje
@@ -39,4 +45,5 @@ function setWSMessageByFromTo(MessageSid, Body, From, To)
     });
 }
 
-setWSMessageByFromTo('0001', 'Cuerpo del mensaje', 'Desde 300', 'Hacia 301');
+//setWSMessageByFromTo('0001', 'Cuerpo del mensaje4', '300123', '301456');
+getWSMessageByFromTo('300123', '301456');

@@ -17,5 +17,5 @@ const WhatsappUserAccountSchema = new Schema({
     AccountId: {type: String, required: true}
 });
 */
-module.exports = mongoose.model('WhastappMsg', WhastappMsgSchema);
+module.exports = mongoose.model('WhastappMsg', WhastappMsgSchema)
 //module.exports = mongoose.model('WhatsappUserAccount', WhatsappUserAccountSchema);
