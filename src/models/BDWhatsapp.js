@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const WhastappMsgSchema = new Schema({
+const WhatsappMsgSchema = new Schema({
     MessageSid: {type: String, required: true},
     To: {type: String, required: true},
     From: {type: String, required: true},
@@ -17,5 +17,5 @@ const WhatsappUserAccountSchema = new Schema({
     AccountId: {type: String, required: true}
 });
 */
-module.exports = mongoose.model('WhastappMsg', WhastappMsgSchema)
-//module.exports = mongoose.model('WhatsappUserAccount', WhatsappUserAccountSchema);
+module.exports = mongoose.model('WhatsappMsg', WhatsappMsgSchema)
+//module.exports = mongoose.model('WhatsappUserAccount', WhatsappUserAccountSchema)
