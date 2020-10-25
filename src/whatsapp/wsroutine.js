@@ -6,33 +6,35 @@ const conn = require('../database');
 const BDLastMsg = require('../models/BDLastMsg');
 const { ExportCustomJobPage } = require('twilio/lib/rest/bulkexports/v1/export/exportCustomJob');
 
-//
+//ok
 //Crear en la tabla cuentas por usuario el IdUsuario de la aplicación y relacionarlo con un teléfono para whatsapp.
 //No valida si ya se encuentra previamente.
 //Retorna true o false.
 function setWSUserAccountNumber(UserId, Number) {
-    //Crear el mensaje
-    let mensaje = new BDNumbersByUser();
-    mensaje.UserId = UserId;
-    mensaje.Number = Number;
-    console.log("WSUserAccountNumber a grabar: ", mensaje.toJSON())
-    mensaje.save(function (err) {
-        if (err) {
-            console.log("WSUserAccountNumber error en save: ", err);
-            return false;
-        }
-        else {
-            console.log("WSUserAccountNumber: Guardado correctamente");
-            return true;
-        }
+    return new Promise((resolve, reject) => {
+        //Crear el mensaje
+        let mensaje = new BDNumbersByUser();
+        mensaje.UserId = UserId;
+        mensaje.Number = Number;
+        console.log("WSUserAccountNumber a grabar: ", mensaje.toJSON())
+        mensaje.save(function (err) {
+            if (err) {
+                console.log("WSUserAccountNumber error en save: ", err);
+                reject(err);
+                resolve(false);
+            }
+            else {
+                console.log("WSUserAccountNumber: Guardado correctamente");
+                resolve(true);
+            }
+        });
     });
 }
 
-//
+//ok
 //Busca en la tabla de cuentas por usuario qué cuentas (número de whatsapp) le pertenecen. Solo trae un registro.
 //Retorna json.
 async function getWSUserAccounts(UserId) {
-    //let consulta = BDNumbersByUser.findOne({ UserId: UserId }, function (err, docs) {
     return new Promise((resolve, reject) => {
         BDNumbersByUser.findOne({ UserId: UserId }, function (err, docs) {
             if (err) {
@@ -46,49 +48,46 @@ async function getWSUserAccounts(UserId) {
             }
         });
     });
-    /*consulta.then(docs => {
-        let resp = JSON.stringify(docs);
-        console.log("getWSUserAccounts respuesta: ", resp);
-        return resp;*/
-
-
-
 }
 
-//
+//ok
 //Muestra el último mensaje de cada cliente por Usuario. 
 //Retorna json.
 function getWSContactMSG_ByUser(From) {
-    let consulta = BDUltimoMensaje.find({ From: From }, function (err, docs) {
-        if (err) {
-            console.log("getWSContactMSG_ByUser error: ", err);
-            return (JSON.stringify(''));
-        }
-    });
+    return new Promise((resolve, reject) => {
+        let consulta = BDUltimoMensaje.find({ From: From }, function (err, docs) {
+            if (err) {
+                console.log("getWSContactMSG_ByUser error: ", err);
+                reject(JSON.stringify(''));
+            }
+        });
 
-    consulta.then(docs => {
-        let resp = JSON.stringify(docs);
-        console.log("getWSContactMSG_ByUser respuesta: ", resp);
-        return resp;
-    })
+        consulta.then(docs => {
+            let resp = JSON.stringify(docs);
+            console.log("getWSContactMSG_ByUser respuesta: ", resp);
+            resolve(resp);
+        })
+    });
 }
 
-//
+//ok
 //Se consulta la BD con esos dos parámetros, se ordena por fecha desc.
 //Retorna json.
 function getWSMessageByFromTo(From, To) {
-    let consulta = BDWhatsapp.find({ From: From, To: To }, function (err, docs) {
-        if (err) {
-            console.log("getWSMessageByFromTo error: ", err);
-            return (JSON.stringify(''));
-        }
-    }).sort({ Hour: -1 });
+    return new Promise((resolve, reject) => {
+        let consulta = BDWhatsapp.find({ From: From, To: To }, function (err, docs) {
+            if (err) {
+                console.log("getWSMessageByFromTo error: ", err);
+                reject(JSON.stringify(''));
+            }
+        }).sort({ Hour: -1 });
 
-    consulta.then(docs => {
-        let resp = JSON.stringify(docs);
-        console.log("getWSMessageByFromTo respuesta: ", resp);
-        return resp;
-    })
+        consulta.then(docs => {
+            let resp = JSON.stringify(docs);
+            console.log("getWSMessageByFromTo respuesta: ", resp);
+            resolve(resp);
+        })
+    });
 }
 
 //
@@ -96,67 +95,74 @@ function getWSMessageByFromTo(From, To) {
 //También guarda o actualiza en la tabla de Ultimos mensajes la última interacción que se tuvo con ese cliente.
 //Retorna true o false.
 function setWSMessageByFromTo(MessageSid, Body, From, To, Owner) {
-    //Crear el mensaje
-    let mensaje = new BDWhatsapp();
-    mensaje.MessageSid = MessageSid;
-    mensaje.Body = Body;
-    mensaje.From = From;
-    mensaje.To = To;
-    mensaje.Owner = Owner;
-    console.log(mensaje.toJSON())
-    mensaje.save(function (err) {
-        if (err)
-            console.log("setWSMessageByFromTo error en save: ", err);
-        else
-            console.log("setWSMessageByFromTo guardado correctamente")
-    });
-
-    ////Crear o actualizar el último mensaje
-    //Buscar si ya existe
-    let consulta = BDLastMsg.findOne({ From: From, To: To }, function (err, res) {
-        if (err) {
-            console.log("lstMsg error: ", err);
-            return false;
-        }
-        else {
-            console.log("lstMsg res: ", res)
-
-            if (res) {
-                let now = new Date();
-                console.log("lstMsg data a actualizar: Fecha " + now + ", id " + res._id + ", MessageSIDWS " + MessageSid)
-
-                let ultMsgUpd = BDLastMsg.updateOne({ _id: res._id }, { MessageSid: MessageSid, Hour: now, Body: Body, Owner: Owner }, function (errupd, resupd) {
-                    console.log("ultMsUpd encontrado: ", ultMsgUpd);
-                    if (errupd) {
-                        console.log("error en lstMsg actualizar: ", errupd);
-                        return false;
-                    }
-                    else {
-                        console.log("actualiza registro lstMsg: ", resupd);
-                        return true;
-                    }
-                });
+    return new Promise((resolve, reject) => {
+        //Crear el mensaje
+        let mensaje = new BDWhatsapp();
+        mensaje.MessageSid = MessageSid;
+        mensaje.Body = Body;
+        mensaje.From = From;
+        mensaje.To = To;
+        mensaje.Owner = Owner;
+        console.log(mensaje.toJSON())
+        mensaje.save(function (err) {
+            if (err) {
+                console.log("setWSMessageByFromTo error en save: ", err);
+                reject(err);
+                resolve(false);
             }
             else {
-                let msgupd = new BDLastMsg();
-                msgupd.MessageSid = MessageSid;
-                msgupd.From = From;
-                msgupd.To = To;
-                msgupd.Body = Body;
-                msgupd.Owner = Owner;
-
-                msgupd.save(function (err) {
-                    if (err) {
-                        console.log("Error en lstMsg save: ", err);
-                        return false;
-                    }
-                    else {
-                        console.log("Guardado lstMsg correctamente")
-                        return true;
-                    }
-                });
+                console.log("setWSMessageByFromTo guardado correctamente")
+                resolve(true); //TODO: Dejar en cascada para que la actualización en BD también vaya incluída en esta respuesta.
             }
-        }
+        });
+
+        ////Crear o actualizar el último mensaje
+        //Buscar si ya existe
+        let consulta = BDLastMsg.findOne({ From: From, To: To }, function (err, res) {
+            if (err) {
+                console.log("lstMsg error: ", err);
+                return false;
+            }
+            else {
+                console.log("lstMsg res: ", res)
+
+                if (res) {
+                    let now = new Date();
+                    console.log("lstMsg data a actualizar: Fecha " + now + ", id " + res._id + ", MessageSIDWS " + MessageSid)
+
+                    let ultMsgUpd = BDLastMsg.updateOne({ _id: res._id }, { MessageSid: MessageSid, Hour: now, Body: Body, Owner: Owner }, function (errupd, resupd) {
+                        console.log("ultMsUpd encontrado: ", ultMsgUpd);
+                        if (errupd) {
+                            console.log("error en lstMsg actualizar: ", errupd);
+                            return false;
+                        }
+                        else {
+                            console.log("actualiza registro lstMsg: ", resupd);
+                            return true;
+                        }
+                    });
+                }
+                else {
+                    let msgupd = new BDLastMsg();
+                    msgupd.MessageSid = MessageSid;
+                    msgupd.From = From;
+                    msgupd.To = To;
+                    msgupd.Body = Body;
+                    msgupd.Owner = Owner;
+
+                    msgupd.save(function (err) {
+                        if (err) {
+                            console.log("Error en lstMsg save: ", err);
+                            return false;
+                        }
+                        else {
+                            console.log("Guardado lstMsg correctamente")
+                            return true;
+                        }
+                    });
+                }
+            }
+        });
     });
 }
 
@@ -171,3 +177,7 @@ function setWSMessageByFromTo(MessageSid, Body, From, To, Owner) {
 //getWSContactMSG_ByUser('300123');
 
 exports.getWSUserAccounts = getWSUserAccounts;
+exports.getWSContactMSG_ByUser = getWSContactMSG_ByUser;
+exports.getWSMessageByFromTo = getWSMessageByFromTo;
+exports.setWSUserAccountNumber = setWSUserAccountNumber;
+exports.setWSMessageByFromTo = setWSMessageByFromTo;
