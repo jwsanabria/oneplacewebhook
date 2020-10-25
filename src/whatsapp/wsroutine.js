@@ -4,8 +4,12 @@ const BDUltimoMensaje = require('../models/BDLastMsg');
 const BDNumbersByUser = require('../models/BDNumbersByUser');
 const conn = require('../database');
 const BDLastMsg = require('../models/BDLastMsg');
+const { ExportCustomJobPage } = require('twilio/lib/rest/bulkexports/v1/export/exportCustomJob');
 
-//Crear en la tabla cuentas por usuario el IdUsuario de la aplicación y relacionarlo con un teléfono para whatsapp
+//
+//Crear en la tabla cuentas por usuario el IdUsuario de la aplicación y relacionarlo con un teléfono para whatsapp.
+//No valida si ya se encuentra previamente.
+//Retorna true o false.
 function setWSUserAccountNumber(UserId, Number) {
     //Crear el mensaje
     let mensaje = new BDNumbersByUser();
@@ -13,51 +17,84 @@ function setWSUserAccountNumber(UserId, Number) {
     mensaje.Number = Number;
     console.log("WSUserAccountNumber a grabar: ", mensaje.toJSON())
     mensaje.save(function (err) {
-        if (err)
+        if (err) {
             console.log("WSUserAccountNumber error en save: ", err);
-        else
-            console.log("WSUserAccountNumber: Guardado correctamente")
+            return false;
+        }
+        else {
+            console.log("WSUserAccountNumber: Guardado correctamente");
+            return true;
+        }
     });
 }
 
-
-//Se busca en la tabla de cuentas por usuario qué cuentas le pertenecen. Solo trae un registro.
-function getWSUserAccounts(UserId) {
-    let consulta = BDNumbersByUser.findOne({ UserId: UserId }, function (err, docs) {
-        if (err) return console.log(err)
-        console.log("getWSUserAccounts error: ", docs.length)
+//
+//Busca en la tabla de cuentas por usuario qué cuentas (número de whatsapp) le pertenecen. Solo trae un registro.
+//Retorna json.
+async function getWSUserAccounts(UserId) {
+    //let consulta = BDNumbersByUser.findOne({ UserId: UserId }, function (err, docs) {
+    return new Promise((resolve, reject) => {
+        BDNumbersByUser.findOne({ UserId: UserId }, function (err, docs) {
+            if (err) {
+                console.log("getWSUserAccounts error: ", err);
+                reject(JSON.stringify(''));
+            }
+            else {
+                let resp = JSON.stringify(docs);
+                console.log("getWSUserAccounts respuesta: ", resp);
+                resolve(resp);
+            }
+        });
     });
+    /*consulta.then(docs => {
+        let resp = JSON.stringify(docs);
+        console.log("getWSUserAccounts respuesta: ", resp);
+        return resp;*/
 
-    consulta.then(docs => {
-        console.log(JSON.stringify(docs))
-    })
+
+
 }
 
-//Se filtra por los telefonos encontrados de esa persona. Se muestra  el último mensaje por cada persona
+//
+//Muestra el último mensaje de cada cliente por Usuario. 
+//Retorna json.
 function getWSContactMSG_ByUser(From) {
     let consulta = BDUltimoMensaje.find({ From: From }, function (err, docs) {
-        if (err) return console.log(err)
-        console.log(docs.length)
+        if (err) {
+            console.log("getWSContactMSG_ByUser error: ", err);
+            return (JSON.stringify(''));
+        }
     });
 
     consulta.then(docs => {
-        console.log(JSON.stringify(docs))
+        let resp = JSON.stringify(docs);
+        console.log("getWSContactMSG_ByUser respuesta: ", resp);
+        return resp;
     })
 }
 
-//Se consulta la BD con esos dos parámetros, se ordena por fecha desc
+//
+//Se consulta la BD con esos dos parámetros, se ordena por fecha desc.
+//Retorna json.
 function getWSMessageByFromTo(From, To) {
     let consulta = BDWhatsapp.find({ From: From, To: To }, function (err, docs) {
-        if (err) return console.log(err)
-        console.log(docs.length)
+        if (err) {
+            console.log("getWSMessageByFromTo error: ", err);
+            return (JSON.stringify(''));
+        }
     }).sort({ Hour: -1 });
 
     consulta.then(docs => {
-        console.log(JSON.stringify(docs))
+        let resp = JSON.stringify(docs);
+        console.log("getWSMessageByFromTo respuesta: ", resp);
+        return resp;
     })
 }
 
-//Guardar en la BD el mensaje
+//
+//Guardar en la BD el mensaje que proviene de la interacción.
+//También guarda o actualiza en la tabla de Ultimos mensajes la última interacción que se tuvo con ese cliente.
+//Retorna true o false.
 function setWSMessageByFromTo(MessageSid, Body, From, To, Owner) {
     //Crear el mensaje
     let mensaje = new BDWhatsapp();
@@ -69,60 +106,68 @@ function setWSMessageByFromTo(MessageSid, Body, From, To, Owner) {
     console.log(mensaje.toJSON())
     mensaje.save(function (err) {
         if (err)
-            console.log("Error en save: ", err);
+            console.log("setWSMessageByFromTo error en save: ", err);
         else
-            console.log("Guardado correctamente")
+            console.log("setWSMessageByFromTo guardado correctamente")
     });
 
     ////Crear o actualizar el último mensaje
     //Buscar si ya existe
-    let existe = false;
     let consulta = BDLastMsg.findOne({ From: From, To: To }, function (err, res) {
         if (err) {
             console.log("lstMsg error: ", err);
-            //return false;
+            return false;
         }
         else {
             console.log("lstMsg res: ", res)
-            //console.log("lstMsg res length: ", res.length)
 
             if (res) {
                 let now = new Date();
                 console.log("lstMsg data a actualizar: Fecha " + now + ", id " + res._id + ", MessageSIDWS " + MessageSid)
 
-                let ultMsgUpd = BDLastMsg.updateOne({ _id: res._id }, { MessageSid: MessageSid, Hour: now, Body: Body }, function (errupd, resupd) {
+                let ultMsgUpd = BDLastMsg.updateOne({ _id: res._id }, { MessageSid: MessageSid, Hour: now, Body: Body, Owner: Owner }, function (errupd, resupd) {
                     console.log("ultMsUpd encontrado: ", ultMsgUpd);
-                    if (errupd)
+                    if (errupd) {
                         console.log("error en lstMsg actualizar: ", errupd);
-                    else
+                        return false;
+                    }
+                    else {
                         console.log("actualiza registro lstMsg: ", resupd);
-                });                
+                        return true;
+                    }
+                });
             }
             else {
                 let msgupd = new BDLastMsg();
-                msgupd.MessageSid= MessageSid;
-                msgupd.From=From;
-                msgupd.To=To;
-                msgupd.Body=Body;
-                msgupd.Owner=Owner;                
-                //console.log(msgupd.toJSON())
+                msgupd.MessageSid = MessageSid;
+                msgupd.From = From;
+                msgupd.To = To;
+                msgupd.Body = Body;
+                msgupd.Owner = Owner;
+
                 msgupd.save(function (err) {
-                    if (err)
+                    if (err) {
                         console.log("Error en lstMsg save: ", err);
-                    else
+                        return false;
+                    }
+                    else {
                         console.log("Guardado lstMsg correctamente")
-                });                
+                        return true;
+                    }
+                });
             }
         }
     });
 }
 
-//setWSMessageByFromTo('0013', 'Cuerpo del mensaje13', '300123', '301234', 1);
-//setWSMessageByFromTo('0013', 'Cuerpo del mensaje13', '300123', '301234', 2);
-setWSMessageByFromTo('0017', 'Cuerpo del mensaje17', '300123', '301347', 2);
-//setWSMessageByFromTo('0007', 'Cuerpo del mensaje7', '300222', '301666');
-//setWSMessageByFromTo('0008', 'Cuerpo del mensaje7', '300222', '301444');
-//getWSMessageByFromTo('300123', '301234');
+//console.log(setWSUserAccountNumber('3', '300125'));
+//console.log("Respuest fuera: ", getWSUserAccounts('2').then(msg => {console.log(msg)})); //.then(resp => {console.log("Respuesta fuera: ", resp)})
+
+//getWSUserAccounts('2').then(function (msg1, msg2) { console.log(msg1) });
+
+
+//setWSMessageByFromTo('0018', 'Cuerpo del mensaje18', '300123', '301348', 2);
+//getWSMessageByFromTo('300123', '3012345');
 //getWSContactMSG_ByUser('300123');
-//getWSUserAccounts('2');
-//setWSUserAccountNumber('1', '300123');
+
+exports.getWSUserAccounts = getWSUserAccounts;
