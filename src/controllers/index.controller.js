@@ -1,8 +1,9 @@
 const MessagingResponse = require('twilio').twiml.MessagingResponse;
 const config = require('../config');
 const request = require("request");
-const Message = require('../models/messages');
+const Message = require('../models/Message');
 const whatsappBack = require('../whatsapp/wsroutine');
+const Account = require('../models/Account');
 
 ////////////////////////////
 const accountSid = config.twilioAccountId;
@@ -104,20 +105,22 @@ const receivedWhatsapp1 = async (req, res) => {
     });
 }
 
-const receivedWhatsapp = async (req, res) => {
-    console.log('JSON.stringify(req.body): ' + JSON.stringify(req.body));
-    console.log('req.body: ' + JSON.parse(JSON.stringify(req.body)).Body);
+const postHookWhatsapp = async (req, res) => {
+    console.log('hookWhatsapp ' + req.body.Body+'9');
 
-    const result = await whatsappBack.setWSMessageByFromTo(JSON.parse(JSON.stringify(req.SmsMessageSid)).SmsMessageSid, JSON.parse(JSON.stringify(req.body)).Body, 'whatsapp:+14155238886', JSON.parse(JSON.stringify(req.body)).To, 2); //.then(function (msg1, msg2) { console.log(msg1) });
+    const account = await Account.find({WhatsappId: req.body.To});
+    console.log('account' + account);
+
+    if(account !== null){
+        const result = await Message.create({UserId: account[0].UserId, MessageId: req.body.SmsMessageSid, Client: req.body.From, User: req.body.To, Message: req.body.Body, MessageType: 1,  SocialNetwork: 2});
+    }else{
+        console.log('No hay cuenta registrada '+ req.body.To);
+    }
 
     //Construir mensaje a emitir    
-    require('../index').emitMessage(result);
+    //require('../index').emitMessage(result);
 
-    res.status(200).send({
-        body: twiml.toString(),
-        headers: { 'Content-Type': 'application/xml' },
-        isRaw: true
-    });
+    res.sendStatus(200);
 }
 
 
@@ -135,26 +138,36 @@ const getHookFacebook = (req, res) => {
 }
 
 
-const postHookFacebook = (req, res) => {
+const postHookFacebook = async (req, res) => {
+    console.log('hookFacebook ' + req.body.object); 
+
     // Verificar si el evento proviene del pagina asociada
     if (req.body.object == "page") {
-        console.log(req.body);
         // Si existe multiples entradas entradas
-        req.body.entry.forEach(function (entry) {
+        for(const entry of req.body.entry){
             // Iterara todos lo eventos capturados
-            entry.messaging.forEach(function (event) {
-                if (event.message) {
-                    process_event(event);
+            for(const event of entry.messaging){
+                const account = await Account.find({FacebookId: entry.id});
+                console.log('account' + account);
+
+                if (event.message && account[0] !== undefined) {
+                    const result = await Message.create({UserId: account[0].UserId, MessageId: event.sender.id, Client: event.sender.id, User: event.recipient.id, Message: event.message, MessageType: 1,  SocialNetwork: 1});
+
+                    //Construir mensaje a emitir    
+                    //require('../index').emitMessage(result);
+
+                }else{
+                    console.log('No hay cuenta registrada '+ event.recipient.id);
                 }
-            });
-        });
+            }
+        }
         res.sendStatus(200);
     }
 }
 
 
 // Funcion donde se procesara el evento
-function process_event(event) {
+function process_event(event, account) {
     // Capturamos los datos del que genera el evento y el mensaje 
     var senderID = event.sender.id;
     var message = event.message;
@@ -162,13 +175,14 @@ function process_event(event) {
     // Si en el evento existe un mensaje de tipo texto
     if (message.text) {
         // Crear un payload para un simple mensaje de texto
-        var response = {
+        //const result = await Message.create({UserId: account[0].UserId, MessageId: event.sender.id, Client: event.sender.id, User: event.recipient.id, Message: event.message, MessageType: 1,  SocialNetwork: 1});
+        /*var response = {
             "text": 'Enviaste este mensaje: ' + message.text
-        }
+        }*/
     }
 
     // Enviamos el mensaje mediante SendAPI
-    enviar_texto(senderID, response);
+    //enviar_texto(senderID, response);
 }
 
 
@@ -211,6 +225,6 @@ const messagesController = (req, res) => {
     res.render('index');
 }
 
-module.exports = { indexController, chatController, receivedWhatsapp, getHookFacebook, postHookFacebook, LeftMessagesController, contactmessagesController, messagesController }
+module.exports = { indexController, chatController, postHookWhatsapp, getHookFacebook, postHookFacebook, LeftMessagesController, contactmessagesController, messagesController }
 
 

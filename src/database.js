@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
-require('dotenv').config()
+const config = require('./config')
 
-console.log('Usuario: ' + process.env.OP_MONGODB_USER);
+console.log('Usuario: ' + config.mongoDbUser);
 
-mongoose.connect('mongodb+srv://'+ process.env.OP_MONGODB_USER + ':'+process.env.OP_MONGODB_PASSWORD+'@cluster0.ncadf.mongodb.net/'+process.env.OP_MONGODB_DATABASE+'?retryWrites=true&w=majority', {
+mongoose.connect('mongodb+srv://'+ config.mongoDbUser + ':'+config.mongoDbPassword+'@cluster0.ncadf.mongodb.net/'+config.montoDbDatabase+'?retryWrites=true&w=majority', {
     useNewUrlParser: true, 
     useUnifiedTopology: true,
 })

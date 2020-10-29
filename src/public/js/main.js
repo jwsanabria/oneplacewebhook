@@ -1,4 +1,4 @@
-/*
+
 const socket = io()
 
 document.cookie = "UserId=5";
@@ -13,7 +13,7 @@ socket.on('message', function (msg) {
     //Asignar el mensaje a cada componente del chat
     $('#messages').append('<div class=\"incoming_msg\"><div class=\"incoming_msg_img\"><img src=\"https://ptetutorials.com/images/user-profile.png\" alt=\"sunil\" /></div><div class=\"received_msg\"><div class=\"received_withd_msg\"><p>' + objjson.Body + '</p><span class=\"time_date\">' + dateFormat(fecha, " h:MM:ss TT    |    mmmm dS") + '</span></div></div></div>')
 })
-*/
+
 
 //Dibuja el frame de recientes en la parte izquierda
 function PaintRecent(From, Date1, Body) {
@@ -30,6 +30,7 @@ function PaintRecent(From, Date1, Body) {
 }
 
 function cargar() {
+    console.log('CARGANDO PAGINA');
 
     const url = 'http://localhost:8080/leftmessages/1';
     console.log('url: ', url);
