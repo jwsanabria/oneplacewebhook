@@ -105,6 +105,20 @@ const receivedWhatsapp1 = async (req, res) => {
     });
 }
 
+
+/**
+ * Controlador para el webhook de Whatsapp, este método consulta la cuenta del mensaje recibido, si la encuentra
+ * realiza el registro del mensaje recibido asignandolo al usuario registrado en la aplicación y se realiza el 
+ * envío de la notificación a través del socket io específico.
+ * 
+ * Se espera recibir la siguiente estructura y ejemplo de datos: 
+ * {"SmsMessageSid":"SM990908a439b3667ef6d5a54500b53da0","NumMedia":"0","SmsSid":"SM990908a439b3667ef6d5a54500b53da0",
+ * "SmsStatus":"received","Body":"hola","To":"whatsapp:+14155238886","NumSegments":"1","MessageSid":"SM990908a439b3667ef6d5a54500b53da0",
+ * "AccountSid":"AC172cbb76359af9692e1e21aa1f1812d3","From":"whatsapp:+57316491XXXX","ApiVersion":"2010-04-01"}
+ * 
+ * @param {} req 
+ * @param {*} res 
+ */
 const postHookWhatsapp = async (req, res) => {
     console.log('hookWhatsapp ' + req.body.Body+'9');
 
@@ -113,15 +127,16 @@ const postHookWhatsapp = async (req, res) => {
 
     if(account !== null){
         const result = await Message.create({UserId: account[0].UserId, MessageId: req.body.SmsMessageSid, Client: req.body.From, User: req.body.To, Message: req.body.Body, MessageType: 1,  SocialNetwork: 2});
+        
+        //TODO: Construir mensaje a emitir    
+        //require('../index').emitMessage(result);
     }else{
         console.log('No hay cuenta registrada '+ req.body.To);
     }
 
-    //Construir mensaje a emitir    
-    //require('../index').emitMessage(result);
-
     res.sendStatus(200);
 }
+
 
 
 const getHookFacebook = (req, res) => {
@@ -138,6 +153,19 @@ const getHookFacebook = (req, res) => {
 }
 
 
+
+/**
+ * Controlador para el webhook de Facebook, este metodo consulta la cuenta del mensaje recibido, si la encuentra
+ * realiza el registro del mensaje recibido asignándolo al usuario registrado en la aplicación y se realiza el 
+ * envío de la notificación a través del socket io específico.
+ * 
+ * Se espera recibir la siguiente estructura y ejemplo de datos: 
+ * {"object":"page", "entry":[{"id":"103063468342065", "time":1458692752478, "messaging":[{"sender":{ "id":"13235324321"},
+ *  "recipient":{"id":"103063468342065"}, "message": "TEST_MESSAGE"}]}]}
+ * 
+ * @param {} req 
+ * @param {*} res 
+ */
 const postHookFacebook = async (req, res) => {
     console.log('hookFacebook ' + req.body.object); 
 
@@ -153,7 +181,7 @@ const postHookFacebook = async (req, res) => {
                 if (event.message && account[0] !== undefined) {
                     const result = await Message.create({UserId: account[0].UserId, MessageId: event.sender.id, Client: event.sender.id, User: event.recipient.id, Message: event.message, MessageType: 1,  SocialNetwork: 1});
 
-                    //Construir mensaje a emitir    
+                    //TODO: Construir mensaje a emitir    
                     //require('../index').emitMessage(result);
 
                 }else{
@@ -211,9 +239,20 @@ function enviar_texto(senderID, response) {
     });
 }
 
-
+/**
+ * Función para retornar el conjunto de contactos de una cuenta junto con el ultimo mensaje recibido
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
 const contactmessagesController = (req, res) => {
-    //TODO: Implementation
+    //Obtener el usuario de la sesión
+    let userId = req.params.userid;
+    if (!userId)
+        userId = '555';
+
+    userId = '555';
+
 
     res.render('index');
 }
