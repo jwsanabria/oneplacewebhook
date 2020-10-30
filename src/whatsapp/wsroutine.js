@@ -5,8 +5,9 @@ const BDNumbersByUser = require('../models/BDNumbersByUser');
 const conn = require('../database');
 const BDLastMsg = require('../models/BDLastMsg');
 const { ExportCustomJobPage } = require('twilio/lib/rest/bulkexports/v1/export/exportCustomJob');
+const BDMessage = require('../models/Message');
 
-//ok
+//
 //Crear en la tabla cuentas por usuario el IdUsuario de la aplicación y relacionarlo con un teléfono para whatsapp.
 //No valida si ya se encuentra previamente.
 //Retorna true o false.
@@ -31,7 +32,7 @@ function setWSUserAccountNumber(UserId, Number) {
     });
 }
 
-//ok
+//
 //Busca en la tabla de cuentas por usuario qué cuentas (número de whatsapp) le pertenecen. Solo trae un registro.
 //Retorna json.
 async function getWSUserAccounts(UserId) {
@@ -50,7 +51,7 @@ async function getWSUserAccounts(UserId) {
     });
 }
 
-//ok
+//
 //Muestra el último mensaje de cada cliente por Usuario. 
 //Retorna json.
 function getWSContactMSG_ByUser(From) {
@@ -70,7 +71,7 @@ function getWSContactMSG_ByUser(From) {
     });
 }
 
-//ok
+//
 //Se consulta la BD con esos dos parámetros, se ordena por fecha desc.
 //Retorna json.
 function getWSMessageByFromTo(From, To) {
@@ -90,35 +91,39 @@ function getWSMessageByFromTo(From, To) {
     });
 }
 
-//
+//ok - Falta probar
+//20201029 FB
 //Guardar en la BD el mensaje que proviene de la interacción.
 //También guarda o actualiza en la tabla de Ultimos mensajes la última interacción que se tuvo con ese cliente.
 //Retorna true o false.
-function setWSMessageByFromTo(MessageSid, Body, From, To, Owner) {
+function setMessage(UserId, MessageId, Client, User, Message, MessageType, SocialNetwork) {
     return new Promise((resolve, reject) => {
         //Crear el mensaje
-        let mensaje = new BDWhatsapp();
-        mensaje.MessageSid = MessageSid;
-        mensaje.Body = Body;
-        mensaje.From = From;
-        mensaje.To = To;
-        mensaje.Owner = Owner;
+        let mensaje = new BDMessage();
+        mensaje.UserId = UserId;
+        mensaje.MessageId = MessageId;
+        mensaje.Client = Client;
+        mensaje.User = User;
+        mensaje.Message = Message;
+        mensaje.MessageType = MessageType;
+        mensaje.SocialNetwork = SocialNetwork;
         console.log(mensaje.toJSON())
         mensaje.save(function (err) {
             if (err) {
-                console.log("setWSMessageByFromTo error en save: ", err);
+                console.log("setMessage error en save: ", err);
                 reject(err);
                 resolve(false);
             }
             else {
-                console.log("setWSMessageByFromTo guardado correctamente")
+                console.log("setMessage guardado correctamente")
                 resolve(true); //TODO: Dejar en cascada para que la actualización en BD también vaya incluída en esta respuesta.
             }
         });
 
         ////Crear o actualizar el último mensaje
         //Buscar si ya existe
-        let consulta = BDLastMsg.findOne({ From: From, To: To }, function (err, res) {
+        //TODO: Validar si esta funcion va, ya qye se piensa dejar una sola tabla de mensajes.
+        let consulta = BDLastMsg.findOne({ From: User, To: Client }, function (err, res) {
             if (err) {
                 console.log("lstMsg error: ", err);
                 return false;
@@ -128,9 +133,9 @@ function setWSMessageByFromTo(MessageSid, Body, From, To, Owner) {
 
                 if (res) {
                     let now = new Date();
-                    console.log("lstMsg data a actualizar: Fecha " + now + ", id " + res._id + ", MessageSIDWS " + MessageSid)
+                    console.log("lstMsg data a actualizar: Fecha " + now + ", id " + res._id + ", MessageSIDWS " + MessageId)
 
-                    let ultMsgUpd = BDLastMsg.updateOne({ _id: res._id }, { MessageSid: MessageSid, Hour: now, Body: Body, Owner: Owner }, function (errupd, resupd) {
+                    let ultMsgUpd = BDLastMsg.updateOne({ _id: res._id }, { MessageSid: MessageId, Hour: now, Body: Message, Owner: MessageType }, function (errupd, resupd) {
                         console.log("ultMsUpd encontrado: ", ultMsgUpd);
                         if (errupd) {
                             console.log("error en lstMsg actualizar: ", errupd);
@@ -144,11 +149,11 @@ function setWSMessageByFromTo(MessageSid, Body, From, To, Owner) {
                 }
                 else {
                     let msgupd = new BDLastMsg();
-                    msgupd.MessageSid = MessageSid;
-                    msgupd.From = From;
-                    msgupd.To = To;
-                    msgupd.Body = Body;
-                    msgupd.Owner = Owner;
+                    msgupd.MessageSid = MessageId;
+                    msgupd.From = User;
+                    msgupd.To = Client;
+                    msgupd.Body = Message;
+                    msgupd.Owner = MessageType;
 
                     msgupd.save(function (err) {
                         if (err) {
@@ -180,4 +185,4 @@ exports.getWSUserAccounts = getWSUserAccounts;
 exports.getWSContactMSG_ByUser = getWSContactMSG_ByUser;
 exports.getWSMessageByFromTo = getWSMessageByFromTo;
 exports.setWSUserAccountNumber = setWSUserAccountNumber;
-exports.setWSMessageByFromTo = setWSMessageByFromTo;
+exports.setMessage = setMessage;
