@@ -6,7 +6,7 @@ router.get('/', indexController);
 
 router.get('/chat/:user', chatController);
 
-router.post("/hookWhatsapp", postHookWhatsapp);
+router.post("/hookwhatsapp", postHookWhatsapp);
 
 router.get("/hookFacebook", getHookFacebook);
 
