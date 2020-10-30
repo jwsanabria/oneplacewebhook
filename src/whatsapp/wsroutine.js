@@ -1,7 +1,6 @@
 const { MediaInstance } = require('twilio/lib/rest/api/v2010/account/message/media');
 const BDWhatsapp = require('../models/BDWhatsapp');
 const BDUltimoMensaje = require('../models/BDLastMsg');
-const BDNumbersByUser = require('../models/BDNumbersByUser');
 const conn = require('../database');
 const BDLastMsg = require('../models/BDLastMsg');
 const { ExportCustomJobPage } = require('twilio/lib/rest/bulkexports/v1/export/exportCustomJob');

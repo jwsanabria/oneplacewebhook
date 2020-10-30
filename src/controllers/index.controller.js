@@ -1,9 +1,10 @@
 const MessagingResponse = require('twilio').twiml.MessagingResponse;
 const config = require('../config');
 const request = require("request");
-const Message = require('../models/messages');
+const Message = require('../models/Message');
 const whatsappBack = require('../whatsapp/wsroutine');
 const MessagesBack = require('../whatsapp/wsroutine');
+const Account = require('../models/Account');
 
 ////////////////////////////
 const accountSid = config.twilioAccountId;
@@ -138,6 +139,7 @@ const postHookWhatsapp = (req, res) => {
 }
 
 
+
 const getHookFacebook = (req, res) => {
     // Verificar la coincidendia del token
     if (req.query["hub.verify_token"] === config.facebookVerificationToken) {
@@ -152,26 +154,49 @@ const getHookFacebook = (req, res) => {
 }
 
 
-const postHookFacebook = (req, res) => {
+
+/**
+ * Controlador para el webhook de Facebook, este metodo consulta la cuenta del mensaje recibido, si la encuentra
+ * realiza el registro del mensaje recibido asignándolo al usuario registrado en la aplicación y se realiza el 
+ * envío de la notificación a través del socket io específico.
+ * 
+ * Se espera recibir la siguiente estructura y ejemplo de datos: 
+ * {"object":"page", "entry":[{"id":"103063468342065", "time":1458692752478, "messaging":[{"sender":{ "id":"13235324321"},
+ *  "recipient":{"id":"103063468342065"}, "message": "TEST_MESSAGE"}]}]}
+ * 
+ * @param {} req 
+ * @param {*} res 
+ */
+const postHookFacebook = async (req, res) => {
+    console.log('hookFacebook ' + req.body.object); 
+
     // Verificar si el evento proviene del pagina asociada
     if (req.body.object == "page") {
-        console.log(req.body);
         // Si existe multiples entradas entradas
-        req.body.entry.forEach(function (entry) {
+        for(const entry of req.body.entry){
             // Iterara todos lo eventos capturados
-            entry.messaging.forEach(function (event) {
-                if (event.message) {
-                    process_event(event);
+            for(const event of entry.messaging){
+                const account = await Account.find({FacebookId: entry.id});
+                console.log('account' + account);
+
+                if (event.message && account[0] !== undefined) {
+                    const result = await Message.create({UserId: account[0].UserId, MessageId: event.sender.id, Client: event.sender.id, User: event.recipient.id, Message: event.message, MessageType: 1,  SocialNetwork: 1});
+
+                    //TODO: Construir mensaje a emitir    
+                    //require('../index').emitMessage(result);
+
+                }else{
+                    console.log('No hay cuenta registrada '+ event.recipient.id);
                 }
-            });
-        });
+            }
+        }
         res.sendStatus(200);
     }
 }
 
 
 // Funcion donde se procesara el evento
-function process_event(event) {
+function process_event(event, account) {
     // Capturamos los datos del que genera el evento y el mensaje 
     var senderID = event.sender.id;
     var message = event.message;
@@ -179,13 +204,14 @@ function process_event(event) {
     // Si en el evento existe un mensaje de tipo texto
     if (message.text) {
         // Crear un payload para un simple mensaje de texto
-        var response = {
+        //const result = await Message.create({UserId: account[0].UserId, MessageId: event.sender.id, Client: event.sender.id, User: event.recipient.id, Message: event.message, MessageType: 1,  SocialNetwork: 1});
+        /*var response = {
             "text": 'Enviaste este mensaje: ' + message.text
-        }
+        }*/
     }
 
     // Enviamos el mensaje mediante SendAPI
-    enviar_texto(senderID, response);
+    //enviar_texto(senderID, response);
 }
 
 
