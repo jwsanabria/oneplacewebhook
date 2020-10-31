@@ -168,6 +168,31 @@ async function createMessage(MessageId, Client, User, Message, MessageType, Soci
 }
 
 
+/**
+ * Obtiene la lista de contactos de una cuenta con el ultimo mensaje en la conversación de cada uno.
+ * 
+ * @param {*} UserId 
+ */
+async function getContacts(UserId){
+    const lastMessages = await LastMessage.find({UserId: UserId}).sort({Time:-1});
+
+    return JSON.stringify(lastMessages);
+}
+
+
+/**
+ * Obtiene la lista de mensajes de una cuenta con un cliente específico y en una red social definida,
+ * se utiliza para cargar el contenido de una conversación seleccionada.
+ * 
+ * @param {*} UserId 
+ * @param {*} Client 
+ * @param {*} SocialNetwork 
+ */
+async function getMessagesByClient(UserId, Client, SocialNetwork){
+    const messages = await BDMessage.find({UserId: UserId, Client: Client, SocialNetwork: SocialNetwork}).sort({Time: 1});
+
+    return JSON.stringify(messages);
+}
 
 
 exports.getWSUserAccounts = getWSUserAccounts;
@@ -175,3 +200,5 @@ exports.getWSContactMSG_ByUser = getWSContactMSG_ByUser;
 exports.getWSMessageByFromTo = getWSMessageByFromTo;
 exports.setWSUserAccountNumber = setWSUserAccountNumber;
 exports.createMessage = createMessage;
+exports.getContacts = getContacts;
+exports.getMessagesByClient = getMessagesByClient;
