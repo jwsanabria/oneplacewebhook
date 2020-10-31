@@ -234,23 +234,36 @@ function enviar_texto(senderID, response) {
  * @param {*} req 
  * @param {*} res 
  */
-const contactmessagesController = (req, res) => {
+const contactmessagesController = async (req, res) => {
+    //TODO: Obtener el usuario de la sesión
     //Obtener el usuario de la sesión
     let userId = req.params.userid;
     if (!userId)
         userId = '555';
+    userId = 'Oneplace1'; //! Se debe establecer el UserId desde el token
 
-    userId = '555';
-
-
-    res.render('index');
+    try{
+        const contacts = await daoMongo.getContacts(userId);
+        res.status(200).json(contacts);
+    }catch(error){
+        res.status(404).json({error:error.toString()});
+    }
 }
 
 
-const messagesController = (req, res) => {
-    //TODO: Implementation
+const messagesController = async (req, res) => {
+    //TODO: Obtener el usuario de la sesión
+    userId = 'Oneplace1'; //! Se debe establecer el UserId desde el token
+    
+    clientId = req.body.clientId;
+    socialNetwork = req.body.socialNetwork;
 
-    res.render('index');
+    try{
+        const messages = await daoMongo.getMessagesByClient(userId, clientId, socialNetwork);
+        res.status(200).json(messages);
+    }catch(error){
+        res.status(404).json({error:error.toString()});
+    }
 }
 
 module.exports = { indexController, chatController, postHookWhatsapp, getHookFacebook, postHookFacebook, LeftMessagesController, contactmessagesController, messagesController }

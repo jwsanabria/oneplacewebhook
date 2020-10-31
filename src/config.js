@@ -10,6 +10,7 @@ module.exports = {
     facebookAccessToken: process.env.PAGE_ACCESS_TOKEN,
     facebookVerificationToken: process.env.VERIFICATION_TOKEN,
     messageTypeFacebook: 1,
-    messageTypeWhatsapp: 2
+    messageTypeWhatsapp: 2,
+    keySecret: process.env.KEY_SECRET
     
 }
