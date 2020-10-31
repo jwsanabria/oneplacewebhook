@@ -1,9 +1,9 @@
 const MessagingResponse = require('twilio').twiml.MessagingResponse;
 const config = require('../config');
 const request = require("request");
-const Message = require('../models/messages');
+const Message = require('../models/Message');
 const whatsappBack = require('../whatsapp/wsroutine');
-const MessagesBack = require('../whatsapp/wsroutine');
+const Account = require('../models/Account');
 
 ////////////////////////////
 const accountSid = config.twilioAccountId;
@@ -24,7 +24,7 @@ const chatController2 = (req, res) => {
     let userId = '555';
     let from1 = 'whatsapp:+573005559718';
     let to1 = 'whatsapp:+14155238886';
-    let body1 = 'Mensaje';
+    let body1 = 'Mensaje';    
     let messageSid1 = '';
 
     //Enviar Mensaje a Twilio
@@ -37,10 +37,10 @@ const chatController2 = (req, res) => {
         .then(message => console.log('Mensaje enviado a Twilio: ', message.sid));
 
     //messageSid1 = resultws.sid; //TODO: No lo va a capturar, falta volverlo asincrono
-    messageSid1 = '';
+    messageSid1='';
 
     //Guardar mensaje en BD.
-    const resultSave = whatsappBack.setMessage(messageSid1, body1, from1, to1, 1); //.then(function (msg1, msg2) { console.log(msg1) });
+    const resultSave = whatsappBack.setWSMessageByFromTo(messageSid1, body1, from1, to1, 1); //.then(function (msg1, msg2) { console.log(msg1) });
 
 
 
@@ -105,37 +105,38 @@ const receivedWhatsapp1 = async (req, res) => {
     });
 }
 
-//Estado: Funcional
-//20201029 FB.
-//Recurso que captura los mensajes que provienen del API de Whatsapp.
-const postHookWhatsapp = (req, res) => {
-    //Captura el JSON y lo distribuye en variables
-    body = JSON.parse(JSON.stringify(req.body));
 
-    if (Object.keys(body).length === 0)
-        res.status(500).send('error');
-    else
-    {
-        SmsMessageSid = body.SmsMessageSid;
-        Body = body.Body;
-        To = body.To; //En este contexto, from es el Cliente
-        From = body.From; //En este contexto, from es el Usuario
-        console.log('JSON.stringify(req.body): ' + JSON.stringify(req.body));
-        console.log('req.body: ' + JSON.parse(JSON.stringify(req.body)).Body);
+/**
+ * Controlador para el webhook de Whatsapp, este método consulta la cuenta del mensaje recibido, si la encuentra
+ * realiza el registro del mensaje recibido asignandolo al usuario registrado en la aplicación y se realiza el 
+ * envío de la notificación a través del socket io específico.
+ * 
+ * Se espera recibir la siguiente estructura y ejemplo de datos: 
+ * {"SmsMessageSid":"SM990908a439b3667ef6d5a54500b53da0","NumMedia":"0","SmsSid":"SM990908a439b3667ef6d5a54500b53da0",
+ * "SmsStatus":"received","Body":"hola","To":"whatsapp:+14155238886","NumSegments":"1","MessageSid":"SM990908a439b3667ef6d5a54500b53da0",
+ * "AccountSid":"AC172cbb76359af9692e1e21aa1f1812d3","From":"whatsapp:+57316491XXXX","ApiVersion":"2010-04-01"}
+ * 
+ * @param {} req 
+ * @param {*} res 
+ */
+const postHookWhatsapp = async (req, res) => {
+    console.log('hookWhatsapp ' + req.body.Body+'9');
 
-        UserId = '2'; //Cuenta de usuario
+    const account = await Account.find({WhatsappId: req.body.To});
+    console.log('account' + account);
 
-        //Almacena el mensaje en la BD.
-        //TODO: Esto debería ser asíncrono, para pintar rápidamente el mensaje en pantalla al usuario
-        const result = MessagesBack.setMessage(UserId, SmsMessageSid, To, From, Body, 1, 2); //.then(function (msg1, msg2) { console.log(msg1) });
+    if(account !== null){
+        const result = await Message.create({UserId: account[0].UserId, MessageId: req.body.SmsMessageSid, Client: req.body.From, User: req.body.To, Message: req.body.Body, MessageType: 1,  SocialNetwork: 2});
+        
+        //TODO: Construir mensaje a emitir    
+        //require('../index').emitMessage(result);
+    }else{
+        console.log('No hay cuenta registrada '+ req.body.To);
+    }
 
-        //Emitir el mensaje por SocketIO
-        require('../index').emitMessage(body);
-
-        //devuelve ok al api. Este no valida un mensaje en específico, solo la respuesta 200 http
-        res.status(200).send('ok');
-    }           
+    res.sendStatus(200);
 }
+
 
 
 const getHookFacebook = (req, res) => {
@@ -152,26 +153,49 @@ const getHookFacebook = (req, res) => {
 }
 
 
-const postHookFacebook = (req, res) => {
+
+/**
+ * Controlador para el webhook de Facebook, este metodo consulta la cuenta del mensaje recibido, si la encuentra
+ * realiza el registro del mensaje recibido asignándolo al usuario registrado en la aplicación y se realiza el 
+ * envío de la notificación a través del socket io específico.
+ * 
+ * Se espera recibir la siguiente estructura y ejemplo de datos: 
+ * {"object":"page", "entry":[{"id":"103063468342065", "time":1458692752478, "messaging":[{"sender":{ "id":"13235324321"},
+ *  "recipient":{"id":"103063468342065"}, "message": "TEST_MESSAGE"}]}]}
+ * 
+ * @param {} req 
+ * @param {*} res 
+ */
+const postHookFacebook = async (req, res) => {
+    console.log('hookFacebook ' + req.body.object); 
+
     // Verificar si el evento proviene del pagina asociada
     if (req.body.object == "page") {
-        console.log(req.body);
         // Si existe multiples entradas entradas
-        req.body.entry.forEach(function (entry) {
+        for(const entry of req.body.entry){
             // Iterara todos lo eventos capturados
-            entry.messaging.forEach(function (event) {
-                if (event.message) {
-                    process_event(event);
+            for(const event of entry.messaging){
+                const account = await Account.find({FacebookId: entry.id});
+                console.log('account' + account);
+
+                if (event.message && account[0] !== undefined) {
+                    const result = await Message.create({UserId: account[0].UserId, MessageId: event.sender.id, Client: event.sender.id, User: event.recipient.id, Message: event.message, MessageType: 1,  SocialNetwork: 1});
+
+                    //TODO: Construir mensaje a emitir    
+                    //require('../index').emitMessage(result);
+
+                }else{
+                    console.log('No hay cuenta registrada '+ event.recipient.id);
                 }
-            });
-        });
+            }
+        }
         res.sendStatus(200);
     }
 }
 
 
 // Funcion donde se procesara el evento
-function process_event(event) {
+function process_event(event, account) {
     // Capturamos los datos del que genera el evento y el mensaje 
     var senderID = event.sender.id;
     var message = event.message;
@@ -179,13 +203,14 @@ function process_event(event) {
     // Si en el evento existe un mensaje de tipo texto
     if (message.text) {
         // Crear un payload para un simple mensaje de texto
-        var response = {
+        //const result = await Message.create({UserId: account[0].UserId, MessageId: event.sender.id, Client: event.sender.id, User: event.recipient.id, Message: event.message, MessageType: 1,  SocialNetwork: 1});
+        /*var response = {
             "text": 'Enviaste este mensaje: ' + message.text
-        }
+        }*/
     }
 
     // Enviamos el mensaje mediante SendAPI
-    enviar_texto(senderID, response);
+    //enviar_texto(senderID, response);
 }
 
 
@@ -214,53 +239,29 @@ function enviar_texto(senderID, response) {
     });
 }
 
-//20201029 FB.
-//Recurso que expone el último mensaje que un usuario ha tenido con sus clientes.
-//El request debería contener el UserId, para encontrar todos los mensajes con los que ha interactado.
+/**
+ * Función para retornar el conjunto de contactos de una cuenta junto con el ultimo mensaje recibido
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
 const contactmessagesController = (req, res) => {
     //Obtener el usuario de la sesión
-    let userid = req.params.userid;
-    if (!userid)
-        res.status(200).send('{}');
+    let userId = req.params.userid;
+    if (!userId)
+        userId = '555';
 
-    //Obtener los mensajes, según el ID del usuario
-    whatsappBack.getWSContactMSG_ByUser(userid).then(function (msg1, msg2) {
-        if (msg2) {
-            console.log('Error en contactmessagesController para el usuario ' + userid + ': ' + msg2);
-            res.status(500).send(msg2);
-        }
-        else {
-            console.log('Data de contactmessagesController: ', msg1);
-            res.status(200).send(msg1);
-        }
-    });
+    userId = '555';
+
+
+    res.render('index');
 }
 
-//20201029 FB.
-//Recurso que expone todos los mensajes que un usuario ha tenido con un cliente.
-//El request debería contener la red social de donde lo contacta, la cuenta de usuario y la cuenta del cliente.
+
 const messagesController = (req, res) => {
-    //Obtener los parámetros requeridos
-    let socialnetwork = req.params.socialnetwork;
-    let useraccountid = req.params.useraccountid;
-    let clientaccountid = req.params.clientaccountid;
+    //TODO: Implementation
 
-    if (!socialnetwork || !useraccountid || clientaccountid)
-        res.status(200).send('{}');
-
-    //Obtener los mensajes, según el ID del usuario
-    whatsappBack.getWSMessageByFromTo(socialnetwork, useraccountid, clientaccountid).then(function (msg1, msg2) {
-        if (msg2) {
-            console.log('Error en messagesController para ' + socialnetwork + ', ' + useraccountid + ', ' + clientaccountid + ': ' + msg2);
-            res.status(500).send(msg2);
-        }
-        else {
-            console.log('Data de messagesController: ', msg1);
-            res.status(200).send(msg1);
-        }
-    });
+    res.render('index');
 }
 
 module.exports = { indexController, chatController, postHookWhatsapp, getHookFacebook, postHookFacebook, LeftMessagesController, contactmessagesController, messagesController }
-
-
