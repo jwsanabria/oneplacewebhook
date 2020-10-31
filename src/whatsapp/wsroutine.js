@@ -169,86 +169,9 @@ async function createMessage(MessageId, Client, User, Message, MessageType, Soci
 
 
 
-function setMessage(UserId, MessageId, Client, User, Message, MessageType, SocialNetwork) {
-    return new Promise((resolve, reject) => {
-        //Crear el mensaje
-        let mensaje = Message;
-        mensaje.UserId = UserId;
-        mensaje.MessageId = MessageId;
-        mensaje.Client = Client;
-        mensaje.User = User;
-        mensaje.Message = Message;
-        mensaje.MessageType = MessageType;
-        mensaje.SocialNetwork = SocialNetwork;
-        console.log(mensaje)
-        mensaje.create(function (err) {
-            if (err) {
-                console.log("setMessage error en save: ", err);
-                reject(err);
-                resolve(false);
-            }
-            else {
-                console.log("setMessage guardado correctamente")
-                resolve(true); //TODO: Dejar en cascada para que la actualización en BD también vaya incluída en esta respuesta.
-            }
-        });
-
-        ////Crear o actualizar el último mensaje
-        //Buscar si ya existe
-        let consulta = LastMessage.findOne({ UserId: UserId, From: Client, SocialNetwork: SocialNetwork}, function (err, res) {
-            if (err) {
-                console.log("lstMsg error: ", err);
-                return false;
-            }
-            else {
-                console.log("lstMsg res: ", res)
-
-                if (res) {
-                    let now = new Date();
-                    console.log("lstMsg data a actualizar: Fecha " + now + ", id " + res._id + ", MessageSIDWS " + MessageId)
-
-                    let ultMsgUpd = LastMessage.updateOne({ _id: res._id }, { MessageSid: MessageId, Hour: now, Message: Message, MessageType: MessageType}, function (errupd, resupd) {
-                        console.log("ultMsUpd encontrado: ", ultMsgUpd);
-                        if (errupd) {
-                            console.log("error en lstMsg actualizar: ", errupd);
-                            return false;
-                        }
-                        else {
-                            console.log("actualiza registro lstMsg: ", resupd);
-                            return true;
-                        }
-                    });
-                }
-                else {
-                    let msgupd = new LastMessage();
-                    msgupd.MessageSid = MessageId;
-                    msgupd.User = User;
-                    msgupd.Client = Client;
-                    msgupd.Message = Message;
-                    msgupd.MessageType = MessageType;
-                    msgupd.SocialNetwork = SocialNetwork;
-                    msgupd.UserId = UserId;
-
-                    msgupd.save(function (err) {
-                        if (err) {
-                            console.log("Error en lstMsg save: ", err);
-                            return false;
-                        }
-                        else {
-                            console.log("Guardado lstMsg correctamente")
-                            return true;
-                        }
-                    });
-                }
-            }
-        });
-    });
-}
-
 
 exports.getWSUserAccounts = getWSUserAccounts;
 exports.getWSContactMSG_ByUser = getWSContactMSG_ByUser;
 exports.getWSMessageByFromTo = getWSMessageByFromTo;
 exports.setWSUserAccountNumber = setWSUserAccountNumber;
 exports.createMessage = createMessage;
-exports.setMessage = setMessage;
