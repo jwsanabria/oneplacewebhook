@@ -8,6 +8,8 @@ module.exports = {
     mongoDbPassword: process.env.OP_MONGODB_PASSWORD,
     montoDbDatabase: process.env.OP_MONGODB_DATABASE,
     facebookAccessToken: process.env.PAGE_ACCESS_TOKEN,
-    facebookVerificationToken: process.env.VERIFICATION_TOKEN
+    facebookVerificationToken: process.env.VERIFICATION_TOKEN,
+    messageTypeFacebook: 1,
+    messageTypeWhatsapp: 2
     
 }

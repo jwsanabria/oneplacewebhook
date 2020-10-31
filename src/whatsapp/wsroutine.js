@@ -1,10 +1,12 @@
 const { MediaInstance } = require('twilio/lib/rest/api/v2010/account/message/media');
 const BDWhatsapp = require('../models/BDWhatsapp');
-const BDUltimoMensaje = require('../models/BDLastMsg');
+const LastMessage = require('../models/LastMessage');
+const mongoose = require('mongoose');
 const conn = require('../database');
-const BDLastMsg = require('../models/BDLastMsg');
-const { ExportCustomJobPage } = require('twilio/lib/rest/bulkexports/v1/export/exportCustomJob');
+const Account = require('../models/Account');
 const BDMessage = require('../models/Message');
+const { ExportCustomJobPage } = require('twilio/lib/rest/bulkexports/v1/export/exportCustomJob');
+const config = require('../config');
 
 //
 //Crear en la tabla cuentas por usuario el IdUsuario de la aplicación y relacionarlo con un teléfono para whatsapp.
@@ -55,7 +57,7 @@ async function getWSUserAccounts(UserId) {
 //Retorna json.
 function getWSContactMSG_ByUser(From) {
     return new Promise((resolve, reject) => {
-        let consulta = BDUltimoMensaje.find({ From: From }, function (err, docs) {
+        let consulta = LastMessage.find({ From: From }, function (err, docs) {
             if (err) {
                 console.log("getWSContactMSG_ByUser error: ", err);
                 reject(JSON.stringify(''));
@@ -90,98 +92,86 @@ function getWSMessageByFromTo(From, To) {
     });
 }
 
-//ok - Falta probar
-//20201029 FB
-//Guardar en la BD el mensaje que proviene de la interacción.
-//También guarda o actualiza en la tabla de Ultimos mensajes la última interacción que se tuvo con ese cliente.
-//Retorna true o false.
-function setMessage(UserId, MessageId, Client, User, Message, MessageType, SocialNetwork) {
-    return new Promise((resolve, reject) => {
-        //Crear el mensaje
-        let mensaje = new BDMessage();
-        mensaje.UserId = UserId;
-        mensaje.MessageId = MessageId;
-        mensaje.Client = Client;
-        mensaje.User = User;
-        mensaje.Message = Message;
-        mensaje.MessageType = MessageType;
-        mensaje.SocialNetwork = SocialNetwork;
-        console.log(mensaje.toJSON())
-        mensaje.save(function (err) {
-            if (err) {
-                console.log("setMessage error en save: ", err);
-                reject(err);
-                resolve(false);
-            }
-            else {
-                console.log("setMessage guardado correctamente")
-                resolve(true); //TODO: Dejar en cascada para que la actualización en BD también vaya incluída en esta respuesta.
-            }
-        });
 
-        ////Crear o actualizar el último mensaje
-        //Buscar si ya existe
-        //TODO: Validar si esta funcion va, ya qye se piensa dejar una sola tabla de mensajes.
-        let consulta = BDLastMsg.findOne({ From: User, To: Client }, function (err, res) {
-            if (err) {
-                console.log("lstMsg error: ", err);
-                return false;
+
+
+/**
+ * Guardar en la BD el mensaje que proviene de la interacción.
+ * También guarda o actualiza en la tabla de Ultimos mensajes la última interacción que se tuvo con ese cliente.
+ * Retorna true o false.
+ * 
+ * @param {*} UserId 
+ * @param {*} MessageId 
+ * @param {*} Client 
+ * @param {*} User 
+ * @param {*} Message 
+ * @param {*} MessageType 
+ * @param {*} SocialNetwork 
+ */
+async function createMessage(MessageId, Client, User, Message, MessageType, SocialNetwork){
+    const session = await mongoose.startSession();
+
+    const transactionOptions = {
+        readPreference: 'primary',
+        readConcern: { level: 'local' },
+        writeConcern: { w: 'majority' }
+    };
+ 
+    try {
+        const transactionResults = await session.withTransaction(async () => {
+            var isAccount = undefined;
+            if(SocialNetwork === config.messageTypeWhatsapp){
+                isAccount = await Account.findOne({WhatsappId: User}, null, { session });
+            }else{
+                isAccount = await Account.findOne({FacebookId: User}, null, { session });
             }
-            else {
-                console.log("lstMsg res: ", res)
+            
+            if(isAccount){
+                const msg = await BDMessage.create([{UserId: isAccount.UserId, MessageId: MessageId, Client: Client, User: User, Message: Message, MessageType: MessageType, SocialNetwork: SocialNetwork}], { session });
+                console.log(`${msg.createdCount} document created in the message collection ${msg}.`);
 
-                if (res) {
-                    let now = new Date();
-                    console.log("lstMsg data a actualizar: Fecha " + now + ", id " + res._id + ", MessageSIDWS " + MessageId)
-
-                    let ultMsgUpd = BDLastMsg.updateOne({ _id: res._id }, { MessageSid: MessageId, Hour: now, Body: Message, Owner: MessageType }, function (errupd, resupd) {
-                        console.log("ultMsUpd encontrado: ", ultMsgUpd);
-                        if (errupd) {
-                            console.log("error en lstMsg actualizar: ", errupd);
-                            return false;
-                        }
-                        else {
-                            console.log("actualiza registro lstMsg: ", resupd);
-                            return true;
-                        }
-                    });
+                const isLastMessage = await LastMessage.findOne(
+                    { UserId:  isAccount.UserId, Client: Client, SocialNetwork: SocialNetwork},
+                    null,
+                    { session });
+                if (isLastMessage) {
+                    const lastMessageResults = await LastMessage.updateOne(
+                        { UserId:  isAccount.UserId, Client: Client, SocialNetwork: SocialNetwork},
+                        { $set: { Message: Message, MessageType: MessageType } },
+                        { session });
+                    console.log(`${lastMessageResults.matchedCount} document(s) found in the lastmessages collection with userd-client-socialnetwork ${ isAccount.UserId}-${Client}-${SocialNetwork}.`);
+                    console.log(`${lastMessageResults.modifiedCount} document(s) was/were updated to include the message and message type.`);
+                }else{
+                    const lstmsg = await LastMessage.create([{UserId:  isAccount.UserId, MessageId: MessageId, Client: Client, User: User, Message: Message, MessageType: MessageType, SocialNetwork: SocialNetwork}], { session });
+                    console.log(`${lstmsg.createdCount} document created in the lastmessage collection ${lstmsg}.`); 
                 }
-                else {
-                    let msgupd = new BDLastMsg();
-                    msgupd.MessageSid = MessageId;
-                    msgupd.From = User;
-                    msgupd.To = Client;
-                    msgupd.Body = Message;
-                    msgupd.Owner = MessageType;
-
-                    msgupd.save(function (err) {
-                        if (err) {
-                            console.log("Error en lstMsg save: ", err);
-                            return false;
-                        }
-                        else {
-                            console.log("Guardado lstMsg correctamente")
-                            return true;
-                        }
-                    });
-                }
+            }else{
+                await session.abortTransaction();
+                console.error("Account is not found. The message could not be created.");
+                console.error("Any operations that already occurred as part of this transaction will be rolled back.");
+                return;
             }
-        });
-    });
+ 
+             
+        }, transactionOptions);
+ 
+        if (transactionResults) {
+            console.log("The message was successfully created.");
+        } else {
+            console.log("The transaction was intentionally aborted.");
+        }
+    } catch(e){
+        console.log("The transaction was aborted due to an unexpected error: " + e);
+    } finally {
+        await session.endSession();
+    }    
 }
 
-//console.log(setWSUserAccountNumber('3', '300125'));
-//console.log("Respuest fuera: ", getWSUserAccounts('2').then(msg => {console.log(msg)})); //.then(resp => {console.log("Respuesta fuera: ", resp)})
-
-//getWSUserAccounts('2').then(function (msg1, msg2) { console.log(msg1) });
 
 
-//setWSMessageByFromTo('0018', 'Cuerpo del mensaje18', '300123', '301348', 2);
-//getWSMessageByFromTo('300123', '3012345');
-//getWSContactMSG_ByUser('300123');
 
 exports.getWSUserAccounts = getWSUserAccounts;
 exports.getWSContactMSG_ByUser = getWSContactMSG_ByUser;
 exports.getWSMessageByFromTo = getWSMessageByFromTo;
 exports.setWSUserAccountNumber = setWSUserAccountNumber;
-exports.setMessage = setMessage;
+exports.createMessage = createMessage;
