@@ -244,9 +244,9 @@ const contactmessagesController = async (req, res) => {
 
     try{
         const contacts = await daoMongo.getContacts(userId);
-        res.status(200).send(contacts);
+        res.status(200).json(contacts);
     }catch(error){
-        res.status(404).send({error:error.toString()});
+        res.status(404).json({error:error.toString()});
     }
 }
 
@@ -260,9 +260,9 @@ const messagesController = async (req, res) => {
 
     try{
         const messages = await daoMongo.getMessagesByClient(userId, clientId, socialNetwork);
-        res.status(200).send(messages);
+        res.status(200).json(messages);
     }catch(error){
-        res.status(404).send({error:error.toString()});
+        res.status(404).json({error:error.toString()});
     }
 }
 
