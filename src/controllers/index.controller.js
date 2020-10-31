@@ -4,6 +4,7 @@ const request = require("request");
 const Message = require('../models/Message');
 const whatsappBack = require('../whatsapp/wsroutine');
 const Account = require('../models/Account');
+const daoMongo = require('../whatsapp/wsroutine');
 
 ////////////////////////////
 const accountSid = config.twilioAccountId;
@@ -121,19 +122,10 @@ const receivedWhatsapp1 = async (req, res) => {
  */
 const postHookWhatsapp = async (req, res) => {
     console.log('hookWhatsapp ' + req.body.Body+'9');
-
-    const account = await Account.find({WhatsappId: req.body.To});
-    console.log('account' + account);
-
-    if(account !== null){
-        const result = await Message.create({UserId: account[0].UserId, MessageId: req.body.SmsMessageSid, Client: req.body.From, User: req.body.To, Message: req.body.Body, MessageType: 1,  SocialNetwork: 2});
-        
-        //TODO: Construir mensaje a emitir    
-        //require('../index').emitMessage(result);
-    }else{
-        console.log('No hay cuenta registrada '+ req.body.To);
-    }
-
+    const result = await daoMongo.createMessage(req.body.SmsMessageSid, req.body.From, req.body.To, req.body.Body, 1,  config.messageTypeWhatsapp);
+  
+    //TODO: Construir mensaje a emitir    
+    //require('../index').emitMessage(result);
     res.sendStatus(200);
 }
 
@@ -175,11 +167,8 @@ const postHookFacebook = async (req, res) => {
         for(const entry of req.body.entry){
             // Iterara todos lo eventos capturados
             for(const event of entry.messaging){
-                const account = await Account.find({FacebookId: entry.id});
-                console.log('account' + account);
-
-                if (event.message && account[0] !== undefined) {
-                    const result = await Message.create({UserId: account[0].UserId, MessageId: event.sender.id, Client: event.sender.id, User: event.recipient.id, Message: event.message, MessageType: 1,  SocialNetwork: 1});
+                if (event.message) {
+                    const result = daoMongo.createMessage(event.sender.id, event.sender.id, event.recipient.id, event.message, 1,  config.messageTypeFacebook);
 
                     //TODO: Construir mensaje a emitir    
                     //require('../index').emitMessage(result);
