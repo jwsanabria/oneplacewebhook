@@ -1,4 +1,4 @@
-const { sendWhatsapp } = require('./twilio/senders');
+const { sendToSocialNetwork } = require('./logic/snlogic');
 
 const connection = (io) => {
     io.set('origins', '*:*');
@@ -13,14 +13,16 @@ const connection = (io) => {
         }, 4000);
         */
 
-        io.on('new-message', socket => {
-            console.log("socket entra");
-
-            console.log('Se recibe mensaje desde el front: ' + JSON.stringify(socket));
+        socket.on('message', message => {
+            console.log('Mensaje a enviar a red social: ', message);
+            //Enviar atributos y la siguiente función debería manejar la lógica del envío a las diferentes redes            
+            var Client = 'whatsapp:+573005559718';
+            var User = 'whatsapp:+14155238886';
+            var SocialNetwork = 2; //Simulando por el momento Whatsapp
+            sendToSocialNetwork(Client, User, message, SocialNetwork); //TODO: Lógica para inferir SocialNetwork
         });
     });
 
 }
-
 
 module.exports = { connection }

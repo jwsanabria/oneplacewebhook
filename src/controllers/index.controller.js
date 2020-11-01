@@ -1,50 +1,13 @@
-const MessagingResponse = require('twilio').twiml.MessagingResponse;
 const config = require('../config');
 const request = require("request");
-const Message = require('../models/Message');
-const whatsappBack = require('../whatsapp/wsroutine');
-const Account = require('../models/Account');
+const whatsappBack = require('../whatsapp/wsroutine'); //TODO: Reemplazar esto por daoMongo
 const daoMongo = require('../whatsapp/wsroutine');
-
-////////////////////////////
-const accountSid = config.twilioAccountId;
-const authToken = config.twilioAuthToken;
-const client = require('twilio')(accountSid, authToken);
-///////////////////////////
 
 const indexController = (req, res) => {
     res.render('index');
 }
 
 const chatController = (req, res) => {
-    res.render('chat');
-}
-
-//FB
-const chatController2 = (req, res) => {
-    let userId = '555';
-    let from1 = 'whatsapp:+573005559718';
-    let to1 = 'whatsapp:+14155238886';
-    let body1 = 'Mensaje';    
-    let messageSid1 = '';
-
-    //Enviar Mensaje a Twilio
-    let results = client.messages
-        .create({
-            from: from1,
-            body: body1,
-            to: to1
-        })
-        .then(message => console.log('Mensaje enviado a Twilio: ', message.sid));
-
-    //messageSid1 = resultws.sid; //TODO: No lo va a capturar, falta volverlo asincrono
-    messageSid1='';
-
-    //Guardar mensaje en BD.
-    const resultSave = whatsappBack.setWSMessageByFromTo(messageSid1, body1, from1, to1, 1); //.then(function (msg1, msg2) { console.log(msg1) });
-
-
-
     res.render('chat');
 }
 
@@ -76,37 +39,6 @@ const LeftMessagesController = (req, res) => {
     });
 }
 
-//Al seleccionar ese chat en la parte izquiera, carga todos los mensajes para ese contacto en la parte central
-const ChatCargeController = (req, res) => {
-    //Cargar todos los mensajes
-    WSService.getWSMessageByFromTo('300123', '301234').then(function (msg1, msg2) { console.log(msg1) });
-
-    res.render('index');
-}
-
-
-
-//FB: Modifiqué este por el que yo implementé.
-const receivedWhatsapp1 = async (req, res) => {
-    console.log('JSON.stringify(req.body): ' + JSON.stringify(req.body));
-    console.log('req.body: ' + JSON.parse(JSON.stringify(req.body)).Body);
-
-    const result = await Message.create({ message: JSON.parse(JSON.stringify(req.body)).Body, from: JSON.parse(JSON.stringify(req.body)).From, to: JSON.parse(JSON.stringify(req.body)).To, social_network: "whatsapp" });
-
-    console.log(result.sid);
-
-    const twiml = new MessagingResponse();
-    twiml.message('You said: ' + JSON.parse(JSON.stringify(req.body)).Body);
-    require('../index').emitMessage(JSON.parse(JSON.stringify(req.body)).Body);
-
-    res.status(200).send({
-        body: twiml.toString(),
-        headers: { 'Content-Type': 'application/xml' },
-        isRaw: true
-    });
-}
-
-
 /**
  * Controlador para el webhook de Whatsapp, este método consulta la cuenta del mensaje recibido, si la encuentra
  * realiza el registro del mensaje recibido asignandolo al usuario registrado en la aplicación y se realiza el 
@@ -121,15 +53,23 @@ const receivedWhatsapp1 = async (req, res) => {
  * @param {*} res 
  */
 const postHookWhatsapp = async (req, res) => {
-    console.log('hookWhatsapp ' + req.body.Body+'9');
-    const result = await daoMongo.createMessage(req.body.SmsMessageSid, req.body.From, req.body.To, req.body.Body, 1,  config.messageTypeWhatsapp);
-  
-    //TODO: Construir mensaje a emitir    
-    //require('../index').emitMessage(result);
-    res.sendStatus(200);
+    console.log('postHookWhatsapp: ' + req.body.Body);
+        
+    if (Object.keys(req.body).length === 0)
+        res.status(500).send('error');
+    else
+    {       
+        //Almacena el mensaje en la BD.
+        //TODO: Esto debería ser asíncrono, para pintar rápidamente el mensaje en pantalla al usuario        
+        const result = await daoMongo.createMessage(req.body.SmsMessageSid, req.body.To, req.body.From, req.body.Body, 1, config.messageTypeWhatsapp);
+
+        //Emitir el mensaje por SocketIO
+        require('../index').emitMessage(req.body);
+
+        //devuelve ok al api. Este no valida un mensaje en específico, solo la respuesta 200 http
+        res.status(200).send('ok');
+    }       
 }
-
-
 
 const getHookFacebook = (req, res) => {
     // Verificar la coincidendia del token
@@ -143,8 +83,6 @@ const getHookFacebook = (req, res) => {
         res.sendStatus(403);
     }
 }
-
-
 
 /**
  * Controlador para el webhook de Facebook, este metodo consulta la cuenta del mensaje recibido, si la encuentra
@@ -182,7 +120,6 @@ const postHookFacebook = async (req, res) => {
     }
 }
 
-
 // Funcion donde se procesara el evento
 function process_event(event, account) {
     // Capturamos los datos del que genera el evento y el mensaje 
@@ -201,7 +138,6 @@ function process_event(event, account) {
     // Enviamos el mensaje mediante SendAPI
     //enviar_texto(senderID, response);
 }
-
 
 // Funcion donde el chat respondera usando SendAPI
 function enviar_texto(senderID, response) {
