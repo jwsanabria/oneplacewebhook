@@ -1,9 +1,10 @@
 const MessagingResponse = require('twilio').twiml.MessagingResponse;
 const config = require('../config');
 const request = require("request");
-const Message = require('../models/messages');
+//const Message = require('../models/messages');
 const whatsappBack = require('../whatsapp/wsroutine');
 const MessagesBack = require('../whatsapp/wsroutine');
+
 
 ////////////////////////////
 const accountSid = config.twilioAccountId;
@@ -18,6 +19,9 @@ const indexController = (req, res) => {
 const chatController = (req, res) => {
     res.render('chat');
 }
+
+require('../index').receiveMessage;
+  
 
 //FB
 const chatController2 = (req, res) => {
@@ -105,7 +109,7 @@ const receivedWhatsapp1 = async (req, res) => {
     });
 }
 
-//Estado: Funcional
+//Estado: En desarrollo
 //20201029 FB.
 //Recurso que captura los mensajes que provienen del API de Whatsapp.
 const postHookWhatsapp = (req, res) => {
@@ -120,10 +124,10 @@ const postHookWhatsapp = (req, res) => {
         Body = body.Body;
         To = body.To; //En este contexto, from es el Cliente
         From = body.From; //En este contexto, from es el Usuario
-        console.log('JSON.stringify(req.body): ' + JSON.stringify(req.body));
-        console.log('req.body: ' + JSON.parse(JSON.stringify(req.body)).Body);
+        //console.log('JSON.stringify(req.body): ' + JSON.stringify(req.body));
+        //console.log('req.body: ' + JSON.parse(JSON.stringify(req.body)).Body);
 
-        UserId = '2'; //Cuenta de usuario
+        UserId = '2'; //TODO: Cuenta de usuario
 
         //Almacena el mensaje en la BD.
         //TODO: Esto debería ser asíncrono, para pintar rápidamente el mensaje en pantalla al usuario
@@ -214,6 +218,7 @@ function enviar_texto(senderID, response) {
     });
 }
 
+//Estado: En desarrollo
 //20201029 FB.
 //Recurso que expone el último mensaje que un usuario ha tenido con sus clientes.
 //El request debería contener el UserId, para encontrar todos los mensajes con los que ha interactado.
@@ -236,6 +241,7 @@ const contactmessagesController = (req, res) => {
     });
 }
 
+//Estado: En desarrollo
 //20201029 FB.
 //Recurso que expone todos los mensajes que un usuario ha tenido con un cliente.
 //El request debería contener la red social de donde lo contacta, la cuenta de usuario y la cuenta del cliente.
@@ -260,6 +266,9 @@ const messagesController = (req, res) => {
         }
     });
 }
+
+
+
 
 module.exports = { indexController, chatController, postHookWhatsapp, getHookFacebook, postHookFacebook, LeftMessagesController, contactmessagesController, messagesController }
 

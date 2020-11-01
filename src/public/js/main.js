@@ -1,23 +1,44 @@
-/*
-const socket = io()
 
-document.cookie = "UserId=5";
+//const socket = io()
+var socket = io.connect('http://localhost:8080', { 'forceNew': true });
 
 socket.on('message', function (msg) {
     //Recibe json
-    var objjson = JSON.parse(msg);
-    var fecha = Date.now();
+    if (msg) {
+        console.log(msg);
+        //var objjson = JSON.parse(msg);
+        var objjson = msg;
+        var fecha = Date.now();
 
-    //Dividir el json para cada parte del mensaje
-
-    //Asignar el mensaje a cada componente del chat
-    $('#messages').append('<div class=\"incoming_msg\"><div class=\"incoming_msg_img\"><img src=\"https://ptetutorials.com/images/user-profile.png\" alt=\"sunil\" /></div><div class=\"received_msg\"><div class=\"received_withd_msg\"><p>' + objjson.Body + '</p><span class=\"time_date\">' + dateFormat(fecha, " h:MM:ss TT    |    mmmm dS") + '</span></div></div></div>')
+        //Validar si el mensaje recibido es del mismo con el de la ventana actual. Sino, deberá enviarlo a la ventana de la izquiera.
+        if (true) {
+            //Asignar el mensaje a cada componente del chat
+            $('#messages').append('<div class=\"incoming_msg\"><div class=\"incoming_msg_img\"><img src=\"https://ptetutorials.com/images/user-profile.png\" alt=\"sunil\" /></div><div class=\"received_msg\"><div class=\"received_withd_msg\"><p>' + objjson.Body + '</p><span class=\"time_date\">' + dateFormat(fecha, " h:MM:ss TT    |    mmmm dS") + '</span></div></div></div>');
+        }
+        else { }
+    }
 })
-*/
+
+$('#send').on('click', function () {
+    
+    var mensaje = $('#myMessage').val();
+
+    if (mensaje != '') {
+        console.log('Send to Social network: ' + mensaje);
+        var fecha = Date.now();        
+        $('#messages').append('<div class=\"outgoing_msg\"><div class=\"sent_msg\"><p>' + mensaje + '</p><span class=\"time_date\">' + dateFormat(fecha, " h:MM:ss TT    |    mmmm dS") + '</span></div></div>');
+        $('#myMessage').val('');
+
+        //Enviar mensaje al back
+        //socket.send(mensaje); 
+        console.log(socket.emit('message', mensaje));
+    }
+})
+
 
 //Dibuja el frame de recientes en la parte izquierda
 function PaintRecent(From, Date1, Body) {
-    console.log('pintando a ' +  From + ", " + Date1 + ", " + Body);
+    console.log('pintando a ' + From + ", " + Date1 + ", " + Body);
 
     const d = Date.parse(Date1);
     const mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d);
@@ -73,9 +94,9 @@ function cargar() {
                     $('#InboxLeft').empty();
 
                     for (let i = 0; i < data.length; i++) {
-                        PaintRecent(data[i].To, data[i].Hour, data[i].Body);                        
+                        PaintRecent(data[i].To, data[i].Hour, data[i].Body);
                     }
-                    
+
                 });
             }
         )

@@ -107,7 +107,7 @@ function setMessage(UserId, MessageId, Client, User, Message, MessageType, Socia
         mensaje.Message = Message;
         mensaje.MessageType = MessageType;
         mensaje.SocialNetwork = SocialNetwork;
-        console.log(mensaje.toJSON())
+        //console.log(mensaje.toJSON());
         mensaje.save(function (err) {
             if (err) {
                 console.log("setMessage error en save: ", err);
@@ -129,20 +129,20 @@ function setMessage(UserId, MessageId, Client, User, Message, MessageType, Socia
                 return false;
             }
             else {
-                console.log("lstMsg res: ", res)
+                //console.log("lstMsg res: ", res);
 
                 if (res) {
                     let now = new Date();
-                    console.log("lstMsg data a actualizar: Fecha " + now + ", id " + res._id + ", MessageSIDWS " + MessageId)
+                    //console.log("lstMsg data a actualizar: Fecha " + now + ", id " + res._id + ", MessageSIDWS " + MessageId);
 
                     let ultMsgUpd = BDLastMsg.updateOne({ _id: res._id }, { MessageSid: MessageId, Hour: now, Body: Message, Owner: MessageType }, function (errupd, resupd) {
-                        console.log("ultMsUpd encontrado: ", ultMsgUpd);
+                        //console.log("ultMsUpd encontrado: ", ultMsgUpd);
                         if (errupd) {
                             console.log("error en lstMsg actualizar: ", errupd);
                             return false;
                         }
                         else {
-                            console.log("actualiza registro lstMsg: ", resupd);
+                            //console.log("actualiza registro lstMsg: ", resupd);
                             return true;
                         }
                     });
