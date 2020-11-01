@@ -9,8 +9,10 @@ module.exports = {
     montoDbDatabase: process.env.OP_MONGODB_DATABASE,
     facebookAccessToken: process.env.PAGE_ACCESS_TOKEN,
     facebookVerificationToken: process.env.VERIFICATION_TOKEN,
-    messageTypeFacebook: 1,
-    messageTypeWhatsapp: 2,
+    messageNetworkFacebook: 1,
+    messageNetworkWhatsapp: 2,
+    messageTypeInbound:1,
+    messageTypeOutbound:2,
     keySecret: process.env.KEY_SECRET
     
 }

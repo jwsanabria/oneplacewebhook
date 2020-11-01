@@ -100,7 +100,6 @@ function getWSMessageByFromTo(From, To) {
  * También guarda o actualiza en la tabla de Ultimos mensajes la última interacción que se tuvo con ese cliente.
  * Retorna true o false.
  * 
- * @param {*} UserId 
  * @param {*} MessageId 
  * @param {*} Client 
  * @param {*} User 
@@ -120,7 +119,7 @@ async function createMessage(MessageId, Client, User, Message, MessageType, Soci
     try {
         const transactionResults = await session.withTransaction(async () => {
             var isAccount = undefined;
-            if(SocialNetwork === config.messageTypeWhatsapp){
+            if(SocialNetwork === config.messageNetworkWhatsapp){
                 isAccount = await Account.findOne({WhatsappId: User}, null, { session });
             }else{
                 isAccount = await Account.findOne({FacebookId: User}, null, { session });
