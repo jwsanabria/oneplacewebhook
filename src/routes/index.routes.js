@@ -6,7 +6,7 @@ router.get('/', indexController);
 
 router.get('/chat/:user', chatController);
 
-router.post("/hookwhatsapp", postHookWhatsapp);
+router.post("/hookWhatsapp", postHookWhatsapp);
 
 router.get("/hookFacebook", getHookFacebook);
 
@@ -16,6 +16,6 @@ router.get('/leftmessages/:user', LeftMessagesController);
 
 router.get('/contactmessages/:userid', contactmessagesController);
 
-router.get('/messages/:socialnetwork/:useraccountid/:clientaccountid', messagesController);
+router.post('/messages/', messagesController);
 
 module.exports = router;

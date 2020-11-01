@@ -1,9 +1,10 @@
 const MessagingResponse = require('twilio').twiml.MessagingResponse;
 const config = require('../config');
 const request = require("request");
-//const Message = require('../models/messages');
+const Message = require('../models/Message');
 const whatsappBack = require('../whatsapp/wsroutine');
-const MessagesBack = require('../whatsapp/wsroutine');
+const Account = require('../models/Account');
+const daoMongo = require('../whatsapp/wsroutine');
 
 
 ////////////////////////////
@@ -28,7 +29,7 @@ const chatController2 = (req, res) => {
     let userId = '555';
     let from1 = 'whatsapp:+573005559718';
     let to1 = 'whatsapp:+14155238886';
-    let body1 = 'Mensaje';
+    let body1 = 'Mensaje';    
     let messageSid1 = '';
 
     //Enviar Mensaje a Twilio
@@ -41,10 +42,10 @@ const chatController2 = (req, res) => {
         .then(message => console.log('Mensaje enviado a Twilio: ', message.sid));
 
     //messageSid1 = resultws.sid; //TODO: No lo va a capturar, falta volverlo asincrono
-    messageSid1 = '';
+    messageSid1='';
 
     //Guardar mensaje en BD.
-    const resultSave = whatsappBack.setMessage(messageSid1, body1, from1, to1, 1); //.then(function (msg1, msg2) { console.log(msg1) });
+    const resultSave = whatsappBack.setWSMessageByFromTo(messageSid1, body1, from1, to1, 1); //.then(function (msg1, msg2) { console.log(msg1) });
 
 
 
@@ -142,6 +143,7 @@ const postHookWhatsapp = (req, res) => {
 }
 
 
+
 const getHookFacebook = (req, res) => {
     // Verificar la coincidendia del token
     if (req.query["hub.verify_token"] === config.facebookVerificationToken) {
@@ -156,26 +158,46 @@ const getHookFacebook = (req, res) => {
 }
 
 
-const postHookFacebook = (req, res) => {
+
+/**
+ * Controlador para el webhook de Facebook, este metodo consulta la cuenta del mensaje recibido, si la encuentra
+ * realiza el registro del mensaje recibido asignándolo al usuario registrado en la aplicación y se realiza el 
+ * envío de la notificación a través del socket io específico.
+ * 
+ * Se espera recibir la siguiente estructura y ejemplo de datos: 
+ * {"object":"page", "entry":[{"id":"103063468342065", "time":1458692752478, "messaging":[{"sender":{ "id":"13235324321"},
+ *  "recipient":{"id":"103063468342065"}, "message": "TEST_MESSAGE"}]}]}
+ * 
+ * @param {} req 
+ * @param {*} res 
+ */
+const postHookFacebook = async (req, res) => {
+    console.log('hookFacebook ' + req.body.object); 
+
     // Verificar si el evento proviene del pagina asociada
     if (req.body.object == "page") {
-        console.log(req.body);
         // Si existe multiples entradas entradas
-        req.body.entry.forEach(function (entry) {
+        for(const entry of req.body.entry){
             // Iterara todos lo eventos capturados
-            entry.messaging.forEach(function (event) {
+            for(const event of entry.messaging){
                 if (event.message) {
-                    process_event(event);
+                    const result = daoMongo.createMessage(event.sender.id, event.sender.id, event.recipient.id, event.message, 1,  config.messageTypeFacebook);
+
+                    //TODO: Construir mensaje a emitir    
+                    //require('../index').emitMessage(result);
+
+                }else{
+                    console.log('No hay cuenta registrada '+ event.recipient.id);
                 }
-            });
-        });
+            }
+        }
         res.sendStatus(200);
     }
 }
 
 
 // Funcion donde se procesara el evento
-function process_event(event) {
+function process_event(event, account) {
     // Capturamos los datos del que genera el evento y el mensaje 
     var senderID = event.sender.id;
     var message = event.message;
@@ -183,13 +205,14 @@ function process_event(event) {
     // Si en el evento existe un mensaje de tipo texto
     if (message.text) {
         // Crear un payload para un simple mensaje de texto
-        var response = {
+        //const result = await Message.create({UserId: account[0].UserId, MessageId: event.sender.id, Client: event.sender.id, User: event.recipient.id, Message: event.message, MessageType: 1,  SocialNetwork: 1});
+        /*var response = {
             "text": 'Enviaste este mensaje: ' + message.text
-        }
+        }*/
     }
 
     // Enviamos el mensaje mediante SendAPI
-    enviar_texto(senderID, response);
+    //enviar_texto(senderID, response);
 }
 
 
@@ -218,28 +241,19 @@ function enviar_texto(senderID, response) {
     });
 }
 
-//Estado: En desarrollo
-//20201029 FB.
-//Recurso que expone el último mensaje que un usuario ha tenido con sus clientes.
-//El request debería contener el UserId, para encontrar todos los mensajes con los que ha interactado.
-const contactmessagesController = (req, res) => {
+/**
+ * Función para retornar el conjunto de contactos de una cuenta junto con el ultimo mensaje recibido
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
+const contactmessagesController = async (req, res) => {
+    //TODO: Obtener el usuario de la sesión
     //Obtener el usuario de la sesión
-    let userid = req.params.userid;
-    if (!userid)
-        res.status(200).send('{}');
-
-    //Obtener los mensajes, según el ID del usuario
-    whatsappBack.getWSContactMSG_ByUser(userid).then(function (msg1, msg2) {
-        if (msg2) {
-            console.log('Error en contactmessagesController para el usuario ' + userid + ': ' + msg2);
-            res.status(500).send(msg2);
-        }
-        else {
-            console.log('Data de contactmessagesController: ', msg1);
-            res.status(200).send(msg1);
-        }
-    });
-}
+    let userId = req.params.userid;
+    if (!userId)
+        userId = '555';
+    userId = 'Oneplace1'; //! Se debe establecer el UserId desde el token
 
 //Estado: En desarrollo
 //20201029 FB.
@@ -265,11 +279,31 @@ const messagesController = (req, res) => {
             res.status(200).send(msg1);
         }
     });
+
+    /* Se comentarea mientras se resuelve el conflicto
+    try{
+        const contacts = await daoMongo.getContacts(userId);
+        res.status(200).json(contacts);
+    }catch(error){
+        res.status(404).json({error:error.toString()});
+    }
+    */
 }
 
 
+const messagesController = async (req, res) => {
+    //TODO: Obtener el usuario de la sesión
+    userId = 'Oneplace1'; //! Se debe establecer el UserId desde el token
+    
+    clientId = req.body.clientId;
+    socialNetwork = req.body.socialNetwork;
 
+    try{
+        const messages = await daoMongo.getMessagesByClient(userId, clientId, socialNetwork);
+        res.status(200).json(messages);
+    }catch(error){
+        res.status(404).json({error:error.toString()});
+    }
+}
 
 module.exports = { indexController, chatController, postHookWhatsapp, getHookFacebook, postHookFacebook, LeftMessagesController, contactmessagesController, messagesController }
-
-
