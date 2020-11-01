@@ -12,6 +12,7 @@ require('./sockets').connection(io);
 
 const emitMessage = (message) => {
   io.sockets.emit('message', message)
+  console.log('Se emite desde el back el mensaje: ' + JSON.stringify(message));
 }
 
 // Start express on the defined port

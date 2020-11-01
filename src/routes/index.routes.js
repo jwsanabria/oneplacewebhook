@@ -16,6 +16,8 @@ router.get('/leftmessages/:user', LeftMessagesController);
 
 router.get('/contactmessages/:userid', contactmessagesController);
 
-router.post('/messages/', messagesController);
+//router.post('/messages/', messagesController);
+
+router.get('/messages/:socialnetwork/:useraccountid/:clientaccountid', messagesController);
 
 module.exports = router;
