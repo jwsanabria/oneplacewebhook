@@ -61,7 +61,7 @@ const postHookWhatsapp = async (req, res) => {
     {       
         //Almacena el mensaje en la BD.
         //TODO: Esto debería ser asíncrono, para pintar rápidamente el mensaje en pantalla al usuario        
-        const result = await daoMongo.createMessage(req.body.SmsMessageSid, req.body.To, req.body.From, req.body.Body, 1, config.messageTypeWhatsapp);
+        const result = await daoMongo.createMessage(req.body.SmsMessageSid, req.body.To, req.body.From, req.body.Body, config.messageTypeInbound, config.messageNetworkWhatsapp);
 
         //Emitir el mensaje por SocketIO
         require('../index').emitMessage(req.body);
@@ -106,7 +106,7 @@ const postHookFacebook = async (req, res) => {
             // Iterara todos lo eventos capturados
             for(const event of entry.messaging){
                 if (event.message) {
-                    const result = daoMongo.createMessage(event.sender.id, event.sender.id, event.recipient.id, event.message, 1,  config.messageTypeFacebook);
+                    const result = daoMongo.createMessage(event.sender.id, event.sender.id, event.recipient.id, event.message, config.messageTypeInbound,  config.messageNetworkFacebook);
 
                     //TODO: Construir mensaje a emitir    
                     //require('../index').emitMessage(result);
@@ -120,49 +120,7 @@ const postHookFacebook = async (req, res) => {
     }
 }
 
-// Funcion donde se procesara el evento
-function process_event(event, account) {
-    // Capturamos los datos del que genera el evento y el mensaje 
-    var senderID = event.sender.id;
-    var message = event.message;
 
-    // Si en el evento existe un mensaje de tipo texto
-    if (message.text) {
-        // Crear un payload para un simple mensaje de texto
-        //const result = await Message.create({UserId: account[0].UserId, MessageId: event.sender.id, Client: event.sender.id, User: event.recipient.id, Message: event.message, MessageType: 1,  SocialNetwork: 1});
-        /*var response = {
-            "text": 'Enviaste este mensaje: ' + message.text
-        }*/
-    }
-
-    // Enviamos el mensaje mediante SendAPI
-    //enviar_texto(senderID, response);
-}
-
-// Funcion donde el chat respondera usando SendAPI
-function enviar_texto(senderID, response) {
-    // Construcicon del cuerpo del mensaje
-    let request_body = {
-        "recipient": {
-            "id": senderID
-        },
-        "message": response
-    }
-
-    // Enviar el requisito HTTP a la plataforma de messenger
-    request({
-        "uri": "https://graph.facebook.com/v2.6/me/messages",
-        "qs": { "access_token": config.facebookAccessToken },
-        "method": "POST",
-        "json": request_body
-    }, (err, res, body) => {
-        if (!err) {
-            console.log('Mensaje enviado!')
-        } else {
-            console.error("No se puedo enviar el mensaje:" + err);
-        }
-    });
-}
 
 /**
  * Función para retornar el conjunto de contactos de una cuenta junto con el ultimo mensaje recibido

@@ -1,26 +1,31 @@
 
 const config = require('../config');
 const daoMongo = require('../whatsapp/wsroutine');
-const { sendWhatsapp } = require('../twilio/senders');
+const { sendWhatsapp, sendFacebook } = require('../senders/senders');
 
 //Estado: En desarrollo
 //20201031 FB
 //Esta función rebibe parámetros y basado en la red social, envía el mensaje por la API correspondiente.
 //También persiste el mensaje en BD.
 async function sendToSocialNetwork(Client, User, Message, SocialNetwork) {
+    var messageId = undefined;
     //Notifica el mensaje según la red social
-    if (SocialNetwork == config.messageTypeFacebook) {
-
+    if (SocialNetwork == config.messageNetworkFacebook) {
+        let msgIdFacebook = await sendFacebook(Message, User, Client);
+        messageId = msgIdFacebook
     }
     else {
-        let result = sendWhatsapp(Message, User, Client);
+        let msgIdWhatsapp = await sendWhatsapp(Message, User, Client);
+        messageId = msgIdWhatsapp;
     }
 
-    let SmsMessageSid = '123'; //TODO: El ID debe provenir de la respuesta del API de la red social
-
-    //Persiste el mensaje en BD
-    const result = await daoMongo.createMessage(SmsMessageSid, Client, User, Message, 1, SocialNetwork); //TODO: Debería haber una enumeración para el tipo de mensaje.
-
+    if(messageId != undefined){
+        //Persiste el mensaje en BD
+        const result = await daoMongo.createMessage(messageId, Client, User, Message, config.messageTypeOutbound, SocialNetwork); 
+    }else{
+        console.log('El mensaje no pudo ser enviado');
+    }
+    
     /*
     try {
         const message = await client.messages.create({
