@@ -1,20 +1,3 @@
-
-const socket = io()
-
-document.cookie = "UserId=5";
-
-socket.on('message', function (msg) {
-    //Recibe json
-    var objjson = JSON.parse(msg);
-    var fecha = Date.now();
-
-    //Dividir el json para cada parte del mensaje
-
-    //Asignar el mensaje a cada componente del chat
-    $('#messages').append('<div class=\"incoming_msg\"><div class=\"incoming_msg_img\"><img src=\"https://ptetutorials.com/images/user-profile.png\" alt=\"sunil\" /></div><div class=\"received_msg\"><div class=\"received_withd_msg\"><p>' + objjson.Body + '</p><span class=\"time_date\">' + dateFormat(fecha, " h:MM:ss TT    |    mmmm dS") + '</span></div></div></div>')
-})
-
-
 //Dibuja el frame de recientes en la parte izquierda
 function PaintRecent(From, Date1, Body) {
     console.log('pintando a ' +  From + ", " + Date1 + ", " + Body);
@@ -81,3 +64,4 @@ function cargar() {
         });
 
 }
+
