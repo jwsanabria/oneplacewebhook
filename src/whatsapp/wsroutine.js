@@ -33,68 +33,6 @@ function setWSUserAccountNumber(UserId, Number) {
     });
 }
 
-//
-//Busca en la tabla de cuentas por usuario qué cuentas (número de whatsapp) le pertenecen. Solo trae un registro.
-//Retorna json.
-async function getWSUserAccounts(UserId) {
-    return new Promise((resolve, reject) => {
-        BDNumbersByUser.findOne({ UserId: UserId }, function (err, docs) {
-            if (err) {
-                console.log("getWSUserAccounts error: ", err);
-                reject(JSON.stringify(''));
-            }
-            else {
-                let resp = JSON.stringify(docs);
-                console.log("getWSUserAccounts respuesta: ", resp);
-                resolve(resp);
-            }
-        });
-    });
-}
-
-//
-//Muestra el último mensaje de cada cliente por Usuario. 
-//Retorna json.
-function getWSContactMSG_ByUser(From) {
-    return new Promise((resolve, reject) => {
-        let consulta = LastMessage.find({ From: From }, function (err, docs) {
-            if (err) {
-                console.log("getWSContactMSG_ByUser error: ", err);
-                reject(JSON.stringify(''));
-            }
-        });
-
-        consulta.then(docs => {
-            let resp = JSON.stringify(docs);
-            console.log("getWSContactMSG_ByUser respuesta: ", resp);
-            resolve(resp);
-        })
-    });
-}
-
-//
-//Se consulta la BD con esos dos parámetros, se ordena por fecha desc.
-//Retorna json.
-function getWSMessageByFromTo(From, To) {
-    return new Promise((resolve, reject) => {
-        let consulta = BDWhatsapp.find({ From: From, To: To }, function (err, docs) {
-            if (err) {
-                console.log("getWSMessageByFromTo error: ", err);
-                reject(JSON.stringify(''));
-            }
-        }).sort({ Hour: -1 });
-
-        consulta.then(docs => {
-            let resp = JSON.stringify(docs);
-            console.log("getWSMessageByFromTo respuesta: ", resp);
-            resolve(resp);
-        })
-    });
-}
-
-
-
-
 /**
  * Guardar en la BD el mensaje que proviene de la interacción.
  * También guarda o actualiza en la tabla de Ultimos mensajes la última interacción que se tuvo con ese cliente.
@@ -119,7 +57,7 @@ async function createMessage(MessageId, Client, User, Message, MessageType, Soci
     try {
         const transactionResults = await session.withTransaction(async () => {
             var isAccount = undefined;
-            if(SocialNetwork === config.messageNetworkWhatsapp){
+            if(SocialNetwork == config.messageNetworkWhatsapp){
                 isAccount = await Account.findOne({WhatsappId: User}, null, { session });
             }else{
                 isAccount = await Account.findOne({FacebookId: User}, null, { session });
@@ -173,9 +111,9 @@ async function createMessage(MessageId, Client, User, Message, MessageType, Soci
  * @param {*} UserId 
  */
 async function getContacts(UserId){
-    const lastMessages = await LastMessage.find({UserId: UserId}).sort({Time:-1});
+    const lastMessages = await LastMessage.find({UserId: UserId}).sort({Time:1});
 
-    return JSON.stringify(lastMessages);
+    return lastMessages;
 }
 
 
@@ -188,16 +126,11 @@ async function getContacts(UserId){
  * @param {*} SocialNetwork 
  */
 async function getMessagesByClient(UserId, Client, SocialNetwork){
-    const messages = await BDMessage.find({UserId: UserId, Client: Client, SocialNetwork: SocialNetwork}).sort({Time: 1});
+    const messages = await BDMessage.find({UserId: UserId, Client: Client, SocialNetwork: SocialNetwork}).sort({Time: -1});
 
     return JSON.stringify(messages);
 }
 
-
-exports.getWSUserAccounts = getWSUserAccounts;
-exports.getWSContactMSG_ByUser = getWSContactMSG_ByUser;
-exports.getWSMessageByFromTo = getWSMessageByFromTo;
-exports.setWSUserAccountNumber = setWSUserAccountNumber;
 exports.createMessage = createMessage;
 exports.getContacts = getContacts;
 exports.getMessagesByClient = getMessagesByClient;

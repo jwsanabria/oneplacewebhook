@@ -25,20 +25,6 @@ async function sendToSocialNetwork(Client, User, Message, SocialNetwork) {
     }else{
         console.log('El mensaje no pudo ser enviado');
     }
-    
-    /*
-    try {
-        const message = await client.messages.create({
-            body,
-            from: 'whatsapp:' + config.twilioNumeroEmprendedor,
-            to: 'whatsapp:' + config.twilioNumeroCliente
-        });
-
-        console.log(message.sid);
-    } catch (error) {
-        console.log(error);
-    }
-    */
 }
 
 module.exports = { sendToSocialNetwork }
