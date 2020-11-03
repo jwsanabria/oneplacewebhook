@@ -1,6 +1,5 @@
 const config = require('../config');
 const request = require("request");
-const whatsappBack = require('../whatsapp/wsroutine'); //TODO: Reemplazar esto por daoMongo
 const daoMongo = require('../whatsapp/wsroutine');
 
 const indexController = (req, res) => {
@@ -8,35 +7,9 @@ const indexController = (req, res) => {
 }
 
 const chatController = (req, res) => {
+    //! TODO: Se debe establecer el UserId desde el token
+    let userId = 'Oneplace1'; 
     res.render('chat');
-}
-
-//FB
-//Carga todos los mensajes de los recientes la primera vez que carga la pagina
-const LeftMessagesController = (req, res) => {
-    //Obtener el usuario de la sesión
-    let userId = req.params.user;
-    if (!userId)
-        userId = '555';
-
-    userId = '555';
-
-    //Obtener el número del usuario según el ID de la sesión
-    whatsappBack.getWSUserAccounts(userId).then(function (resp, error) {
-        if (error) {
-            console.log('Se produjo un error en : WSService.getWSUserAccounts', error);
-        }
-        else {
-            console.log(resp);
-            //Recargar barra de Recientes con el número de teléfono asociado    
-            whatsappBack.getWSContactMSG_ByUser(JSON.parse(resp).Number).then(function (msg1, msg2) {
-                console.log('Data de WSService.getWSContactMSG_ByUser: ', msg1);
-                //res.render('leftmessages', { msg1 });
-
-                res.status(200).send(msg1);
-            });
-        }
-    });
 }
 
 /**
@@ -54,11 +27,10 @@ const LeftMessagesController = (req, res) => {
  */
 const postHookWhatsapp = async (req, res) => {
     console.log('postHookWhatsapp: ' + req.body.Body);
-        
+
     if (Object.keys(req.body).length === 0)
         res.status(500).send('error');
-    else
-    {       
+    else {
         //Almacena el mensaje en la BD.
         //TODO: Esto debería ser asíncrono, para pintar rápidamente el mensaje en pantalla al usuario        
         const result = await daoMongo.createMessage(req.body.SmsMessageSid, req.body.To, req.body.From, req.body.Body, config.messageTypeInbound, config.messageNetworkWhatsapp);
@@ -68,7 +40,7 @@ const postHookWhatsapp = async (req, res) => {
 
         //devuelve ok al api. Este no valida un mensaje en específico, solo la respuesta 200 http
         res.status(200).send('ok');
-    }       
+    }
 }
 
 const getHookFacebook = (req, res) => {
@@ -97,30 +69,28 @@ const getHookFacebook = (req, res) => {
  * @param {*} res 
  */
 const postHookFacebook = async (req, res) => {
-    console.log('hookFacebook ' + req.body.object); 
+    console.log('hookFacebook ' + req.body.object);
 
     // Verificar si el evento proviene del pagina asociada
     if (req.body.object == "page") {
         // Si existe multiples entradas entradas
-        for(const entry of req.body.entry){
+        for (const entry of req.body.entry) {
             // Iterara todos lo eventos capturados
-            for(const event of entry.messaging){
+            for (const event of entry.messaging) {
                 if (event.message) {
-                    const result = daoMongo.createMessage(event.sender.id, event.sender.id, event.recipient.id, event.message, config.messageTypeInbound,  config.messageNetworkFacebook);
+                    const result = daoMongo.createMessage(event.sender.id, event.sender.id, event.recipient.id, event.message, config.messageTypeInbound, config.messageNetworkFacebook);
 
                     //TODO: Construir mensaje a emitir    
                     //require('../index').emitMessage(result);
 
-                }else{
-                    console.log('No hay cuenta registrada '+ event.recipient.id);
+                } else {
+                    console.log('No hay cuenta registrada ' + event.recipient.id);
                 }
             }
         }
         res.sendStatus(200);
     }
 }
-
-
 
 /**
  * Función para retornar el conjunto de contactos de una cuenta junto con el ultimo mensaje recibido
@@ -130,34 +100,35 @@ const postHookFacebook = async (req, res) => {
  */
 const contactmessagesController = async (req, res) => {
     //TODO: Obtener el usuario de la sesión
-    //Obtener el usuario de la sesión
-    let userId = req.params.userid;
-    if (!userId)
-        userId = '555';
-    userId = 'Oneplace1'; //! Se debe establecer el UserId desde el token
+    //Obtener el usuario de la sesión    
+    let userId = 'Oneplace1'; //! Se debe establecer el UserId desde el token
 
-    try{
-        const contacts = await daoMongo.getContacts(userId);
-        res.status(200).json(contacts);
-    }catch(error){
-        res.status(404).json({error:error.toString()});
+    if (!userId) {
+        res.status(404).json('contactmessages, sin parámetro');
+    }
+    else {
+        try {
+            const contacts = await daoMongo.getContacts(userId);
+            res.status(200).send(contacts);
+        } catch (error) {
+            res.status(404).json({ error: error.toString() });
+        }
     }
 }
-
 
 const messagesController = async (req, res) => {
     //TODO: Obtener el usuario de la sesión
     userId = 'Oneplace1'; //! Se debe establecer el UserId desde el token
-    
+
     clientId = req.body.clientId;
     socialNetwork = req.body.socialNetwork;
 
-    try{
+    try {
         const messages = await daoMongo.getMessagesByClient(userId, clientId, socialNetwork);
         res.status(200).json(messages);
-    }catch(error){
-        res.status(404).json({error:error.toString()});
+    } catch (error) {
+        res.status(404).json({ error: error.toString() });
     }
 }
 
-module.exports = { indexController, chatController, postHookWhatsapp, getHookFacebook, postHookFacebook, LeftMessagesController, contactmessagesController, messagesController }
+module.exports = { indexController, chatController, postHookWhatsapp, getHookFacebook, postHookFacebook, contactmessagesController, messagesController }
