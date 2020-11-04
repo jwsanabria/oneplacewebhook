@@ -126,9 +126,9 @@ async function getContacts(UserId){
  * @param {*} SocialNetwork 
  */
 async function getMessagesByClient(UserId, Client, SocialNetwork){
-    const messages = await BDMessage.find({UserId: UserId, Client: Client, SocialNetwork: SocialNetwork}).sort({Time: -1});
+    const messages = await BDMessage.find({UserId: UserId, Client: Client, SocialNetwork: SocialNetwork}).sort({Time: 1});
 
-    return JSON.stringify(messages);
+    return messages;
 }
 
 exports.createMessage = createMessage;
