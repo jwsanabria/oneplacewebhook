@@ -118,10 +118,9 @@ const contactmessagesController = async (req, res) => {
 
 const messagesController = async (req, res) => {
     //TODO: Obtener el usuario de la sesión
-    userId = 'Oneplace1'; //! Se debe establecer el UserId desde el token
-
-    clientId = req.body.clientId;
-    socialNetwork = req.body.socialNetwork;
+    userId = req.params.useraccountid; //'Oneplace1'; //! Se debe establecer el UserId desde el token
+    clientId = req.params.clientaccountid;
+    socialNetwork = req.params.socialnetwork;
 
     try {
         const messages = await daoMongo.getMessagesByClient(userId, clientId, socialNetwork);
