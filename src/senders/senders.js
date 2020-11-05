@@ -36,15 +36,18 @@ async function sendFacebook(body, from, to){
 
         // Construcicon del cuerpo del mensaje
         let request_body = {
+            "sender": { "id": from},
             "recipient": {
                 "id": senderID
             },
-            "message": response
+            "message": response,
+            "messaging_type": "MESSAGE_TAG",
+            "tag": "ACCOUNT_UPDATE"
         }
 
         // Enviar el requisito HTTP a la plataforma de messenger
         request({
-            "uri": "https://graph.facebook.com/v2.6/me/messages",
+            "uri": "https://graph.facebook.com/v8.0/me/messages",
             "qs": { "access_token": config.facebookAccessToken },
             "method": "POST",
             "json": request_body

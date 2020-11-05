@@ -47,11 +47,21 @@ $('#send').on('click', function () {
             +'"Time" : "' + fecha + '"'
             +'}';
         */
+        /*
+        // Mensaje Whatsapp
         var objMessage = new Object();
         objMessage.User = "whatsapp:+14155238886";
         objMessage.Client = "whatsapp:+573005559718";
         objMessage.Message = mensaje;
         objMessage.SocialNetwork = "2";
+        objMessage.Time = fecha;
+        */
+       // Mensaje Facebook
+       var objMessage = new Object();
+        objMessage.User = "103063468213065";
+        objMessage.Client = "13235324321";
+        objMessage.Message = mensaje;
+        objMessage.SocialNetwork = "1";
         objMessage.Time = fecha;
             
 
