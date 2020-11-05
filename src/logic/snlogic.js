@@ -20,6 +20,7 @@ async function sendToSocialNetwork(Client, User, Message, SocialNetwork) {
     }
 
     if(messageId != undefined){
+        console.log("Msg IN: " + Client);
         //Persiste el mensaje en BD
         const result = await daoMongo.createMessage(messageId, Client, User, Message, config.messageTypeOutbound, SocialNetwork); 
     }else{
