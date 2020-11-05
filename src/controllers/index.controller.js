@@ -78,7 +78,7 @@ const postHookFacebook = async (req, res) => {
             // Iterara todos lo eventos capturados
             for (const event of entry.messaging) {
                 if (event.message) {
-                    const result = daoMongo.createMessage(event.sender.id, event.sender.id, event.recipient.id, event.message, config.messageTypeInbound, config.messageNetworkFacebook);
+                    const result = daoMongo.createMessage(event.sender.id, event.sender.id, event.recipient.id, event.message.text, config.messageTypeInbound, config.messageNetworkFacebook);
 
                     //TODO: Construir mensaje a emitir    
                     //require('../index').emitMessage(result);
