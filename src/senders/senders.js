@@ -36,7 +36,6 @@ async function sendFacebook(body, from, to){
 
         // Construcicon del cuerpo del mensaje
         let request_body = {
-            "sender": { "id": from},
             "recipient": {
                 "id": senderID
             },
