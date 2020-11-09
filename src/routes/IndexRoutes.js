@@ -1,6 +1,6 @@
 const {Router} = require('express');
 const router = Router();
-const {indexController, chatController, postHookWhatsapp, getHookFacebook, postHookFacebook, contactmessagesController, messagesController} = require('../controllers/index.controller');
+const {indexController, chatController, postHookWhatsapp, getHookFacebook, postHookFacebook, contactmessagesController, messagesController} = require('../controllers/IndexController');
 const authController = require('../controllers/AuthController');
 
 router.get('/', indexController);

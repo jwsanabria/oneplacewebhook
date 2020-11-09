@@ -33,7 +33,7 @@ app.use(function (req, res, next) {
   
 
 // routes
-app.use(require('./routes/index.routes'));
+app.use(require('./routes/IndexRoutes'));
 
 // static files
 app.use(express.static(path.join(__dirname, 'public')));
