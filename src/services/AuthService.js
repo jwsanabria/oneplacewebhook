@@ -1,16 +1,16 @@
 global.fetch = require('node-fetch');
 global.navigator = () => null;
-global.request = require('request');
 
+const conf = require('../config');
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
-const { jwt } = require('twilio');
-const { request } = require('../server');
+const { jwt } = require('jsonwebtoken');
+const { request } = require('request');
 const poolData = {
-    UserPoolId : "",
-    ClientId : ""
+    UserPoolId : conf.awsCognitoPoolId,
+    ClientId : conf.awsCognitoClientId
 }
 
-const pool_region = ""
+const pool_region = conf.awsCognitoRegion;
 
 const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
 

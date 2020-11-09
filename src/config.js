@@ -13,6 +13,9 @@ module.exports = {
     messageNetworkWhatsapp: 2,
     messageTypeInbound:1,
     messageTypeOutbound:2,
-    keySecret: process.env.KEY_SECRET
+    keySecret: process.env.KEY_SECRET,
+    awsCognitoRegion: process.env.AWS_COGNITO_REGION,
+    awsCognitoPoolId: process.env.AWS_COGINTO_POOL_ID,
+    awsCognitoClientId: process.env.AWS_COGNITO_CLIENT_ID
     
 }
