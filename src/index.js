@@ -1,7 +1,7 @@
 require('dotenv').config()
 const app = require('./server');
 const http = require('http');
-//const bodyParser = require('body-parser')
+
 
 var server = http.createServer(app);
 
