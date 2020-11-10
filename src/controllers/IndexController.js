@@ -1,6 +1,6 @@
 const config = require('../config');
 const request = require("request");
-const daoMongo = require('../whatsapp/wsroutine');
+const daoMongo = require('../services/MessageService');
 
 const indexController = (req, res) => {
     res.render('index');
