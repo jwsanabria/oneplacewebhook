@@ -1,6 +1,7 @@
 const express = require("express");
 const exphbs = require('express-handlebars');
 const path = require('path');
+const bodyParser = require('body-parser')
 // Initialize express and define a port
 const app = express();
 
@@ -16,8 +17,8 @@ app.engine('hbs', exphbs({
 app.set('view engine', 'hbs');
 
 // middlewares
-app.use(express.json());
-app.use(express.urlencoded({extended: false}));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Origin', req.get('Origin') || '*');
     res.header('Access-Control-Allow-Credentials', 'true');

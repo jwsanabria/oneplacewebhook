@@ -1,12 +1,14 @@
 global.fetch = require('node-fetch');
 global.navigator = () => null;
+global.crypto = require('crypto');
 
 const conf = require('../config');
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
-const { jwt } = require('jsonwebtoken');
-const { request } = require('request');
+const jwt  = require('jsonwebtoken');
+const jwkToPem = require('jwk-to-pem');
+const request = require('request');
 const poolData = {
-    UserPoolId : conf.awsCognitoPoolId,
+    UserPoolId  : conf.awsCognitoPoolId,
     ClientId : conf.awsCognitoClientId
 }
 
@@ -15,6 +17,7 @@ const pool_region = conf.awsCognitoRegion;
 const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
 
 exports.Register = function (body, callback){
+    console.log(body);
     var name = body.name;
     var email = body.email;
     var password = body.password;
@@ -23,9 +26,12 @@ exports.Register = function (body, callback){
     attibuteList.push(new AmazonCognitoIdentity.CognitoUserAttribute({ Name: "email", Value: email}));
 
     userPool.signUp(name, password, attibuteList, null, function(err, result){
-        if(err)
+        if(err){
+            console.log(err);
             callback(err);
+        }       
 
+        console.log(result);
         var coginitoUser = result.user;
         callback(null, coginitoUser);
     })
@@ -52,6 +58,7 @@ exports.Login = function(body, callback){
             callback(null, accesstoken);
         }, 
         onFailure: (function(err){
+            console.log(err);
             callback(err);
         })
     })
@@ -60,9 +67,11 @@ exports.Login = function(body, callback){
 
 
 exports.Validate = function(token, callback){
+    const url = 'https://cognito-idp.'+ pool_region  + '.amazonaws.com/'+poolData.UserPoolId+'/.well-known/jwks.json';
+    console.log(url);
     request({
-        url: 'https://cognitoidp.${pool_region}.amazonaws.com/${poolData.UserPoolId}/.well-known/jwks.json', json:true
-    }, function(error, response, body){
+        url: url, json:true
+    }, (error, response, body) => {
         if(!error && response.statusCode == 200){
             pems = {};
             var keys = body['keys'];
@@ -103,5 +112,5 @@ exports.Validate = function(token, callback){
             console.log("Error! Unable to download JWKs");
             callback(error);
         }
-    })    
+    });
 }

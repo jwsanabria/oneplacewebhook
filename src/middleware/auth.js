@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const jwkToPem = require('jwk-to-pem');
 
 const poolData = {
     UserPoolId : "",
@@ -34,7 +35,7 @@ exports.Validate = function(req, res, next){
     const token = req.headers['authorization'];
 
     request({
-        url: 'https://cognitoidp.${pool_region}.amazonaws.com/${poolData.UserPoolId}/.well-known/jwks.json', json:true
+        url: 'https://cognito-idp.${pool_region}.amazonaws.com/${poolData.UserPoolId}/.well-known/jwks.json', json:true
     }, function(error, response, body){
         if(!error && response.statusCode == 200){
             pems = {};
@@ -71,6 +72,7 @@ exports.Validate = function(req, res, next){
                     res.status(401);
                     return res.send('Invalid token');
                 }else{
+                    req.user = payload.username;
                     console.log("Valid token");
                     return next();
                 }

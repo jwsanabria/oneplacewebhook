@@ -1,6 +1,6 @@
 
 const config = require('../config');
-const daoMongo = require('../whatsapp/wsroutine');
+const daoMongo = require('../services/MessageService');
 const { sendWhatsapp, sendFacebook } = require('../services/SendersService');
 
 //Estado: En desarrollo
