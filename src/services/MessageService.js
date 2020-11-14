@@ -146,7 +146,25 @@ async function getMessagesByClient(UserId, Client, SocialNetwork){
     return messages;
 }
 
+
+/**
+ * Devuelve el socketId de una conexión por tipo de red social
+ * @param {*} idNetwork 
+ * @param {*} SocialNetwork 
+ */
+async function getSocketId(idNetwork, SocialNetwork){
+    var account = undefined;
+    if(SocialNetwork == config.messageNetworkFacebook){
+        account = await Account.findOne({FacebookId: idNetwork});
+    }else{
+        account = await Account.findOne({WhatsappId: idNetwork});
+    }
+    
+    return account.getSocketId();
+}
+
 exports.createMessage = createMessage;
 exports.getContacts = getContacts;
 exports.getMessagesByClient = getMessagesByClient;
 exports.verifyAccount = verifyAccount;
+exports.getSocketId = getSocketId;

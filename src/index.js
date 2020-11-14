@@ -10,8 +10,8 @@ require('./database');
 const io = require('socket.io').listen(server);
 require('./sockets').connection(io);
 
-const emitMessage = (message) => {
-  io.sockets.emit('message', message)
+const emitMessage = (message, socketId) => {
+  io.to(socketId).emit('message', message);
   console.log('Se emite desde el API de la red social el mensaje: ' + JSON.stringify(message));
 }
 
