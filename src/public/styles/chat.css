@@ -23,12 +23,6 @@ img{
     float: left; 
     width:40%;
 }
-.inbox_chat{
-    display: inline;
-}
-.recent_heading button{
-    display: none;
-}
 .srch_bar {
     display: inline-block;
     text-align: right;
@@ -90,6 +84,7 @@ img{
     border-bottom: 1px solid #c4c4c4;
     margin: 0;
     padding: 18px 16px 10px;
+    cursor: pointer;
 }
 .inbox_chat { 
     height: 550px; 
@@ -142,6 +137,7 @@ img{
 .outgoing_msg{ 
     overflow:hidden; 
     margin:26px 0 26px;
+    width: 75%;
 }
 .sent_msg {
     float: right;
@@ -178,6 +174,7 @@ img{
 .msg_history {
     height: 516px;
     overflow-y: auto;
+    vertical-align: bottom;
 }
 
 @media only screen and (max-width: 414px) {
@@ -194,7 +191,7 @@ img{
     padding: 0;
     outline: none;
     border: none;
-    display: inline;
+    display: block;
   }
   .inbox_people, .mesgs, .received_withd_msg, .sent_msg{
     width: 100%;
@@ -203,6 +200,7 @@ img{
     max-height: 300px;
     border-bottom: 1px solid black;
     background-color: aliceblue;
+    overflow: scroll;
   }
   .inbox_chat{
     display: none;
