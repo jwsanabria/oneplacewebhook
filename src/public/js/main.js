@@ -1,4 +1,9 @@
-const socket = io()
+//const socket = io()
+
+const {token} = sessionStorage;
+const socket = io.connect('http://localhost:8080', {
+  query: {token: 'eyJraWQiOiJnZUNDZDZ1akRjank0U0UxSlRJRlVLQlVOVUp3aVp0XC9IT3RyY200S2dvST0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJiZGQ0ODcwNS0xMWRkLTQxMjgtYTdiMC0xZDFlNThmMmE4MzIiLCJldmVudF9pZCI6IjIxNTUwZmI1LTg1MWMtNDg5Ni1hMTEyLTJjN2UzMDg0OWFjMiIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2MDUzODkyMzYsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTEuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0xX2lBUFNyZ0U2YyIsImV4cCI6MTYwNTM5MjgzNiwiaWF0IjoxNjA1Mzg5MjM2LCJqdGkiOiI1OTEzNDkwZC0yYmU5LTRhMTAtYmM2ZS03Nzk3YjY4NTdjMDMiLCJjbGllbnRfaWQiOiIzNTcxa2drNGljbnMzaGt1aDI2ajM5OGV1ZiIsInVzZXJuYW1lIjoiYmRkNDg3MDUtMTFkZC00MTI4LWE3YjAtMWQxZTU4ZjJhODMyIn0.kyb4ywOZWTGGJLIwhyWX_1r2z4C83yl48tI7R0osQzIi8mYVgZtCQx4CqSah_g8bzGlPHx_KR-RO5gHiM4GY5r3OrP1gMXl3O6pzKvIYpP7SG8F6OdhcQbQ72qtFV81x45eEjEUBKbKgdgNUf28E9S88GSrKDzlt-DjCh3-xdoCN_VhJ8yl96BPWTE3yVC0NOhB40bjpnCFMrkkrXEy21mp-tABk45KH-WlY9TnaErsXnWP9wGg9xDpLt2lj3ByE7fodN0dZVyGFEYkBJ2br1kVxov3cfkN76AePsb3kQkOE6fMLbSWOlRphS7Q6cDnAQMxfaI6Ra2dYLI-rl5aYLg'}
+});
 
 socket.on('message', function (msg) {
     //Recibe json. Se espera todo el mensaje que proviene de la red social. Esto por si se requiere tomar los otros atributos (id, fecha, etc).

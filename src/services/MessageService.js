@@ -163,8 +163,16 @@ async function getSocketId(idNetwork, SocialNetwork){
     return account.getSocketId();
 }
 
+async function setSocketIdByUserId(UserId, SocketId){
+    const accountResults = await Account.updateOne(
+        { UserId:  UserId },
+        { $set: { SocketId: SocketId } }
+    );        
+}
+
 exports.createMessage = createMessage;
 exports.getContacts = getContacts;
 exports.getMessagesByClient = getMessagesByClient;
 exports.verifyAccount = verifyAccount;
 exports.getSocketId = getSocketId;
+exports.setSocketIdByUserId = setSocketIdByUserId;
