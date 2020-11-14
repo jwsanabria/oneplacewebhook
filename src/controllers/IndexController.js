@@ -35,8 +35,10 @@ const postHookWhatsapp = async (req, res) => {
         //TODO: Esto debería ser asíncrono, para pintar rápidamente el mensaje en pantalla al usuario        
         const result = await daoMongo.createMessage(req.body.SmsMessageSid, req.body.To, req.body.From, req.body.Body, config.messageTypeInbound, config.messageNetworkWhatsapp);
 
+        const socketId = daoMongo.getSocketId(req.body.From, config.messageNetworkWhatsapp);
+
         //Emitir el mensaje por SocketIO
-        require('../index').emitMessage(req.body);
+        require('../index').emitMessage(req.body, socketId);
 
         //devuelve ok al api. Este no valida un mensaje en específico, solo la respuesta 200 http
         res.status(200).send('ok');
@@ -80,9 +82,10 @@ const postHookFacebook = async (req, res) => {
                 if (event.message) {
                     const result = daoMongo.createMessage(event.sender.id, event.sender.id, event.recipient.id, event.message.text, config.messageTypeInbound, config.messageNetworkFacebook);
 
-                    //TODO: Construir mensaje a emitir    
-                    //require('../index').emitMessage(result);
+                    const socketId = daoMongo.getSocketId(event.recipient.id, config.messageNetworkFacebook);
 
+                    //Emitir el mensaje por SocketIO
+                    require('../index').emitMessage(event.message.text, socketId);
                 } else {
                     console.log('No hay cuenta registrada ' + event.recipient.id);
                 }
