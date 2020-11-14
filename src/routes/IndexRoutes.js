@@ -14,9 +14,9 @@ router.get("/hookFacebook", getHookFacebook);
 
 router.post("/hookFacebook", postHookFacebook);
 
-router.get('/contactmessages', authMiddleware.Validate, contactmessagesController);
+router.get('/contactmessages', authMiddleware, contactmessagesController);
 
-router.get('/messages/:socialnetwork/:useraccountid/:clientaccountid', authMiddleware.Validate, messagesController);
+router.get('/messages/:socialnetwork/:useraccountid/:clientaccountid', authMiddleware, messagesController);
 
 router.post('/auth/register', authController.register);
 

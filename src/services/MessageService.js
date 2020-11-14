@@ -127,7 +127,7 @@ async function verifyAccount(UserId, WhatsappId){
     var isAccount = await Account.findOne({UserId: UserId});
 
     if(!isAccount){
-        const account = await Account.create([{UserId: UserId, WhatsappId: "whatsapp:"+WhatsappId}]);
+        const account = await Account.create([{UserId: UserId, WhatsappId: "whatsapp:"+WhatsappId, FacebookId: "Vacio"}]);
     }
 }
 

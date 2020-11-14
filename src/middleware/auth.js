@@ -1,13 +1,15 @@
 const jwt = require('jsonwebtoken');
 const jwkToPem = require('jwk-to-pem');
 const MessageService = require('../services/MessageService');
+const request = require('request');
+const conf = require('../config');
 
 const poolData = {
-    UserPoolId : "",
-    ClientId : ""
+    UserPoolId  : conf.awsCognitoPoolId,
+    ClientId : conf.awsCognitoClientId
 }
 
-const pool_region = ""
+const pool_region = conf.awsCognitoRegion;
 
 
 /*module.exports = (req, res, next)=>{
@@ -30,13 +32,22 @@ const pool_region = ""
     }
 };*/
 
-exports.Validate = function(req, res, next){
+
+module.exports = (req, res, next)=>{
     // Leer token del header
     //const token = req.header('x-auth-token');
     const token = req.headers['authorization'];
 
+    // Revisar si no hay token
+    if(!token){
+        res.status(401).json({msg:"No hay token, permiso no válido"});
+    }
+
+    const url = 'https://cognito-idp.'+ pool_region  + '.amazonaws.com/'+poolData.UserPoolId+'/.well-known/jwks.json';
+    console.log(url);
+
     request({
-        url: 'https://cognito-idp.${pool_region}.amazonaws.com/${poolData.UserPoolId}/.well-known/jwks.json', json:true
+        url: url, json:true
     }, function(error, response, body){
         if(!error && response.statusCode == 200){
             pems = {};
@@ -74,8 +85,9 @@ exports.Validate = function(req, res, next){
                     return res.send('Invalid token');
                 }else{
                     // Consultar en base de datos el username, si no existe crearlo con al menos la cuenta whatsapp [phone_number] (insert en account)
-                    MessageService.verifyAccount(payload.email, payload.phone_number);
-                    req.user = payload.email;
+                    console.log(payload);
+                    MessageService.verifyAccount(payload.username, payload.phone_number);
+                    req.user = payload.username;
                     console.log("Valid token");
                     return next();
                 }
