@@ -111,9 +111,24 @@ async function createMessage(MessageId, Client, User, Message, MessageType, Soci
  * @param {*} UserId 
  */
 async function getContacts(UserId){
+    
     const lastMessages = await LastMessage.find({UserId: UserId}).sort({Time:1});
 
     return lastMessages;
+}
+
+
+/**
+ * Crea una cuenta con el nombre de usuario y numero de telefono
+ * @param {*} UserId 
+ * @param {*} WhatsappId 
+ */
+async function verifyAccount(UserId, WhatsappId){
+    var isAccount = await Account.findOne({UserId: UserId});
+
+    if(!isAccount){
+        const account = await Account.create([{UserId: UserId, WhatsappId: "whatsapp:"+WhatsappId, FacebookId: "Vacio"}]);
+    }
 }
 
 
@@ -134,3 +149,4 @@ async function getMessagesByClient(UserId, Client, SocialNetwork){
 exports.createMessage = createMessage;
 exports.getContacts = getContacts;
 exports.getMessagesByClient = getMessagesByClient;
+exports.verifyAccount = verifyAccount;

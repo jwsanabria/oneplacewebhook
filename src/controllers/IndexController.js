@@ -101,10 +101,11 @@ const postHookFacebook = async (req, res) => {
 const contactmessagesController = async (req, res) => {
     //TODO: Obtener el usuario de la sesión
     //Obtener el usuario de la sesión    
-    let userId = 'Oneplace1'; //! Se debe establecer el UserId desde el token
+    //let userId = 'Oneplace1'; //! Se debe establecer el UserId desde el token
+    let userId = req.user;
 
     if (!userId) {
-        res.status(404).json('contactmessages, sin parámetro');
+        res.status(404).json('usuario no encontrado!');
     }
     else {
         try {
