@@ -6,9 +6,11 @@ function getchat(userId, SocialNetwork, Client){
     
     $(".msg_history").empty();
     
-    //console.log(userId, SocialNetwork, Client);
-    $.get("http://localhost:8080/messages/"+SocialNetwork+"/"+userId+"/"+Client+"", function(data, status){
+    $.get("https://oneplacewebhook.herokuapp.com/"+SocialNetwork+"/"+userId+"/"+Client+"", function(data, status){
         console.clear();
+        if(status != 'success'){
+            alert("Pasó esto cuando me quería conectar "+status)
+        }
         //console.log(status);
         data.forEach(chat => {
             if(chat.MessageType == 1){
@@ -16,7 +18,6 @@ function getchat(userId, SocialNetwork, Client){
             }else{
                 $('#messages').append('<div class=\"outgoing_msg\"><div class=\"sent_msg\"><p>' + chat.Message + '</p><span class=\"time_date\">' + dateFormat(chat.Time, " h:MM TT    |    mmmm dS") + '</span></div></div>');
             }
-            //console.log(chat.MessageType, chat.Message, chat.Time);
         });
     });
 
