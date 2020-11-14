@@ -1,6 +1,11 @@
 const socket = io()
 
+// socket.emit('message', 'hello')
 socket.on('message', function (msg) {
+<<<<<<< Updated upstream
+    $('#messages').append('<div class=\"incoming_msg\"><div class=\"incoming_msg_img\"><img src=\"https://ptetutorials.com/images/user-profile.png\" alt=\"sunil\" /></div><div class=\"received_msg\"><div class=\"received_withd_msg\"><p>' + msg + '</p><span class=\"time_date\"> 11:01 AM    |    June 9</span></div></div></div>')
+})
+=======
     //Recibe json. Se espera todo el mensaje que proviene de la red social. Esto por si se requiere tomar los otros atributos (id, fecha, etc).
     if (msg) {
         console.log('Valor recibido del Socket: ');
@@ -119,3 +124,4 @@ function LoadLeftPanel() {
 window.onload = function() {    
     LoadLeftPanel();
   };
+>>>>>>> Stashed changes
