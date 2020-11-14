@@ -72,6 +72,8 @@ exports.Validate = function(token, callback){
     request({
         url: url, json:true
     }, (error, response, body) => {
+
+        console.log(response);
         if(!error && response.statusCode == 200){
             pems = {};
             var keys = body['keys'];
