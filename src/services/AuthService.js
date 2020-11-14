@@ -107,7 +107,7 @@ exports.Validate = function(token, callback){
                     callback(new Error('Invalid token'));
                 }else{
                     console.log("Valid token");
-                    callback(null, "Valid token");
+                    callback(null, "Valid token", payload.username);
                 }
             })
         }else{

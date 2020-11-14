@@ -1,4 +1,6 @@
 require('dotenv').config()
+const auth = require('../src/services/AuthService');
+const daoMongo = require('../src/services/MessageService');
 
 const { sendToSocialNetwork } = require('./logic/snlogic');
 const config = require('./config');
@@ -6,7 +8,21 @@ const config = require('./config');
 const connection = (io) => {
     io.set('origins', '*:*');
 
-    io.on('connection', socket => {
+    io.use(function(socket, next){
+        if (socket.handshake.query && socket.handshake.query.token){
+            auth.Validate(socket.handshake.query.token, function(error, valido, userId){
+                console.log('Error en scoketID: ' + error)
+                if (error) return next(new Error('Authentication error'))                
+                //Funcion para Actualizar o guardar el SocketId del usuario.
+                daoMongo.setSocketIdByUserId(userId, socket.id);
+                next();
+            });          
+        }
+        else {
+          next(new Error('Authentication error'));
+        }    
+      })
+      .on('connection', socket => {
         console.log("socket ID:" + socket.id);        
 
         socket.on('message', messagejson => {
