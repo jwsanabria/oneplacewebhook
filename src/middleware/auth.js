@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const jwkToPem = require('jwk-to-pem');
+const MessageService = require('../services/MessageService');
 
 const poolData = {
     UserPoolId : "",
@@ -72,7 +73,9 @@ exports.Validate = function(req, res, next){
                     res.status(401);
                     return res.send('Invalid token');
                 }else{
-                    req.user = payload.username;
+                    // Consultar en base de datos el username, si no existe crearlo con al menos la cuenta whatsapp [phone_number] (insert en account)
+                    MessageService.verifyAccount(payload.email, payload.phone_number);
+                    req.user = payload.email;
                     console.log("Valid token");
                     return next();
                 }
