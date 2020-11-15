@@ -72,8 +72,6 @@ exports.Validate = function(token, callback){
     request({
         url: url, json:true
     }, (error, response, body) => {
-
-        console.log(response);
         if(!error && response.statusCode == 200){
             pems = {};
             var keys = body['keys'];
@@ -91,7 +89,7 @@ exports.Validate = function(token, callback){
 
             if(!decodedJwt){
                 console.log("Not a valid JWT token");
-                callback(new Error('Not a valid JWT token'));
+                callback(new Error('Not a valid JWT token'), null, null);
             }
 
             var kid= decodedJwt.header.kid;
