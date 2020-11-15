@@ -40,11 +40,11 @@ module.exports = (req, res, next)=>{
 
     // Revisar si no hay token
     if(!token){
-        res.status(401).json({msg:"No hay token, permiso no válido"});
+        return res.status(401).json({msg:"No hay token, permiso no válido"});
     }
 
     const url = 'https://cognito-idp.'+ pool_region  + '.amazonaws.com/'+poolData.UserPoolId+'/.well-known/jwks.json';
-    console.log(url);
+    console.log("URLL " + url);
 
     request({
         url: url, json:true
