@@ -1,9 +1,12 @@
 //const socket = io()
 
+//const { query } = require("express");
+
 const {token} = sessionStorage;
 const socket = io.connect('http://localhost:8080', {
-  query: {token: 'eyJraWQiOiJnZUNDZDZ1akRjank0U0UxSlRJRlVLQlVOVUp3aVp0XC9IT3RyY200S2dvST0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiJiZGQ0ODcwNS0xMWRkLTQxMjgtYTdiMC0xZDFlNThmMmE4MzIiLCJldmVudF9pZCI6IjllZmVlMDc4LWRmZTQtNDU0Ny04MTE1LTRjYzdmYTYwZTIwNSIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2MDUzOTgzMTcsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTEuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0xX2lBUFNyZ0U2YyIsImV4cCI6MTYwNTQwMTkxNywiaWF0IjoxNjA1Mzk4MzE3LCJqdGkiOiJjOGY1ZGQ2Yi1kZDUwLTQwZTEtOWVjOS03ZWI5YzJmOGVjNWUiLCJjbGllbnRfaWQiOiIzNTcxa2drNGljbnMzaGt1aDI2ajM5OGV1ZiIsInVzZXJuYW1lIjoiYmRkNDg3MDUtMTFkZC00MTI4LWE3YjAtMWQxZTU4ZjJhODMyIn0.S2wNaLnPk97nZHRqZBZUTwnxC0YOig_fl2QajrXlPOyKRbnk5MF6ViCnyYapV81TZk2kg_tOmfBQ3WP66UfUqO9hb-T4x9eaIDTJOESQ0kqUDsZXpqbQYno5H9lTBNnUjS6hulT5crH1MozrOxDnSu7VYCA-s3kZ1M_7xdE1-cokuSuj_l13poy2y_4Ub0cKsu0CPFOjRgeiERvo2WbaricPM3b61IcLxO3UbowLZYK5gbvnoUtzK7Zvat9M1PBlEia9Or3n4j136golIi5Rhgf4Afkgy_P6hKrKRLuVeE39JQCa0F-QwHvLg3pu8Fr4qCD8IHPNZ0FEkR3-QxcXiw'}
+  query: {token: 'eyJraWQiOiJnZUNDZDZ1akRjank0U0UxSlRJRlVLQlVOVUp3aVp0XC9IT3RyY200S2dvST0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIwZDVmMWE2Mi1hMDMwLTQyZDMtYmQyMy0wNTAxOTMwNmQ4OWIiLCJldmVudF9pZCI6IjNjMjZmMDU0LWE2YjEtNGQwMy1iOGNkLWYxNWYyYzNkMDA0MSIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2MDU0MDE2OTksImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTEuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0xX2lBUFNyZ0U2YyIsImV4cCI6MTYwNTQwNTI5OSwiaWF0IjoxNjA1NDAxNjk5LCJqdGkiOiI0OTljNWQ1NS1hNzQzLTRiNzMtYmI4OC1lOWViYmQ2NDE4NDYiLCJjbGllbnRfaWQiOiIzNTcxa2drNGljbnMzaGt1aDI2ajM5OGV1ZiIsInVzZXJuYW1lIjoiMGQ1ZjFhNjItYTAzMC00MmQzLWJkMjMtMDUwMTkzMDZkODliIn0.FeS61ReTsRDxU-qMR2T0FwouAC089Rs3jOybvU6qOrlpsgiTYamcQS_bYdy3RAI08mGlTpVirqZWzFbXAJJjF6h_1rNnpQ7yPP_4gZAeQxilJLGlXzDDP81b4BUATt82GCbWTbbLbOeg8qqExL0MZ5Sq7Lc7Ivhre6arzYpAE_RYoZXM7NNAQx8ju5qn2NGh_8q80-gdAT_lgOfTwSAtUIiDTpUSCqtq77OiXZXos1fBExTIg8ct9-h9ZxhqYIPVvu21OIr1IPUcQEvw8ynGScIh0PpPl9lfo3iAZR68h8K1ANCKrQ5EekoOM1KYmUsc6nq5XNMdnzKlUVkDDQ0bXA'}  
 });
+console.log("def socket en cliente: " + token)
 
 socket.on('message', function (msg) {
     //Recibe json. Se espera todo el mensaje que proviene de la red social. Esto por si se requiere tomar los otros atributos (id, fecha, etc).
@@ -73,6 +76,7 @@ $('#send').on('click', function () {
         console.log('Send to Social network json: ' + JSON.stringify(objMessage));
         //Enviar mensaje al back        
         console.log(socket.emit('message', objMessage));
+               io.to(socketId).emit('message', message);
     }
 });
 

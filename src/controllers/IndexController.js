@@ -33,9 +33,9 @@ const postHookWhatsapp = async (req, res) => {
     else {
         //Almacena el mensaje en la BD.
         //TODO: Esto debería ser asíncrono, para pintar rápidamente el mensaje en pantalla al usuario        
-        const result = await daoMongo.createMessage(req.body.SmsMessageSid, req.body.To, req.body.From, req.body.Body, config.messageTypeInbound, config.messageNetworkWhatsapp);
+        const result = await daoMongo.createMessage(req.body.SmsMessageSid, req.body.From, req.body.To, req.body.Body, config.messageTypeInbound, config.messageNetworkWhatsapp);
 
-        const socketId = daoMongo.getSocketId(req.body.From, config.messageNetworkWhatsapp);
+        const socketId = await daoMongo.getSocketId(req.body.To, config.messageNetworkWhatsapp);
 
         //Emitir el mensaje por SocketIO
         require('../index').emitMessage(req.body, socketId);
