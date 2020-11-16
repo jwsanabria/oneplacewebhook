@@ -12,7 +12,7 @@ require('./sockets').connection(io);
 
 const emitMessage = (message, socketId) => {
   io.to(socketId).emit('message', message);
-  console.log('Se emite desde el API de la red social el mensaje: ' + JSON.stringify(message));
+  console.log('Se emite desde el API de la red social el mensaje: ' + JSON.stringify(message) + ' con el socketId: ' + socketId);
 }
 
 // Start express on the defined port

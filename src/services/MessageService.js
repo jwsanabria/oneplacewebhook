@@ -160,7 +160,7 @@ async function getSocketId(idNetwork, SocialNetwork){
         account = await Account.findOne({WhatsappId: idNetwork});
     }
     
-    return account.getSocketId();
+    return account.SocketId;
 }
 
 async function setSocketIdByUserId(UserId, SocketId){

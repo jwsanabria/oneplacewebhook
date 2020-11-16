@@ -87,10 +87,13 @@ exports.Validate = function(token, callback){
 
             var decodedJwt = jwt.decode(token, {complete:true});
 
-            if(!decodedJwt){
+            console.log(decodedJwt==null);
+
+            // TODO: 20201115 fe.bolivar Validar porque if(!decodedJwt) en el callback no hacía el retorno, sino que continuaba. Entonces al asignar la línea var kid= decodedJwt.header.kid; genera excepción
+            if(decodedJwt==null){
                 console.log("Not a valid JWT token");
                 callback(new Error('Not a valid JWT token'), null, null);
-            }
+            }            
 
             var kid= decodedJwt.header.kid;
             var pem = pems[kid];

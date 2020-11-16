@@ -10,9 +10,9 @@ const connection = (io) => {
 
     io.use(function(socket, next){
         if (socket.handshake.query && socket.handshake.query.token){
-            console.log(socket.handshake.query.token);
+            console.log('Token recibido desde el socket: ' + socket.handshake.query.token);
             auth.Validate(socket.handshake.query.token, function(error, valido, userId){
-                console.log('Error en scoketID: ' + error)
+                console.log('Hay error? --> ' + error)
                 if (error) return next(new Error('Authentication error'))                
                 //Funcion para Actualizar o guardar el SocketId del usuario.
                 daoMongo.setSocketIdByUserId(userId, socket.id);
