@@ -136,12 +136,12 @@ async function verifyAccount(UserId, WhatsappId){
  * Obtiene la lista de mensajes de una cuenta con un cliente específico y en una red social definida,
  * se utiliza para cargar el contenido de una conversación seleccionada.
  * 
- * @param {*} UserId 
+ * @param {*} User 
  * @param {*} Client 
  * @param {*} SocialNetwork 
  */
-async function getMessagesByClient(UserId, Client, SocialNetwork){
-    const messages = await BDMessage.find({UserId: UserId, Client: Client, SocialNetwork: SocialNetwork}).sort({Time: 1});
+async function getMessagesByClient(User, Client, SocialNetwork){
+    const messages = await BDMessage.find({User: User, Client: Client, SocialNetwork: SocialNetwork}).sort({Time: 1});
 
     return messages;
 }
