@@ -4,7 +4,7 @@
 
 const {token} = sessionStorage;
 const socket = io.connect('http://localhost:8080', {
-  query: {token: 'eyJraWQiOiJnZUNDZDZ1akRjank0U0UxSlRJRlVLQlVOVUp3aVp0XC9IT3RyY200S2dvST0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIwZDVmMWE2Mi1hMDMwLTQyZDMtYmQyMy0wNTAxOTMwNmQ4OWIiLCJldmVudF9pZCI6IjNjMjZmMDU0LWE2YjEtNGQwMy1iOGNkLWYxNWYyYzNkMDA0MSIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2MDU0MDE2OTksImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTEuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0xX2lBUFNyZ0U2YyIsImV4cCI6MTYwNTQwNTI5OSwiaWF0IjoxNjA1NDAxNjk5LCJqdGkiOiI0OTljNWQ1NS1hNzQzLTRiNzMtYmI4OC1lOWViYmQ2NDE4NDYiLCJjbGllbnRfaWQiOiIzNTcxa2drNGljbnMzaGt1aDI2ajM5OGV1ZiIsInVzZXJuYW1lIjoiMGQ1ZjFhNjItYTAzMC00MmQzLWJkMjMtMDUwMTkzMDZkODliIn0.FeS61ReTsRDxU-qMR2T0FwouAC089Rs3jOybvU6qOrlpsgiTYamcQS_bYdy3RAI08mGlTpVirqZWzFbXAJJjF6h_1rNnpQ7yPP_4gZAeQxilJLGlXzDDP81b4BUATt82GCbWTbbLbOeg8qqExL0MZ5Sq7Lc7Ivhre6arzYpAE_RYoZXM7NNAQx8ju5qn2NGh_8q80-gdAT_lgOfTwSAtUIiDTpUSCqtq77OiXZXos1fBExTIg8ct9-h9ZxhqYIPVvu21OIr1IPUcQEvw8ynGScIh0PpPl9lfo3iAZR68h8K1ANCKrQ5EekoOM1KYmUsc6nq5XNMdnzKlUVkDDQ0bXA'}  
+  query: {token: 'eyJraWQiOiJnZUNDZDZ1akRjank0U0UxSlRJRlVLQlVOVUp3aVp0XC9IT3RyY200S2dvST0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIzYzNjMGQxNy1kZDYwLTQ0MDAtYjNjMC1iOTZhODdiYWViODMiLCJldmVudF9pZCI6IjQ1MzkyYmJhLTMxNWItNDA0Zi1hMzg1LTgyNTdlOGEwYzJhNSIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2MDU2NzM5NjEsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTEuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0xX2lBUFNyZ0U2YyIsImV4cCI6MTYwNTY3NzU2MSwiaWF0IjoxNjA1NjczOTYxLCJqdGkiOiJkNGY2MzU3Mi1kY2UxLTRkZTEtODg3YS0zYzhjZDVjNWY2MGYiLCJjbGllbnRfaWQiOiIzNTcxa2drNGljbnMzaGt1aDI2ajM5OGV1ZiIsInVzZXJuYW1lIjoiM2MzYzBkMTctZGQ2MC00NDAwLWIzYzAtYjk2YTg3YmFlYjgzIn0.OhAq256yxPcneo_xdd4s9_E26euwADLpSXlXzkqIfTJR_lxJOK_12zGc--nmkRaeppcd9-gHOlaXUe5WyVy9JZ4AfCnQEMBb1EidYPnwQzt0i8HIL4tr-tI7bJDK_w7Mjdxb6ph_q1LoLadZIuwM7umN_Manj_Yhj9TC6DGUhFAt8sNPKznYmbxPb6py_cJwLjJG0QWzr9d6A2jP_sGVGJElubQUi82Aq2i4aboHF12xfQ6BzG8P88MJB8kXLx6VEZ6SstFNtf5IDWAy_raNMxsQle7JDrZfkQ1Nzqh1N2dgcD4aB89YOZa3cWLPapUqGgBU3cgS86Eu7dUiExqibw'}  
 });
 console.log("def socket en cliente: " + token)
 
@@ -55,7 +55,7 @@ $('#send').on('click', function () {
             +'"Time" : "' + fecha + '"'
             +'}';
         */
-        /*
+        
         // Mensaje Whatsapp
         var objMessage = new Object();
         objMessage.User = "whatsapp:+14155238886";
@@ -63,15 +63,15 @@ $('#send').on('click', function () {
         objMessage.Message = mensaje;
         objMessage.SocialNetwork = "2";
         objMessage.Time = fecha;
-        */
+        
        // Mensaje Facebook
-       var objMessage = new Object();
+       /*var objMessage = new Object();
         objMessage.User = "103063468213065";
         objMessage.Client = "4967684069923820";
         objMessage.Message = mensaje;
         objMessage.SocialNetwork = "1";
         objMessage.Time = fecha;
-            
+         */   
 
         console.log('Send to Social network json: ' + JSON.stringify(objMessage));
         //Enviar mensaje al back        
