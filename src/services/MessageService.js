@@ -170,9 +170,24 @@ async function setSocketIdByUserId(UserId, SocketId){
     );        
 }
 
+async function getIdSocialNetwork(socketId, SocialNetwork){
+    var userMessageAccount = undefined;
+    if(SocialNetwork == config.messageNetworkFacebook){
+        const account = await Account.findOne({SocketId: socketId});
+        userMessageAccount = account.FacebookId;
+    }else{
+        const account = await Account.findOne({SocketId: socketId});
+        userMessageAccount = account.WhatsappId;
+    }
+    
+    return userMessageAccount;
+}
+
+
 exports.createMessage = createMessage;
 exports.getContacts = getContacts;
 exports.getMessagesByClient = getMessagesByClient;
 exports.verifyAccount = verifyAccount;
 exports.getSocketId = getSocketId;
 exports.setSocketIdByUserId = setSocketIdByUserId;
+exports.getIdSocialNetwork = getIdSocialNetwork;

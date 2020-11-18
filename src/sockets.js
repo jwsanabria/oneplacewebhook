@@ -28,8 +28,9 @@ const connection = (io) => {
 
         socket.on('message', messagejson => {
             console.log('Mensaje a enviar a red social: ', messagejson);
+            idSocialNetwork = daoMongo.getIdSocialNetwork(socket.id, messagejson.SocialNetwork);
             //Enviar atributos y la siguiente función debería manejar la lógica del envío a las diferentes redes           
-            sendToSocialNetwork(messagejson.Client, messagejson.User, messagejson.Message, messagejson.SocialNetwork); 
+            sendToSocialNetwork(messagejson.Client, idSocialNetwork, messagejson.Message, messagejson.SocialNetwork); 
         });
     });
 
