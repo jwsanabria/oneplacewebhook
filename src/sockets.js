@@ -27,9 +27,10 @@ const connection = async (io) => {
         console.log("socket ID:" + socket.id);        
 
         socket.on('message', messagejson => {
-            console.log('Mensaje a enviar a red social: ', messagejson);            
+            console.log('Mensaje a enviar a red social: ', messagejson);
+            const objetcJson = JSON.parse(messagejson);
             //Enviar atributos y la siguiente función debería manejar la lógica del envío a las diferentes redes           
-            sendToSocialNetwork(messagejson.Client, socket.id, messagejson.Message, messagejson.SocialNetwork); 
+            sendToSocialNetwork(objetcJson.Client, socket.id, objetcJson.Message, objetcJson.SocialNetwork); 
         });
     });
 
