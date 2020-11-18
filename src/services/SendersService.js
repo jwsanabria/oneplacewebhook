@@ -54,7 +54,7 @@ async function sendFacebook(body, from, to){
             }, (err, res, body) => {
                 if (!err) {
                     console.log('Mensaje enviado!')
-                    console.log(res);
+                    //console.log(res);
                     result = res;
                 } else {
                     console.error("No se puedo enviar el mensaje:" + err);

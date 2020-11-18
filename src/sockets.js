@@ -5,7 +5,7 @@ const daoMongo = require('../src/services/MessageService');
 const { sendToSocialNetwork } = require('./logic/snlogic');
 const config = require('./config');
 
-const connection = (io) => {
+const connection = async (io) => {
     io.set('origins', '*:*');
 
     io.use(function(socket, next){
@@ -27,10 +27,9 @@ const connection = (io) => {
         console.log("socket ID:" + socket.id);        
 
         socket.on('message', messagejson => {
-            console.log('Mensaje a enviar a red social: ', messagejson);
-            idSocialNetwork = daoMongo.getIdSocialNetwork(socket.id, messagejson.SocialNetwork);
+            console.log('Mensaje a enviar a red social: ', messagejson);            
             //Enviar atributos y la siguiente función debería manejar la lógica del envío a las diferentes redes           
-            sendToSocialNetwork(messagejson.Client, idSocialNetwork, messagejson.Message, messagejson.SocialNetwork); 
+            sendToSocialNetwork(messagejson.Client, socket.id, messagejson.Message, messagejson.SocialNetwork); 
         });
     });
 
