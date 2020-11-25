@@ -7,9 +7,9 @@ const { sendWhatsapp, sendFacebook } = require('../services/SendersService');
 //20201031 FB
 //Esta función rebibe parámetros y basado en la red social, envía el mensaje por la API correspondiente.
 //También persiste el mensaje en BD.
-async function sendToSocialNetwork(Client, SocketId, Message, SocialNetwork) {
-    var messageId = undefined;
-    User = await daoMongo.getIdSocialNetwork(SocketId, SocialNetwork);
+async function sendToSocialNetwork(Client, SocketId, Message, SocialNetwork, twilioId) {
+    let messageId = undefined;
+    let User = await daoMongo.getIdSocialNetwork(SocketId, SocialNetwork);
     //Notifica el mensaje según la red social
     console.log(Client + "+" + User + "+" + SocialNetwork);
     if (SocialNetwork == config.messageNetworkFacebook) {
@@ -17,7 +17,8 @@ async function sendToSocialNetwork(Client, SocketId, Message, SocialNetwork) {
         messageId = msgIdFacebook
     }
     else {
-        let msgIdWhatsapp = await sendWhatsapp(Message, User, Client);
+        let twilioAccount = await daoMongo.getTwilioAccount(twilioId);
+        let msgIdWhatsapp = await sendWhatsapp(Message, User, Client, twilioAccount.TWILIO_ACCOUNT_ID, twilioAccount.TWILIO_AUTH_TOKEN);
         messageId = msgIdWhatsapp;
     }
 

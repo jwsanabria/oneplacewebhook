@@ -7,6 +7,7 @@ const Account = require('../models/Account');
 const BDMessage = require('../models/Message');
 const { ExportCustomJobPage } = require('twilio/lib/rest/bulkexports/v1/export/exportCustomJob');
 const config = require('../config');
+const TwilioAccount = require('../models/TwilioAccount');
 
 //
 //Crear en la tabla cuentas por usuario el IdUsuario de la aplicación y relacionarlo con un teléfono para whatsapp.
@@ -183,6 +184,13 @@ async function getIdSocialNetwork(socketId, SocialNetwork){
     return userMessageAccount;
 }
 
+/**
+ * Crea una cuenta con el nombre de usuario y numero de telefono
+ * @param {*} TWILIO_ACCOUNT_ID 
+ */
+async function getTwilioAccount(TWILIO_ACCOUNT_ID){
+    return await TwilioAccount.findOne({TWILIO_ACCOUNT_ID: TWILIO_ACCOUNT_ID});        
+}
 
 exports.createMessage = createMessage;
 exports.getContacts = getContacts;
@@ -191,3 +199,4 @@ exports.verifyAccount = verifyAccount;
 exports.getSocketId = getSocketId;
 exports.setSocketIdByUserId = setSocketIdByUserId;
 exports.getIdSocialNetwork = getIdSocialNetwork;
+exports.getTwilioAccount = getTwilioAccount;

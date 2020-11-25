@@ -1,10 +1,13 @@
 const config = require('../config')
 const request = require("request");
-const client = require('twilio')(config.twilioAccountId, config.twilioAuthToken);
+//const client = require('twilio')(config.twilioAccountId, config.twilioAuthToken);
 
 
-async function sendWhatsapp(body, from, to){
+async function sendWhatsapp(body, from, to, twilioAccountId, twilioAuthToken){
     var result = undefined;
+
+
+    const client = require('twilio')(twilioAccountId, twilioAuthToken);
 
     try {
         const message = await client.messages.create({
