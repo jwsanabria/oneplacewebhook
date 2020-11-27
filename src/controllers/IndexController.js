@@ -134,4 +134,10 @@ const messagesController = async (req, res) => {
     }
 }
 
-module.exports = { indexController, chatController, postHookWhatsapp, getHookFacebook, postHookFacebook, contactmessagesController, messagesController }
+const chatnewController = (req, res) => {
+    //! TODO: Se debe establecer el UserId desde el token
+    let userId = 'Oneplace1'; 
+    res.render('chatnew');
+}
+
+module.exports = { indexController, chatController, postHookWhatsapp, getHookFacebook, postHookFacebook, contactmessagesController, messagesController, chatnewController }

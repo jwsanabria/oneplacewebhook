@@ -1,6 +1,6 @@
 const {Router} = require('express');
 const router = Router();
-const {indexController, chatController, postHookWhatsapp, getHookFacebook, postHookFacebook, contactmessagesController, messagesController} = require('../controllers/IndexController');
+const {indexController, chatController, postHookWhatsapp, getHookFacebook, postHookFacebook, contactmessagesController, messagesController, chatnewController} = require('../controllers/IndexController');
 const authController = require('../controllers/AuthController');
 const authMiddleware = require('../middleware/auth');
 
@@ -23,5 +23,7 @@ router.post('/auth/register', authController.register);
 router.post('/auth/login', authController.login);
 
 router.post('/auth/validate', authController.validate_token);
+
+router.get('/chatnew', chatnewController);
 
 module.exports = router;

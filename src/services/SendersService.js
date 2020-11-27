@@ -16,7 +16,7 @@ async function sendWhatsapp(body, from, to, twilioAccountId, twilioAuthToken){
             to: to
         });
     
-        console.log('Se envía mensaje por Twilio: ', message.sid);
+        console.log('Se envía mensaje por Twilio: ' + twilioAccountId + ' msgId: ' + message.sid);
         
         result = message.sid;
     } catch (error) {
