@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <!-- This file has been downloaded from Bootsnipp.com. Enjoy! -->
+  <title>Chat - Bootsnipp.com</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="http://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+  <style type="text/css">
+
+  </style>
+  <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+  <!------ Include the above in your HEAD tag ---------->
+
+
+  <!DOCTYPE html>
+  <html class=''>
+
+  <head>
+    <meta charset='UTF-8'>
+    <meta name="robots" content="noindex">
+    <link rel="shortcut icon" type="image/x-icon"
+      href="//production-assets.codepen.io/assets/favicon/favicon-8ea04875e70c4b0bb41da869e81236e54394d63638a1ef12fa558a4a835f1164.ico" />
+    <link rel="mask-icon" type=""
+      href="//production-assets.codepen.io/assets/favicon/logo-pin-f2d2b6d2c61838f7e76325261b7195c27224080bc099486ddd6dccb469b8e8e6.svg"
+      color="#111" />
+    <link rel="canonical" href="https://codepen.io/emilcarlsson/pen/ZOQZaV?limit=all&page=74&q=contact+" />
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,300' rel='stylesheet'
+      type='text/css' />
+    <script src="https://use.typekit.net/hoy3lrg.js"></script>
+    <script>try { Typekit.load({ async: true }); } catch (e) { }</script>
+    <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css' />
+    <link rel='stylesheet prefetch'
+      href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css' />
+    <link href="/styles/chatnew.css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div id="frame">
+      <div id="sidepanel">
+        <div id="profile">
+          <div class="wrap">
+            <img id="profile-img" src="http://emilcarlsson.se/assets/mikeross.png" class="online" alt="" />
+            <p>Mike Ross</p>
+            <i class="fa fa-chevron-down expand-button" aria-hidden="true"></i>
+            <div id="status-options">
+              <ul>
+                <li id="status-online" class="active"><span class="status-circle"></span>
+                  <p>Online</p>
+                </li>
+                <li id="status-away"><span class="status-circle"></span>
+                  <p>Away</p>
+                </li>
+                <li id="status-busy"><span class="status-circle"></span>
+                  <p>Busy</p>
+                </li>
+                <li id="status-offline"><span class="status-circle"></span>
+                  <p>Offline</p>
+                </li>
+              </ul>
+            </div>
+            <div id="expanded">
+              <label for="twitter"><i class="fa fa-facebook fa-fw" aria-hidden="true"></i></label>
+              <input name="twitter" type="text" value="mikeross" />
+              <label for="twitter"><i class="fa fa-twitter fa-fw" aria-hidden="true"></i></label>
+              <input name="twitter" type="text" value="ross81" />
+              <label for="twitter"><i class="fa fa-instagram fa-fw" aria-hidden="true"></i></label>
+              <input name="twitter" type="text" value="mike.ross" />
+            </div>
+          </div>
+        </div>
+        <div id="search">
+          <label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
+          <input type="text" placeholder="Search contacts..." />
+        </div>
+        <div id="contacts">
+          <ul id="InboxLeft">
+            <li class="contact">
+              <div class="wrap">
+                <span class="contact-status online"></span>
+                <img src="http://emilcarlsson.se/assets/louislitt.png" alt="" />
+                <div class="meta">
+                  <p class="name">Louis Litt</p>
+                  <p class="preview">You just got LITT up, Mike.</p>
+                </div>
+              </div>
+            </li>
+            <li class="contact active">
+              <div class="wrap">
+                <span class="contact-status busy"></span>
+                <img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
+                <div class="meta">
+                  <p class="name">Harvey Specter</p>
+                  <p class="preview">Wrong. You take the gun, or you pull out a bigger one. Or, you call their bluff.
+                    Or, you do any one of a hundred and forty six other things.</p>
+                </div>
+              </div>
+            </li>
+            <li class="contact">
+              <div class="wrap">
+                <span class="contact-status away"></span>
+                <img src="http://emilcarlsson.se/assets/rachelzane.png" alt="" />
+                <div class="meta">
+                  <p class="name">Rachel Zane</p>
+                  <p class="preview">I was thinking that we could have chicken tonight, sounds good?</p>
+                </div>
+              </div>
+            </li>
+            <li class="contact">
+              <div class="wrap">
+                <span class="contact-status online"></span>
+                <img src="http://emilcarlsson.se/assets/donnapaulsen.png" alt="" />
+                <div class="meta">
+                  <p class="name">Donna Paulsen</p>
+                  <p class="preview">Mike, I know everything! I'm Donna..</p>
+                </div>
+              </div>
+            </li>
+            <li class="contact">
+              <div class="wrap">
+                <span class="contact-status busy"></span>
+                <img src="http://emilcarlsson.se/assets/jessicapearson.png" alt="" />
+                <div class="meta">
+                  <p class="name">Jessica Pearson</p>
+                  <p class="preview">Have you finished the draft on the Hinsenburg deal?</p>
+                </div>
+              </div>
+            </li>
+            <li class="contact">
+              <div class="wrap">
+                <span class="contact-status"></span>
+                <img src="http://emilcarlsson.se/assets/haroldgunderson.png" alt="" />
+                <div class="meta">
+                  <p class="name">Harold Gunderson</p>
+                  <p class="preview">Thanks Mike! :)</p>
+                </div>
+              </div>
+            </li>
+            <li class="contact">
+              <div class="wrap">
+                <span class="contact-status"></span>
+                <img src="http://emilcarlsson.se/assets/danielhardman.png" alt="" />
+                <div class="meta">
+                  <p class="name">Daniel Hardman</p>
+                  <p class="preview">We'll meet again, Mike. Tell Jessica I said 'Hi'.</p>
+                </div>
+              </div>
+            </li>
+            <li class="contact">
+              <div class="wrap">
+                <span class="contact-status busy"></span>
+                <img src="http://emilcarlsson.se/assets/katrinabennett.png" alt="" />
+                <div class="meta">
+                  <p class="name">Katrina Bennett</p>
+                  <p class="preview">I've sent you the files for the Garrett trial.</p>
+                </div>
+              </div>
+            </li>
+            <li class="contact">
+              <div class="wrap">
+                <span class="contact-status"></span>
+                <img src="http://emilcarlsson.se/assets/charlesforstman.png" alt="" />
+                <div class="meta">
+                  <p class="name">Charles Forstman</p>
+                  <p class="preview">Mike, this isn't over.</p>
+                </div>
+              </div>
+            </li>
+            <li class="contact">
+              <div class="wrap">
+                <span class="contact-status"></span>
+                <img src="http://emilcarlsson.se/assets/jonathansidwell.png" alt="" />
+                <div class="meta">
+                  <p class="name">Jonathan Sidwell</p>
+                  <p class="preview"><span>You:</span> That's bullshit. This deal is solid.</p>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div id="bottom-bar">
+          <button id="addcontact"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> <span>Add
+              contact</span></button>
+          <button id="settings"><i class="fa fa-cog fa-fw" aria-hidden="true"></i> <span>Settings</span></button>
+        </div>
+      </div>
+      <div class="content">
+        <div class="contact-profile">
+          <img id="profilephoto" src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
+          <p id="profileclient">Harvey Specter</p>
+          <div class="social-media">
+            <i class="fa fa-facebook" aria-hidden="true"></i>
+            <i class="fa fa-twitter" aria-hidden="true"></i>
+            <i class="fa fa-instagram" aria-hidden="true"></i>
+          </div>
+        </div>
+        <div id="divmessages" class="messages">
+          <ul id="messageright">
+            <li class="sent">
+              <img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />
+              <p>How the hell am I supposed to get a jury to believe you when I am not even sure that I do?!</p>
+            </li>
+            <li class="replies">
+              <img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
+              <p>When you're backed against the wall, break the god damn thing down.</p>
+            </li>
+          </ul>
+        </div>
+        <div class="message-input">
+          <div class="wrap">
+            <input type="text" placeholder="Write your message..." />
+            <i class="fa fa-paperclip attachment" aria-hidden="true"></i>
+            <button class="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <input type="hidden" id="hdnTwilioId" />
+    <input type="hidden" id="hdnSocialNetwork" />
+    <input type="hidden" id="hdnClient" />
+    <input type="hidden" id="hdnUserId" />    
+    <script>
+      var urlServicios = "http://9057ad17fd47.ngrok.io";
+      //var urlServicios = https://oneplacewebhook.herokuapp.com
+    </script>
+    <script src='https://code.jquery.com/jquery-2.2.4.min.js'></script>
+    <script>$(".messages").animate({ scrollTop: $(document).height() }, "fast");
+
+      $("#profile-img").click(function () {
+        $("#status-options").toggleClass("active");
+      });
+
+      $(".expand-button").click(function () {
+        $("#profile").toggleClass("expanded");
+        $("#contacts").toggleClass("expanded");
+      });
+
+      $("#status-options ul li").click(function () {
+        $("#profile-img").removeClass();
+        $("#status-online").removeClass("active");
+        $("#status-away").removeClass("active");
+        $("#status-busy").removeClass("active");
+        $("#status-offline").removeClass("active");
+        $(this).addClass("active");
+
+        if ($("#status-online").hasClass("active")) {
+          $("#profile-img").addClass("online");
+        } else if ($("#status-away").hasClass("active")) {
+          $("#profile-img").addClass("away");
+        } else if ($("#status-busy").hasClass("active")) {
+          $("#profile-img").addClass("busy");
+        } else if ($("#status-offline").hasClass("active")) {
+          $("#profile-img").addClass("offline");
+        } else {
+          $("#profile-img").removeClass();
+        };
+
+        $("#status-options").removeClass("active");
+      });
+
+      function newMessage() {
+        message = $(".message-input input").val();
+        if ($.trim(message) == '') {
+          return false;
+        }
+        $('<li class="replies"><img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /><p>' + message + '</p></li>').appendTo($('.messages ul'));
+        $('.message-input input').val(null);
+        $('.contact.active .preview').html('<span>You: </span>' + message);
+        $(".messages").animate({ scrollTop: 9999 }, 'fast');
+
+        //Envío al server 
+        var objMessage = new Object();
+        objMessage.User = $("#hdnUserId").val();
+        objMessage.Client = $("#hdnClient").val();
+        objMessage.Message = message;
+        objMessage.SocialNetwork = $("#hdnSocialNetwork").val();
+        objMessage.TwilioId = $("#hdnTwilioId").val();
+
+        console.log('Enviado desde cliente: ' + objMessage)
+        console.log(socket.send(objMessage));
+      };
+
+      $('.submit').click(function () {
+        newMessage();
+      });
+
+      $(window).on('keydown', function (e) {
+        if (e.which == 13) {
+          newMessage();
+          return false;
+        }
+      });
+    </script>
+    <!--Script propio de funcionalidad-->
+    <script>
+      var token = 'eyJraWQiOiJnZUNDZDZ1akRjank0U0UxSlRJRlVLQlVOVUp3aVp0XC9IT3RyY200S2dvST0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIzYzNjMGQxNy1kZDYwLTQ0MDAtYjNjMC1iOTZhODdiYWViODMiLCJldmVudF9pZCI6Ijg3MjBkNmZjLTRiNGYtNGFiYS04YzYxLTJhYTcxN2M4MDU4YiIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2MDY0NDUzNzAsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTEuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0xX2lBUFNyZ0U2YyIsImV4cCI6MTYwNjQ5MzExNywiaWF0IjoxNjA2NDg5NTE3LCJqdGkiOiI1MWUyZDliZi1mMjAzLTQ4NjMtOGZjMS1lNDc5MmZjOTZlZTQiLCJjbGllbnRfaWQiOiIzNTcxa2drNGljbnMzaGt1aDI2ajM5OGV1ZiIsInVzZXJuYW1lIjoiM2MzYzBkMTctZGQ2MC00NDAwLWIzYzAtYjk2YTg3YmFlYjgzIn0.RUpgjP3ITIMaaaHRY_rRVyE7wNvcb-lKmadeo4DeA5dzbwjjOSqa0qXdaq5PZWHIOWn1l7E_cmqhZFKZcx7gdGrLpfbInL_4nlxs2AVsz0hpPNKY24dHdt-3ZZaEYlTJ2nRn4s6dS-wXVEuK0y2Fy_QwZRgSrFqL5UyE3CAXcqTxGxQ1i9cNJYWCiZCmKHHUPwlB8bVXsVNvhcUxxDJkH-LgNGe9-IH2B3OZruKt2oUQ1xA5Ov9HIUD3SmAq8FbQHBDM-TDQH4jO1dxDUAcClskZcXtZfiSQhlsxWGgq3wWAdd-VtEaI-NT-O_jc32HyckBzuTDv1DVK23Ozcg8ZKA';
+      var lsfind = 'Token no encontrado en ls';
+
+      /*
+      for (var key in localStorage) {
+        if (key.includes('accessToken')) {
+          token = localStorage[key];
+          lsfind = 'Token encontrado en ls';
+        }
+      }
+      console.log(lsfind);      
+      */
+
+      const socket = io.connect(urlServicios, {
+        query: { token: token }
+      });
+
+      socket.on('message', function (msg) {
+        //Recibe json. Se espera todo el mensaje que proviene de la red social. Esto por si se requiere tomar los otros atributos (id, fecha, etc).
+        console.log('Ingresa al socket del cliente');
+        if (msg) {
+          console.log('Valor recibido del back en el Socket: ');
+          console.log(msg);
+          var fecha = Date.now();
+
+          let id = "";
+          let User = "";
+          let Client = "";
+          let Message = "";
+          let SocialNetwork = "";
+          let Time = "";
+
+          let snlogo = 'chatwhatsapp.png';
+          if (SocialNetwork == '1')
+            snlogo = 'chatfacebook.png';
+
+          //TODO: Validar si el mensaje recibido es del mismo con el de la ventana actual. Sino, deberá enviarlo a la ventana de la izquiera.
+          if (true) {
+            //Asignar el mensaje a cada componente del chat
+            //$('#messages').append('<div class=\"incoming_msg\"><div class=\"incoming_msg_img\"><img src=\"./imgs/' + snlogo + '\" alt=\"sunil\" /></div><div class=\"received_msg\"><div class=\"received_withd_msg\"><p>' + msg.Body + '</p><span class=\"time_date\">' + dateFormat(fecha, " h:MM:ss TT    |    mmmm dS") + '</span></div></div></div>');
+            $('#messageright').append('<li class=\"sent\"><img src=\"./imgs/' + snlogo + '\" alt=\"\" /><p>' + msg.Body + '</p></li>');
+            $(".messages").animate({ scrollTop: 9999 }, 'fast');
+          }
+          else { }
+        }
+      });
+
+      //Dibuja el frame de recientes en la parte izquierda la primera vez que carga la página
+      function PaintRecent(id, User, Client, Message, SocialNetwork, Time) {
+        //console.log('pintando a ' + Client + ", " + Time + ", " + Message);
+
+        const d = Date.parse(Time);
+        const mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d);
+        const da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
+        let snlogo = 'chatfacebook.png';
+        let clientbar = Client;
+        if (SocialNetwork == '2') {
+          snlogo = 'chatwhatsapp.png';
+          clientbar = Client.substring(12);
+          clientbar = clientbar.substring(0, 3) + '-' + clientbar.substring(3);
+        }
+
+        //let a = "<div onclick=\"getchat('" + User + "', '" + SocialNetwork + "', '" + Client + "');\" class=\"chat_list\" id=\"" + id + "\"><div class=\"chat_people\"><input id=\"msg_" + id + "\" type=\"hidden\" value=\"" + id + "\" /><input id=\"" + id + "_" + SocialNetwork + "\" type=\"hidden\" value=\"" + SocialNetwork + "\" /><input id=\"" + id + "_" + User + "\" type=\"hidden\" value=\"" + User + "\" /><div class=\"inline\"><div class=\"chat-img-container\"><img class= \"responsive \" src=\"./assets/imgs/" + snlogo + "\" alt=\"sunil\" /></div><div class=\"chat_ib\"><h5>" + Client + " <span class=\"chat_date\"></div>" + mo + " " + da + "</span></h5><p>" + Message.substring(0, 100) + "</p></div></div></div>";
+        let a = "<li onclick=\"getchat('" + User + "', '" + SocialNetwork + "', '" + Client + "');\" class=\"contact\" id=\"" + id + "\"><input id=\"msg_" + id + "\" type=\"hidden\" value=\"" + id + "\" /><input id=\"" + id + "_" + SocialNetwork + "\" type=\"hidden\" value=\"" + SocialNetwork + "\" /><input id=\"" + id + "_" + User + "\" type=\"hidden\" value=\"" + User + "\" />  <div class=\"wrap\"><span class=\"contact-status online\"></span><img src=\"./imgs/" + snlogo + "\" alt=\"\" /><div class=\"meta\"><p class=\"name\">" + clientbar + "</p><p class=\"preview\">" + Message.substring(0, 40) + "</p></div></div></li>";
+
+        $('#InboxLeft').prepend(a);
+        //console.log('agreg: ' + a);
+      }
+
+      function LoadLeftPanel() {
+        console.log('LoadLeftPanel');
+        const url = urlServicios + '/contactmessages/';
+        console.log('url leftPanel: ', url);
+        console.log('Token: ', this.token);
+
+        fetch(url, {
+          headers: new Headers({
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'authorization': this.token
+          })
+        })
+          .then(
+            function (response) {
+              if (response.status !== 200) {
+                console.warn('Looks like there was a problem. Status Code: ' +
+                  response.status);
+                return;
+              }
+
+              // Examine the text in the response
+              response.json().then(function (data) {
+                let option;
+
+                console.log('data.: ', data);
+                console.log('data left number.: ', data.length);
+
+                $('#InboxLeft').empty();
+                for (let i = 0; i < data.length; i++) {
+                  PaintRecent(data[i]._id, data[i].User, data[i].Client, data[i].Message, data[i].SocialNetwork, data[i].Time);
+                  if(data[i].UserId){
+                    $('#hdnUserId').val(data[i].UserId);
+                    console.log('hdnUserId: ' + data[i].UserId);
+                  }                  
+                }
+              });
+            }
+          )
+          .catch(function (err) {
+            console.error('Fetch Error -', err);
+          });
+
+      }
+
+      window.onload = function () {
+        LoadLeftPanel();
+      };
+    </script>
+    <script>
+      function getchat(User, SocialNetwork, Client) {
+        console.log('User, SocialNetwork, Client' + User + ', ' + SocialNetwork + ', ' + Client);
+        //localStorage.setItem('social', SocialNetwork);
+        //localStorage.setItem('client', Client);               
+
+        let snlogo = 'chatfacebook.png';
+        let clientbar = Client;
+        if (SocialNetwork == '2') {
+          snlogo = 'chatwhatsapp.png';
+          clientbar = Client.substring(12);
+          clientbar = clientbar.substring(0, 3) + '-' + clientbar.substring(3);
+        }
+
+        $('#messageright').empty();
+
+        //Establecer las VG de ese chat en específico
+        $('#hdnSocialNetwork').val(SocialNetwork);
+        $('#hdnClient').val(Client);
+
+        //console.log(userId, SocialNetgiwork, Client);
+        $.ajaxSetup({
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'authorization': this.token
+          }
+        });                
+
+        $.get(urlServicios + "/account/" + $("#hdnUserId").val() + "", function (data, status) {
+          console.log('Account:');
+          console.log(data);
+          //Ahora toca sacar la cuenta de twilio por el ID
+          /*data.forEach(cursor => {
+            $('#hdnTwilioId').val(cursor.TwilioId);
+          });
+          */
+        });
+
+        $.get(urlServicios + "/messages/" + SocialNetwork + "/" + User + "/" + Client + "", function (data, status) {
+          $('#profilephoto').attr('src', './imgs/' + snlogo);
+          $('#profileclient').text(clientbar);
+
+          data.forEach(chat => {
+            if (chat.MessageType == 1) {
+              //$('#messages').append('<div class=\"incoming_msg\"><div class=\"incoming_msg_img chat-img-container\"><img class="\responsive\" src=\"/./assets/imgs/' + snlogo + '\" alt=\"sunil\" /></div><div class=\"received_msg\"><div class=\"received_withd_msg\"><p>' + chat.Message + '</p><span class=\"time_date\">' + dateFormat(chat.Time, " h:MM:ss TT    |    mmmm dS") + '</span></div></div></div>');
+              $('#messageright').append('<li id=\"' + chat.MessageId + '\" class=\"sent\"><img src=\"./imgs/' + snlogo + '\" alt=\"\" /><p>' + chat.Message + '</p></li>');
+            } else {
+              //$('#messages').append('<div class=\"outgoing_msg\"><div class=\"sent_msg\"><p>' + chat.Message + '</p><span class=\"time_date\">' + dateFormat(chat.Time, " h:MM TT    |    mmmm dS") + '</span></div></div>');              
+              $('#messageright').append('<li id=\"' + chat.MessageId + '\" class=\"replies\"><img src=\"./imgs/' + snlogo + '\" alt=\"\" /><p>' + chat.Message + '</p></li>');
+            }
+          });
+        }).done(function (data) {
+          $(".messages").animate({ scrollTop: 9999 }, 'fast');
+        });
+      }
+    </script>
+    <script src="../js/date.format.js"></script>
+  </body>
+
+  </html>
+</body>
+
+</html>
