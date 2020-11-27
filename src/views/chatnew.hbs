@@ -211,7 +211,7 @@
             <li class="replies">
               <img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
               <p>When you're backed against the wall, break the god damn thing down.</p>
-            </li>            
+            </li>
           </ul>
         </div>
         <div class="message-input">
@@ -223,6 +223,14 @@
         </div>
       </div>
     </div>
+    <input type="hidden" id="hdnTwilioId" />
+    <input type="hidden" id="hdnSocialNetwork" />
+    <input type="hidden" id="hdnClient" />
+    <input type="hidden" id="hdnUserId" />    
+    <script>
+      var urlServicios = "http://9057ad17fd47.ngrok.io";
+      //var urlServicios = https://oneplacewebhook.herokuapp.com
+    </script>
     <script src='https://code.jquery.com/jquery-2.2.4.min.js'></script>
     <script>$(".messages").animate({ scrollTop: $(document).height() }, "fast");
 
@@ -266,16 +274,15 @@
         $('<li class="replies"><img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /><p>' + message + '</p></li>').appendTo($('.messages ul'));
         $('.message-input input').val(null);
         $('.contact.active .preview').html('<span>You: </span>' + message);
-        //$(".messages").animate({ scrollTop: $(document).height() }, "fast");
         $(".messages").animate({ scrollTop: 9999 }, 'fast');
 
         //Envío al server 
         var objMessage = new Object();
-        objMessage.User = "whatsapp:+14155238886";
-        objMessage.Client = "whatsapp:+573005559718";
+        objMessage.User = $("#hdnUserId").val();
+        objMessage.Client = $("#hdnClient").val();
         objMessage.Message = message;
-        objMessage.SocialNetwork = "2";
-        objMessage.TwilioId = "ACcb818509d18926a0f4bcc0e174b7cb57";
+        objMessage.SocialNetwork = $("#hdnSocialNetwork").val();
+        objMessage.TwilioId = $("#hdnTwilioId").val();
 
         console.log('Enviado desde cliente: ' + objMessage)
         console.log(socket.send(objMessage));
@@ -294,22 +301,20 @@
     </script>
     <!--Script propio de funcionalidad-->
     <script>
-      var token = 'eyJraWQiOiJnZUNDZDZ1akRjank0U0UxSlRJRlVLQlVOVUp3aVp0XC9IT3RyY200S2dvST0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIzYzNjMGQxNy1kZDYwLTQ0MDAtYjNjMC1iOTZhODdiYWViODMiLCJldmVudF9pZCI6IjJjOGMwNjA4LTcyYzUtNDk3Mi1hMWNjLTY3ZjI4Yjg2M2I4NCIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2MDY0Mzg5ODcsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTEuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0xX2lBUFNyZ0U2YyIsImV4cCI6MTYwNjQ0MjU4NywiaWF0IjoxNjA2NDM4OTg3LCJqdGkiOiI5ZWRmMmEwMC0wM2ZlLTRhMjctYjU5Ni03M2I4YzY1NzA0MGEiLCJjbGllbnRfaWQiOiIzNTcxa2drNGljbnMzaGt1aDI2ajM5OGV1ZiIsInVzZXJuYW1lIjoiM2MzYzBkMTctZGQ2MC00NDAwLWIzYzAtYjk2YTg3YmFlYjgzIn0.G-MLEnFVUlZXi0_gJYahJoXY7dATsg2083TiQJNbrd-RvHKmsnOgkLuRKnxgo2JlY1Iid7CvDBAL2WA5T37Q_VxnZAUwQXQyhFoenGmqraBivRmxOJKhDmv5qjxvnEHNbuj6U0HD7IKPHV3boPO_yps-a8VuatjxhzqLgg9XsVHPvj5XR1K-McjzLXG5m8PkYTR-H2IH1CYuHLiXu-zhhxOxw5Fz0ug5f6hrkcn04gtlnlEeJfpg4SZwQsq0na0hD63AzOTOgtnAkn8ehTzovGN7V-aEX5tOImofYaxsBojbwHurN3kSRwLHdhd-DTAP7QNt_Wjk4TUDcm-M2FNMXQ';
+      var token = 'eyJraWQiOiJnZUNDZDZ1akRjank0U0UxSlRJRlVLQlVOVUp3aVp0XC9IT3RyY200S2dvST0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIzYzNjMGQxNy1kZDYwLTQ0MDAtYjNjMC1iOTZhODdiYWViODMiLCJldmVudF9pZCI6Ijg3MjBkNmZjLTRiNGYtNGFiYS04YzYxLTJhYTcxN2M4MDU4YiIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2MDY0NDUzNzAsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTEuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0xX2lBUFNyZ0U2YyIsImV4cCI6MTYwNjQ5MzExNywiaWF0IjoxNjA2NDg5NTE3LCJqdGkiOiI1MWUyZDliZi1mMjAzLTQ4NjMtOGZjMS1lNDc5MmZjOTZlZTQiLCJjbGllbnRfaWQiOiIzNTcxa2drNGljbnMzaGt1aDI2ajM5OGV1ZiIsInVzZXJuYW1lIjoiM2MzYzBkMTctZGQ2MC00NDAwLWIzYzAtYjk2YTg3YmFlYjgzIn0.RUpgjP3ITIMaaaHRY_rRVyE7wNvcb-lKmadeo4DeA5dzbwjjOSqa0qXdaq5PZWHIOWn1l7E_cmqhZFKZcx7gdGrLpfbInL_4nlxs2AVsz0hpPNKY24dHdt-3ZZaEYlTJ2nRn4s6dS-wXVEuK0y2Fy_QwZRgSrFqL5UyE3CAXcqTxGxQ1i9cNJYWCiZCmKHHUPwlB8bVXsVNvhcUxxDJkH-LgNGe9-IH2B3OZruKt2oUQ1xA5Ov9HIUD3SmAq8FbQHBDM-TDQH4jO1dxDUAcClskZcXtZfiSQhlsxWGgq3wWAdd-VtEaI-NT-O_jc32HyckBzuTDv1DVK23Ozcg8ZKA';
       var lsfind = 'Token no encontrado en ls';
 
+      /*
       for (var key in localStorage) {
         if (key.includes('accessToken')) {
           token = localStorage[key];
           lsfind = 'Token encontrado en ls';
         }
       }
+      console.log(lsfind);      
+      */
 
-      console.log(lsfind);
-
-      //console.log('Token conexion: ', token);
-
-      //const socket = io.connect('https://oneplacewebhook.herokuapp.com', {
-      const socket = io.connect('http://11a1c4855f7e.ngrok.io', {
+      const socket = io.connect(urlServicios, {
         query: { token: token }
       });
 
@@ -367,10 +372,9 @@
 
       function LoadLeftPanel() {
         console.log('LoadLeftPanel');
-        //const url = 'https://oneplacewebhook.herokuapp.com' + '/contactmessages/';      
-        const url = 'http://11a1c4855f7e.ngrok.io' + '/contactmessages/';
-        //console.log('url: ', url);
-        //console.log('Token: ', this.token);
+        const url = urlServicios + '/contactmessages/';
+        console.log('url leftPanel: ', url);
+        console.log('Token: ', this.token);
 
         fetch(url, {
           headers: new Headers({
@@ -391,13 +395,16 @@
               response.json().then(function (data) {
                 let option;
 
-                //console.log('data.: ', data);
+                console.log('data.: ', data);
                 console.log('data left number.: ', data.length);
 
                 $('#InboxLeft').empty();
-
                 for (let i = 0; i < data.length; i++) {
                   PaintRecent(data[i]._id, data[i].User, data[i].Client, data[i].Message, data[i].SocialNetwork, data[i].Time);
+                  if(data[i].UserId){
+                    $('#hdnUserId').val(data[i].UserId);
+                    console.log('hdnUserId: ' + data[i].UserId);
+                  }                  
                 }
               });
             }
@@ -413,10 +420,10 @@
       };
     </script>
     <script>
-      function getchat(userId, SocialNetwork, Client) {
-        console.log('userId, SocialNetwork, Client' + userId + ', ' + SocialNetwork + ', ' + Client);
+      function getchat(User, SocialNetwork, Client) {
+        console.log('User, SocialNetwork, Client' + User + ', ' + SocialNetwork + ', ' + Client);
         //localStorage.setItem('social', SocialNetwork);
-        //localStorage.setItem('client', Client);
+        //localStorage.setItem('client', Client);               
 
         let snlogo = 'chatfacebook.png';
         let clientbar = Client;
@@ -425,8 +432,12 @@
           clientbar = Client.substring(12);
           clientbar = clientbar.substring(0, 3) + '-' + clientbar.substring(3);
         }
-        
+
         $('#messageright').empty();
+
+        //Establecer las VG de ese chat en específico
+        $('#hdnSocialNetwork').val(SocialNetwork);
+        $('#hdnClient').val(Client);
 
         //console.log(userId, SocialNetgiwork, Client);
         $.ajaxSetup({
@@ -435,12 +446,21 @@
             'Content-Type': 'application/json',
             'authorization': this.token
           }
+        });                
+
+        $.get(urlServicios + "/account/" + $("#hdnUserId").val() + "", function (data, status) {
+          console.log('Account:');
+          console.log(data);
+          //Ahora toca sacar la cuenta de twilio por el ID
+          /*data.forEach(cursor => {
+            $('#hdnTwilioId').val(cursor.TwilioId);
+          });
+          */
         });
-                
-        //$.get('https://oneplacewebhook.herokuapp.com' + "/messages/" + SocialNetwork + "/" + userId + "/" + Client + "", function (data, status) {         
-        $.get('http://11a1c4855f7e.ngrok.io' + "/messages/" + SocialNetwork + "/" + userId + "/" + Client + "", function (data, status) {         
+
+        $.get(urlServicios + "/messages/" + SocialNetwork + "/" + User + "/" + Client + "", function (data, status) {
           $('#profilephoto').attr('src', './imgs/' + snlogo);
-          $('#profileclient').text(clientbar);          
+          $('#profileclient').text(clientbar);
 
           data.forEach(chat => {
             if (chat.MessageType == 1) {
@@ -449,11 +469,11 @@
             } else {
               //$('#messages').append('<div class=\"outgoing_msg\"><div class=\"sent_msg\"><p>' + chat.Message + '</p><span class=\"time_date\">' + dateFormat(chat.Time, " h:MM TT    |    mmmm dS") + '</span></div></div>');              
               $('#messageright').append('<li id=\"' + chat.MessageId + '\" class=\"replies\"><img src=\"./imgs/' + snlogo + '\" alt=\"\" /><p>' + chat.Message + '</p></li>');
-            }            
+            }
           });
-        }).done(function (data) {          
+        }).done(function (data) {
           $(".messages").animate({ scrollTop: 9999 }, 'fast');
-        });        
+        });
       }
     </script>
     <script src="../js/date.format.js"></script>

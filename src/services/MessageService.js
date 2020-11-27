@@ -192,6 +192,16 @@ async function getTwilioAccount(TWILIO_ACCOUNT_ID){
     return await TwilioAccount.findOne({TWILIO_ACCOUNT_ID: TWILIO_ACCOUNT_ID});        
 }
 
+/**
+ * Obtiene los datos de un usuario.
+ * 
+ * @param {*} UserId 
+ */
+async function getAccount(UserId){          
+    var isAccount = await Account.findOne({UserId: UserId});
+    return isAccount;
+}
+
 exports.createMessage = createMessage;
 exports.getContacts = getContacts;
 exports.getMessagesByClient = getMessagesByClient;
@@ -200,3 +210,4 @@ exports.getSocketId = getSocketId;
 exports.setSocketIdByUserId = setSocketIdByUserId;
 exports.getIdSocialNetwork = getIdSocialNetwork;
 exports.getTwilioAccount = getTwilioAccount;
+exports.getAccount = getAccount;

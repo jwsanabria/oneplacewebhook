@@ -101,10 +101,7 @@ const postHookFacebook = async (req, res) => {
  * @param {*} req 
  * @param {*} res 
  */
-const contactmessagesController = async (req, res) => {
-    //TODO: Obtener el usuario de la sesión
-    //Obtener el usuario de la sesión    
-    //let userId = 'Oneplace1'; //! Se debe establecer el UserId desde el token
+const contactmessagesController = async (req, res) => {    
     let userId = req.user;
 
     if (!userId) {
@@ -134,10 +131,30 @@ const messagesController = async (req, res) => {
     }
 }
 
-const chatnewController = (req, res) => {
-    //! TODO: Se debe establecer el UserId desde el token
-    let userId = 'Oneplace1'; 
+const chatnewController = (req, res) => {       
     res.render('chatnew');
 }
 
-module.exports = { indexController, chatController, postHookWhatsapp, getHookFacebook, postHookFacebook, contactmessagesController, messagesController, chatnewController }
+/**
+ * Función para retornar los datos de la cuenta segun el usuario
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
+const useraccountController = async (req, res) => {    
+    let userId = req.params.useraccountid
+
+    if (!userId) {
+        res.status(404).json('usuario no encontrado!');
+    }
+    else {
+        try {
+            const Account = await daoMongo.getAccount(userId);
+            res.status(200).send(Account);
+        } catch (error) {
+            res.status(404).json({ error: error.toString() });
+        }
+    }
+}
+
+module.exports = { indexController, chatController, postHookWhatsapp, getHookFacebook, postHookFacebook, contactmessagesController, messagesController, chatnewController, useraccountController }
