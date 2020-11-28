@@ -158,7 +158,7 @@ async function getSocketId(idNetwork, SocialNetwork){
     if(SocialNetwork == config.messageNetworkFacebook){
         account = await Account.findOne({FacebookId: idNetwork});
     }else{
-        account = await Account.findOne({WhatsappId: idNetwork});
+        account = await Account.findOne({TWILIO_ACCOUNT_ID: idNetwork});
     }
     
     return account.SocketId;
@@ -186,10 +186,10 @@ async function getIdSocialNetwork(socketId, SocialNetwork){
 
 /**
  * Crea una cuenta con el nombre de usuario y numero de telefono
- * @param {*} TWILIO_ACCOUNT_ID 
+ * @param {*} SocketId 
  */
-async function getTwilioAccount(TWILIO_ACCOUNT_ID){
-    return await TwilioAccount.findOne({TWILIO_ACCOUNT_ID: TWILIO_ACCOUNT_ID});        
+async function getTwilioAccount(SocketId){
+    return await Account.findOne({SocketId: SocketId});        
 }
 
 /**

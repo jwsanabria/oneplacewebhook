@@ -35,7 +35,7 @@ const postHookWhatsapp = async (req, res) => {
         //TODO: Esto debería ser asíncrono, para pintar rápidamente el mensaje en pantalla al usuario        
         const result = await daoMongo.createMessage(req.body.SmsMessageSid, req.body.From, req.body.To, req.body.Body, config.messageTypeInbound, config.messageNetworkWhatsapp);
 
-        const socketId = await daoMongo.getSocketId(req.body.To, config.messageNetworkWhatsapp);
+        const socketId = await daoMongo.getSocketId(req.body.AccountSid, config.messageNetworkWhatsapp);
 
         //Emitir el mensaje por SocketIO
         require('../index').emitMessage(req.body, socketId);
@@ -142,7 +142,7 @@ const chatnewController = (req, res) => {
  * @param {*} res 
  */
 const useraccountController = async (req, res) => {    
-    let userId = req.params.useraccountid
+    let userId = req.user;
 
     if (!userId) {
         res.status(404).json('usuario no encontrado!');

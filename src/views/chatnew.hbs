@@ -222,13 +222,12 @@
           </div>
         </div>
       </div>
-    </div>
-    <input type="hidden" id="hdnTwilioId" />
+    </div>    
     <input type="hidden" id="hdnSocialNetwork" />
     <input type="hidden" id="hdnClient" />
     <input type="hidden" id="hdnUserId" />    
     <script>
-      var urlServicios = "http://9057ad17fd47.ngrok.io";
+      var urlServicios = "http://localhost:8080";
       //var urlServicios = https://oneplacewebhook.herokuapp.com
     </script>
     <script src='https://code.jquery.com/jquery-2.2.4.min.js'></script>
@@ -281,8 +280,7 @@
         objMessage.User = $("#hdnUserId").val();
         objMessage.Client = $("#hdnClient").val();
         objMessage.Message = message;
-        objMessage.SocialNetwork = $("#hdnSocialNetwork").val();
-        objMessage.TwilioId = $("#hdnTwilioId").val();
+        objMessage.SocialNetwork = $("#hdnSocialNetwork").val();        
 
         console.log('Enviado desde cliente: ' + objMessage)
         console.log(socket.send(objMessage));
@@ -304,11 +302,11 @@
       //var token = 'eyJraWQiOiJnZUNDZDZ1akRjank0U0UxSlRJRlVLQlVOVUp3aVp0XC9IT3RyY200S2dvST0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIzYzNjMGQxNy1kZDYwLTQ0MDAtYjNjMC1iOTZhODdiYWViODMiLCJldmVudF9pZCI6Ijg3MjBkNmZjLTRiNGYtNGFiYS04YzYxLTJhYTcxN2M4MDU4YiIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoiYXdzLmNvZ25pdG8uc2lnbmluLnVzZXIuYWRtaW4iLCJhdXRoX3RpbWUiOjE2MDY0NDUzNzAsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTEuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0xX2lBUFNyZ0U2YyIsImV4cCI6MTYwNjQ5OTc3MSwiaWF0IjoxNjA2NDk2MTcxLCJqdGkiOiIxNWUzN2FkMC0zNzZlLTQyMTMtYmI3Ny1iZGU4MWU4ODk4NmQiLCJjbGllbnRfaWQiOiIzNTcxa2drNGljbnMzaGt1aDI2ajM5OGV1ZiIsInVzZXJuYW1lIjoiM2MzYzBkMTctZGQ2MC00NDAwLWIzYzAtYjk2YTg3YmFlYjgzIn0.LENtn-Kamjf2zJyVzELO6Tm8jlRfNBO4mEHgnbP8WYOFUGkKk3CDJTloE1D0DXWzGWb9we3qczjfGjhD3Jkll0hec5fCorCJgtcZmn1p7zZ9kF_wOFRu3WWKUEnfJqU0tZEWxLGFNR4Tyt6u7uv3jWkZfZu8i3e3jOIiXqGPPgdCzzsZU7FesMz-5WpB6SSXmpUxdQrfYPZzP50n17zuwG7FnG5VwmyBtaEV1N9hMK3axHA2rxVyCSMK5nOP4XoZyINuXZ3NdxXptrPbiiGenrzioK3ZQBB1T99ARTjaonhAYRYzVxPMHk9zL6QXcZ00IsdkVzFuBJsj3M8R3TFZaw';
       var lsfind = 'Token no encontrado en ls';
 
-      alert("localStorage");
+      //alert("localStorage");
       for (var key in localStorage) {
-        alert(key);
+        //alert(key);
         if (key.includes('accessToken')) {
-          alert(localStorage[key]);
+          //alert(localStorage[key]);
           token = localStorage[key];
           lsfind = 'Token encontrado en ls';
         }
