@@ -80,9 +80,9 @@ const postHookFacebook = async (req, res) => {
             // Iterara todos lo eventos capturados
             for (const event of entry.messaging) {
                 if (event.message) {
-                    const result = daoMongo.createMessage(event.sender.id, event.sender.id, event.recipient.id, event.message.text, config.messageTypeInbound, config.messageNetworkFacebook);
+                    const result = await daoMongo.createMessage(event.sender.id, event.sender.id, event.recipient.id, event.message.text, config.messageTypeInbound, config.messageNetworkFacebook);
 
-                    const socketId = daoMongo.getSocketId(event.recipient.id, config.messageNetworkFacebook);
+                    const socketId = await daoMongo.getSocketId(event.recipient.id, config.messageNetworkFacebook);
 
                     //Emitir el mensaje por SocketIO
                     require('../index').emitMessage(event.message.text, socketId);
