@@ -81,7 +81,7 @@ const postHookFacebook = async (req, res) => {
             for (const event of entry.messaging) {
                 if (event.message) {
                     const result = await daoMongo.createMessage(event.sender.id, event.sender.id, event.recipient.id, event.message.text, config.messageTypeInbound, config.messageNetworkFacebook);
-
+                    console.log("ID Facebook: " +  event.recipient.id);
                     const socketId = await daoMongo.getSocketId(event.recipient.id, config.messageNetworkFacebook);
 
                     //Emitir el mensaje por SocketIO
