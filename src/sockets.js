@@ -31,7 +31,7 @@ const connection = async (io) => {
             //const objetcJson = JSON.parse(messagejson);
             const objetcJson = messagejson;
             //Enviar atributos y la siguiente función debería manejar la lógica del envío a las diferentes redes           
-            sendToSocialNetwork(objetcJson.Client, socket.id, objetcJson.Message, objetcJson.SocialNetwork, objetcJson.TwilioId); 
+            sendToSocialNetwork(objetcJson.Client, socket.id, objetcJson.Message, objetcJson.SocialNetwork); 
         });
     });
 

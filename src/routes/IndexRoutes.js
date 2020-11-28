@@ -26,6 +26,6 @@ router.post('/auth/validate', authController.validate_token);
 
 router.get('/chatnew', chatnewController);
 
-router.get('/account/:useraccountid', authMiddleware, useraccountController);
+router.get('/account/', authMiddleware, useraccountController);
 
 module.exports = router;
