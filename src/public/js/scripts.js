@@ -17,8 +17,8 @@
       $("#forgot-box").hide();
     });
     $("#login-btn").click(function() {
-        alert("Iniciar sesion")
-        var url = 'http://localhost:8080/auth/login';
+        //alert("Iniciar sesion")
+        var url = 'https://oneplacewebhook.herokuapp.com/auth/login';
         var returnData = "";
         $.ajax({
             type: "POST",
@@ -33,9 +33,9 @@
             success: function(data) {
                 //alert(JSON.stringify(data));
                 //var responseAccess = JSON.stringify(data);
-                alert(data.accessToken); 
+                //alert(data.accessToken); 
                 localStorage.setItem("accessToken", data.accessToken);
-                window.location.href="http://localhost:8080/chatnew";
+                window.location.href="https://oneplacewebhook.herokuapp.com/chatnew";
             }
         });
         return (false);
