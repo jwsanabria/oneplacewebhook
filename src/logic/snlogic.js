@@ -12,7 +12,7 @@ async function sendToSocialNetwork(Client, SocketId, Message, SocialNetwork) {
     let User = await daoMongo.getIdSocialNetwork(SocketId, SocialNetwork);
 
     //Notifica el mensaje según la red social
-    console.log(Client + "+" + User + "+" + SocialNetwork);
+    console.log("sendToSocialNetwork: " + Client + ", " + User + ", " + SocialNetwork);
 
     let objRespuesta = {
         "SmsMessageSid": "",
@@ -28,10 +28,13 @@ async function sendToSocialNetwork(Client, SocketId, Message, SocialNetwork) {
         "ApiVersion": ""
     }
 
+    console.log("Objeto a emitir: " + JSON.stringify(objRespuesta));
+
     if (SocialNetwork == config.messageNetworkFacebook) {
         sendFacebook(Message, User, Client, async (messageId) => {
             const result = await daoMongo.createMessage(messageId, Client, User, Message, config.messageTypeOutbound, SocialNetwork, null);
             require('../index').emitMessage(objRespuesta, SocketId);
+            console.log("Objeto a emitir en FB (SocketId, JSON)): " + SocketId + ", " + JSON.stringify(objRespuesta));
         });
     }
     else {
@@ -44,8 +47,9 @@ async function sendToSocialNetwork(Client, SocketId, Message, SocialNetwork) {
             //Persiste el mensaje en BD
             const result = await daoMongo.createMessage(messageId, Client, User, Message, config.messageTypeOutbound, SocialNetwork, twilioAccount.TWILIO_ACCOUNT_ID);
             require('../index').emitMessage(objRespuesta, SocketId);
+            console.log("Objeto a emitir en WA (SocketId, JSON)): " + SocketId + ", " + JSON.stringify(objRespuesta));
         } else {
-            console.log('El mensaje no pudo ser enviado');
+            console.log('El mensaje no pudo ser enviado, no emitió mensaje a Twilio');
         }
     }
 }
