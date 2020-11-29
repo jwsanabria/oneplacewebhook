@@ -46,7 +46,7 @@ function setWSUserAccountNumber(UserId, Number) {
  * @param {*} MessageType 
  * @param {*} SocialNetwork 
  */
-async function createMessage(MessageId, Client, User, Message, MessageType, SocialNetwork){
+async function createMessage(MessageId, Client, User, Message, MessageType, SocialNetwork, TWILIO_ACCOUNT_ID) {
     const session = await mongoose.startSession();
 
     const transactionOptions = {
@@ -54,55 +54,64 @@ async function createMessage(MessageId, Client, User, Message, MessageType, Soci
         readConcern: { level: 'local' },
         writeConcern: { w: 'majority' }
     };
- 
+
     try {
         const transactionResults = await session.withTransaction(async () => {
             var isAccount = undefined;
-            if(SocialNetwork == config.messageNetworkWhatsapp){
-                isAccount = await Account.findOne({WhatsappId: User}, null, { session });
-            }else{
-                isAccount = await Account.findOne({FacebookId: User}, null, { session });
+            if (SocialNetwork == config.messageNetworkWhatsapp) {
+                isAccount = await Account.findOne({ TWILIO_ACCOUNT_ID: TWILIO_ACCOUNT_ID }, null, { session });
+            } else {
+                isAccount = await Account.findOne({ FacebookId: User }, null, { session });
             }
-            
-            if(isAccount){
-                const msg = await BDMessage.create([{UserId: isAccount.UserId, MessageId: MessageId, Client: Client, User: User, Message: Message, MessageType: MessageType, SocialNetwork: SocialNetwork}], { session });
+
+            if (isAccount) {
+                const msg = await BDMessage.create([{ UserId: isAccount.UserId, MessageId: MessageId, Client: Client, User: User, Message: Message, MessageType: MessageType, SocialNetwork: SocialNetwork }], { session });
                 console.log(`${msg.createdCount} document created in the message collection ${msg}.`);
 
-                const isLastMessage = await LastMessage.findOne(
-                    { UserId:  isAccount.UserId, Client: Client, SocialNetwork: SocialNetwork},
+                const isLastMessage = await LastMessage.findOne({ UserId: isAccount.UserId, Client: Client, SocialNetwork: SocialNetwork },
                     null,
                     { session });
                 if (isLastMessage) {
                     const lastMessageResults = await LastMessage.updateOne(
-                        { UserId:  isAccount.UserId, Client: Client, SocialNetwork: SocialNetwork},
+                        { UserId: isAccount.UserId, Client: Client, SocialNetwork: SocialNetwork },
                         { $set: { Message: Message, MessageType: MessageType } },
                         { session });
-                    console.log(`${lastMessageResults.matchedCount} document(s) found in the lastmessages collection with userd-client-socialnetwork ${ isAccount.UserId}-${Client}-${SocialNetwork}.`);
+                    console.log(`${lastMessageResults.matchedCount} document(s) found in the lastmessages collection with userd-client-socialnetwork ${isAccount.UserId}-${Client}-${SocialNetwork}.`);
                     console.log(`${lastMessageResults.modifiedCount} document(s) was/were updated to include the message and message type.`);
-                }else{
-                    const lstmsg = await LastMessage.create([{UserId:  isAccount.UserId, MessageId: MessageId, Client: Client, User: User, Message: Message, MessageType: MessageType, SocialNetwork: SocialNetwork}], { session });
-                    console.log(`${lstmsg.createdCount} document created in the lastmessage collection ${lstmsg}.`); 
+                } else {
+                    try {
+                        const lstmsg = await LastMessage.create([{ UserId: isAccount.UserId, MessageId: MessageId, Client: Client, User: User, Message: Message, MessageType: MessageType, SocialNetwork: SocialNetwork }], { session });
+                        console.log(`${lstmsg.createdCount} document created in the lastmessage collection ${lstmsg}.`);
+                    }
+                    catch (error) {
+                        console.log('Error in LastMessage: ' + error);
+                        await session.abortTransaction();
+                        console.error("Account is not found. The message could not be created. By Try.");
+                        console.error("Any operations that already occurred as part of this transaction will be rolled back. By Try");
+                        return;
+                    }
+
                 }
-            }else{
+            } else {
                 await session.abortTransaction();
                 console.error("Account is not found. The message could not be created.");
                 console.error("Any operations that already occurred as part of this transaction will be rolled back.");
                 return;
             }
- 
-             
+
+
         }, transactionOptions);
- 
+
         if (transactionResults) {
             console.log("The message was successfully created.");
         } else {
             console.log("The transaction was intentionally aborted.");
         }
-    } catch(e){
+    } catch (e) {
         console.log("The transaction was aborted due to an unexpected error: " + e);
     } finally {
         await session.endSession();
-    }    
+    }
 }
 
 
@@ -111,9 +120,9 @@ async function createMessage(MessageId, Client, User, Message, MessageType, Soci
  * 
  * @param {*} UserId 
  */
-async function getContacts(UserId){
-    
-    const lastMessages = await LastMessage.find({UserId: UserId}).sort({Time:1});
+async function getContacts(UserId) {
+
+    const lastMessages = await LastMessage.find({ UserId: UserId }).sort({ Time: -1 });
 
     return lastMessages;
 }
@@ -124,11 +133,11 @@ async function getContacts(UserId){
  * @param {*} UserId 
  * @param {*} WhatsappId 
  */
-async function verifyAccount(UserId, WhatsappId){
-    var isAccount = await Account.findOne({UserId: UserId});
+async function verifyAccount(UserId, WhatsappId) {
+    var isAccount = await Account.findOne({ UserId: UserId });
 
-    if(!isAccount){
-        const account = await Account.create([{UserId: UserId, WhatsappId: "whatsapp:"+WhatsappId, FacebookId: "Vacio"}]);
+    if (!isAccount) {
+        const account = await Account.create([{ UserId: UserId, WhatsappId: "whatsapp:" + WhatsappId, FacebookId: "Vacio" }]);
     }
 }
 
@@ -141,8 +150,8 @@ async function verifyAccount(UserId, WhatsappId){
  * @param {*} Client 
  * @param {*} SocialNetwork 
  */
-async function getMessagesByClient(User, Client, SocialNetwork){
-    const messages = await BDMessage.find({User: User, Client: Client, SocialNetwork: SocialNetwork}).sort({Time: 1});
+async function getMessagesByClient(User, Client, SocialNetwork) {
+    const messages = await BDMessage.find({ User: User, Client: Client, SocialNetwork: SocialNetwork }).sort({ Time: 1 });
 
     return messages;
 }
@@ -153,34 +162,34 @@ async function getMessagesByClient(User, Client, SocialNetwork){
  * @param {*} idNetwork 
  * @param {*} SocialNetwork 
  */
-async function getSocketId(idNetwork, SocialNetwork){
+async function getSocketId(idNetwork, SocialNetwork) {
     var account = undefined;
-    if(SocialNetwork == config.messageNetworkFacebook){
-        account = await Account.findOne({FacebookId: idNetwork});
-    }else{
-        account = await Account.findOne({TWILIO_ACCOUNT_ID: idNetwork});
+    if (SocialNetwork == config.messageNetworkFacebook) {
+        account = await Account.findOne({ FacebookId: idNetwork });
+    } else {
+        account = await Account.findOne({ TWILIO_ACCOUNT_ID: idNetwork });
     }
-    
+
     return account.SocketId;
 }
 
-async function setSocketIdByUserId(UserId, SocketId){
+async function setSocketIdByUserId(UserId, SocketId) {
     const accountResults = await Account.updateOne(
-        { UserId:  UserId },
+        { UserId: UserId },
         { $set: { SocketId: SocketId } }
-    );        
+    );
 }
 
-async function getIdSocialNetwork(socketId, SocialNetwork){
+async function getIdSocialNetwork(socketId, SocialNetwork) {
     var userMessageAccount = undefined;
-    if(SocialNetwork == config.messageNetworkFacebook){
-        const account = await Account.findOne({SocketId: socketId});
+    if (SocialNetwork == config.messageNetworkFacebook) {
+        const account = await Account.findOne({ SocketId: socketId });
         userMessageAccount = account.FacebookId;
-    }else{
-        const account = await Account.findOne({SocketId: socketId});
+    } else {
+        const account = await Account.findOne({ SocketId: socketId });
         userMessageAccount = account.WhatsappId;
     }
-    
+
     return userMessageAccount;
 }
 
@@ -188,8 +197,8 @@ async function getIdSocialNetwork(socketId, SocialNetwork){
  * Crea una cuenta con el nombre de usuario y numero de telefono
  * @param {*} SocketId 
  */
-async function getTwilioAccount(SocketId){
-    return await Account.findOne({SocketId: SocketId});        
+async function getTwilioAccount(SocketId) {
+    return await Account.findOne({ SocketId: SocketId });
 }
 
 /**
@@ -197,8 +206,8 @@ async function getTwilioAccount(SocketId){
  * 
  * @param {*} UserId 
  */
-async function getAccount(UserId){          
-    var isAccount = await Account.findOne({UserId: UserId});
+async function getAccount(UserId) {
+    var isAccount = await Account.findOne({ UserId: UserId });
     return isAccount;
 }
 
