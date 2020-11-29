@@ -8,7 +8,7 @@ const indexController = (req, res) => {
 
 const chatController = (req, res) => {
     //! TODO: Se debe establecer el UserId desde el token
-    let userId = 'Oneplace1'; 
+    let userId = 'Oneplace1';
     res.render('chat');
 }
 
@@ -31,10 +31,8 @@ const postHookWhatsapp = async (req, res) => {
     if (Object.keys(req.body).length === 0)
         res.status(500).send('error');
     else {
-        //Almacena el mensaje en la BD.
-        //TODO: Esto debería ser asíncrono, para pintar rápidamente el mensaje en pantalla al usuario        
-        const result = await daoMongo.createMessage(req.body.SmsMessageSid, req.body.From, req.body.To, req.body.Body, config.messageTypeInbound, config.messageNetworkWhatsapp);
-
+        //Almacena el mensaje en la BD.           
+        const result = await daoMongo.createMessage(req.body.SmsMessageSid, req.body.From, req.body.To, req.body.Body, config.messageTypeInbound, config.messageNetworkWhatsapp, req.body.AccountSid);
         const socketId = await daoMongo.getSocketId(req.body.AccountSid, config.messageNetworkWhatsapp);
 
         //Emitir el mensaje por SocketIO
@@ -80,8 +78,8 @@ const postHookFacebook = async (req, res) => {
             // Iterara todos lo eventos capturados
             for (const event of entry.messaging) {
                 if (event.message) {
-                    const result = await daoMongo.createMessage(event.sender.id, event.sender.id, event.recipient.id, event.message.text, config.messageTypeInbound, config.messageNetworkFacebook);
-                    console.log("ID Facebook: " +  event.recipient.id);
+                    const result = await daoMongo.createMessage(event.sender.id, event.sender.id, event.recipient.id, event.message.text, config.messageTypeInbound, config.messageNetworkFacebook, null);
+                    console.log("ID Facebook: " + event.recipient.id);
                     const socketId = await daoMongo.getSocketId(event.recipient.id, config.messageNetworkFacebook);
 
                     //Emitir el mensaje por SocketIO
@@ -101,7 +99,7 @@ const postHookFacebook = async (req, res) => {
  * @param {*} req 
  * @param {*} res 
  */
-const contactmessagesController = async (req, res) => {    
+const contactmessagesController = async (req, res) => {
     let userId = req.user;
 
     if (!userId) {
@@ -131,7 +129,7 @@ const messagesController = async (req, res) => {
     }
 }
 
-const chatnewController = (req, res) => {       
+const chatnewController = (req, res) => {
     res.render('chatnew');
 }
 
@@ -141,7 +139,7 @@ const chatnewController = (req, res) => {
  * @param {*} req 
  * @param {*} res 
  */
-const useraccountController = async (req, res) => {    
+const useraccountController = async (req, res) => {
     let userId = req.user;
 
     if (!userId) {

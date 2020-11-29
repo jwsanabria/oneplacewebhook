@@ -36,6 +36,7 @@
                 //alert(data.accessToken); 
                 localStorage.setItem("accessToken", data.accessToken);
                 window.location.href="https://oneplacewebhook.herokuapp.com/chatnew";
+                //window.location.href="http://localhost:8080/chatnew";
             }
         });
         return (false);

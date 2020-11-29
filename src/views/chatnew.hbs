@@ -227,8 +227,8 @@
     <input type="hidden" id="hdnClient" />
     <input type="hidden" id="hdnUserId" />    
     <script>
-      //var urlServicios = "http://localhost:8080";
-      var urlServicios = "https://oneplacewebhook.herokuapp.com";
+      var urlServicios = "http://localhost:8080";
+      //var urlServicios = "https://oneplacewebhook.herokuapp.com";
     </script>
     <script src='https://code.jquery.com/jquery-2.2.4.min.js'></script>
     <script>$(".messages").animate({ scrollTop: $(document).height() }, "fast");
@@ -364,7 +364,7 @@
         }
 
         //let a = "<div onclick=\"getchat('" + User + "', '" + SocialNetwork + "', '" + Client + "');\" class=\"chat_list\" id=\"" + id + "\"><div class=\"chat_people\"><input id=\"msg_" + id + "\" type=\"hidden\" value=\"" + id + "\" /><input id=\"" + id + "_" + SocialNetwork + "\" type=\"hidden\" value=\"" + SocialNetwork + "\" /><input id=\"" + id + "_" + User + "\" type=\"hidden\" value=\"" + User + "\" /><div class=\"inline\"><div class=\"chat-img-container\"><img class= \"responsive \" src=\"./assets/imgs/" + snlogo + "\" alt=\"sunil\" /></div><div class=\"chat_ib\"><h5>" + Client + " <span class=\"chat_date\"></div>" + mo + " " + da + "</span></h5><p>" + Message.substring(0, 100) + "</p></div></div></div>";
-        let a = "<li onclick=\"getchat('" + User + "', '" + SocialNetwork + "', '" + Client + "');\" class=\"contact\" id=\"" + id + "\"><input id=\"msg_" + id + "\" type=\"hidden\" value=\"" + id + "\" /><input id=\"" + id + "_" + SocialNetwork + "\" type=\"hidden\" value=\"" + SocialNetwork + "\" /><input id=\"" + id + "_" + User + "\" type=\"hidden\" value=\"" + User + "\" />  <div class=\"wrap\"><span class=\"contact-status online\"></span><img src=\"./imgs/" + snlogo + "\" alt=\"\" /><div class=\"meta\"><p class=\"name\">" + clientbar + "</p><p class=\"preview\">" + Message.substring(0, 40) + "</p></div></div></li>";
+        let a = "<li onclick=\"getchat('" + User + "', '" + SocialNetwork + "', '" + Client + "');\" class=\"contact\" id=\"" + id + "\" draggable=\"true\" ><input id=\"msg_" + id + "\" type=\"hidden\" value=\"" + id + "\" /><input id=\"" + id + "_" + SocialNetwork + "\" type=\"hidden\" value=\"" + SocialNetwork + "\" /><input id=\"" + id + "_" + User + "\" type=\"hidden\" value=\"" + User + "\" />  <div class=\"wrap\"><span class=\"contact-status online\"></span><img src=\"./imgs/" + snlogo + "\" alt=\"\" /><div class=\"meta\"><p class=\"name\">" + clientbar + "</p><p class=\"preview\">" + Message.substring(0, 40) + "</p></div></div></li>";
 
         $('#InboxLeft').prepend(a);
         //console.log('agreg: ' + a);
