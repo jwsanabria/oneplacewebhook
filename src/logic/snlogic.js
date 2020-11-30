@@ -9,10 +9,10 @@ const { sendWhatsapp, sendFacebook } = require('../services/SendersService');
 //También persiste el mensaje en BD.
 async function sendToSocialNetwork(Client, SocketId, Message, SocialNetwork) {
     let messageId = undefined;
-    let User = await daoMongo.getIdSocialNetwork(SocketId, SocialNetwork);
-
+    let account = await daoMongo.getAccountBySocketId(SocketId);
+    
     //Notifica el mensaje según la red social
-    console.log("sendToSocialNetwork: " + Client + ", " + User + ", " + SocialNetwork);
+    console.log("sendToSocialNetwork: " + Client + ", " + account + ", " + SocialNetwork);
 
     let objRespuesta = {
         "SmsMessageSid": "",
@@ -30,7 +30,7 @@ async function sendToSocialNetwork(Client, SocketId, Message, SocialNetwork) {
 
     console.log("Objeto a emitir: " + JSON.stringify(objRespuesta));
 
-    let account = await daoMongo.getAccountBySocketId(SocketId);
+    
     
     if (SocialNetwork == config.messageNetworkFacebook) {
         sendFacebook(Message, account.FacebookId, Client, account.FacebookAccessToken, async (messageId) => {
