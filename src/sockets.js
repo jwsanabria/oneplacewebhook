@@ -27,6 +27,7 @@ const connection = async (io) => {
             console.log("socket ID:" + socket.id);
 
             socket.on('message', messagejson => {
+                console.log("socket ID:" + socket.id);
                 console.log('Mensaje a enviar a red social: ', messagejson);
                 //const objetcJson = JSON.parse(messagejson);
                 const objetcJson = messagejson;

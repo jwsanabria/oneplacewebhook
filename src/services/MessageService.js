@@ -66,7 +66,7 @@ async function createMessage(MessageId, Client, User, Message, MessageType, Soci
 
             if (isAccount) {
                 const msg = await BDMessage.create([{ UserId: isAccount.UserId, MessageId: MessageId, Client: Client, User: User, Message: Message, MessageType: MessageType, SocialNetwork: SocialNetwork }], { session });
-                console.log(`${msg.createdCount} document created in the message collection ${msg}.`);
+                console.log(`${msg.length} document created in the message collection ${msg}.`);
 
                 const isLastMessage = await LastMessage.findOne({ UserId: isAccount.UserId, Client: Client, SocialNetwork: SocialNetwork },
                     null,
@@ -76,12 +76,12 @@ async function createMessage(MessageId, Client, User, Message, MessageType, Soci
                         { UserId: isAccount.UserId, Client: Client, SocialNetwork: SocialNetwork },
                         { $set: { Message: Message, MessageType: MessageType } },
                         { session });
-                    console.log(`${lastMessageResults.matchedCount} document(s) found in the lastmessages collection with userd-client-socialnetwork ${isAccount.UserId}-${Client}-${SocialNetwork}.`);
-                    console.log(`${lastMessageResults.modifiedCount} document(s) was/were updated to include the message and message type.`);
+                    console.log(`Document found in the lastmessages collection with userid-client-socialnetwork ${isAccount.UserId}-${Client}-${SocialNetwork}.`);
+                    console.log(`Document was/were updated to include the message and message type.`);
                 } else {
                     try {
                         const lstmsg = await LastMessage.create([{ UserId: isAccount.UserId, MessageId: MessageId, Client: Client, User: User, Message: Message, MessageType: MessageType, SocialNetwork: SocialNetwork }], { session });
-                        console.log(`${lstmsg.createdCount} document created in the lastmessage collection ${lstmsg}.`);
+                        console.log(`${lstmsg.length} document created in the lastmessage collection ${lstmsg}.`);
                     }
                     catch (error) {
                         console.log('Error in LastMessage: ' + error);
