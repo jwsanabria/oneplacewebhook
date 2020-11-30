@@ -26,14 +26,11 @@ async function sendToSocialNetwork(Client, SocketId, Message, SocialNetwork) {
         "AccountSid": "",
         "From": "",
         "ApiVersion": ""
-    }
-
-    console.log("Objeto a emitir: " + JSON.stringify(objRespuesta));
-
-    
+    }  
     
     if (SocialNetwork == config.messageNetworkFacebook) {
         objRespuesta.From = account.FacebookId;
+        console.log("Objeto a emitir: " + JSON.stringify(objRespuesta));
         sendFacebook(Message, account.FacebookId, Client, account.FacebookAccessToken, async (messageId) => {
             const result = await daoMongo.createMessage(messageId, Client, account.FacebookId, Message, config.messageTypeOutbound, SocialNetwork, null);
             require('../index').emitMessage(objRespuesta, SocketId);
@@ -44,6 +41,7 @@ async function sendToSocialNetwork(Client, SocketId, Message, SocialNetwork) {
         
         messageId = await sendWhatsapp(Message, account.WhatsappId, Client, account.TWILIO_ACCOUNT_ID, account.TWILIO_AUTH_TOKEN);
         objRespuesta.From = account.WhatsappId;
+        console.log("Objeto a emitir: " + JSON.stringify(objRespuesta));
         if (messageId != undefined) {
             console.log("Msg IN: " + Client);
 
