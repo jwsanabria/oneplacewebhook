@@ -71,6 +71,20 @@ const getHookFacebook = (req, res) => {
 const postHookFacebook = async (req, res) => {
     console.log('hookFacebook ' + JSON.stringify(req.body));
 
+    let objRespuesta = {
+        "SmsMessageSid": "",
+        "NumMedia": "",
+        "SmsSid": "",
+        "SmsStatus": "",
+        "Body": "",
+        "To": "",
+        "NumSegments": "1",
+        "MessageSid": "",
+        "AccountSid": "",
+        "From": "",
+        "ApiVersion": ""
+    }
+
     // Verificar si el evento proviene del pagina asociada
     if (req.body.object == "page") {
         // Si existe multiples entradas entradas
@@ -81,9 +95,12 @@ const postHookFacebook = async (req, res) => {
                     const result = await daoMongo.createMessage(event.sender.id, event.sender.id, event.recipient.id, event.message.text, config.messageTypeInbound, config.messageNetworkFacebook, null);
                     console.log("ID Facebook: " + event.recipient.id);
                     const socketId = await daoMongo.getSocketId(event.recipient.id, config.messageNetworkFacebook);
+                    objRespuesta.Body = event.message.text;
+                    objRespuesta.To = event.recipient.id;
+                    objRespuesta.From = event.sender.id;
 
                     //Emitir el mensaje por SocketIO
-                    require('../index').emitMessage(event.message.text, socketId);
+                    require('../index').emitMessage(objRespuesta, socketId);
                 } else {
                     console.log('No hay cuenta registrada ' + event.recipient.id);
                 }
