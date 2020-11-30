@@ -69,7 +69,7 @@ const getHookFacebook = (req, res) => {
  * @param {*} res 
  */
 const postHookFacebook = async (req, res) => {
-    console.log('hookFacebook ' + req.body.object);
+    console.log('hookFacebook ' + JSON.stringify(req.body));
 
     // Verificar si el evento proviene del pagina asociada
     if (req.body.object == "page") {
