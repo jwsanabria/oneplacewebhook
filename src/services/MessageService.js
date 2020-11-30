@@ -137,7 +137,7 @@ async function verifyAccount(UserId, WhatsappId) {
     var isAccount = await Account.findOne({ UserId: UserId });
 
     if (!isAccount) {
-        const account = await Account.create([{ UserId: UserId, WhatsappId: "whatsapp:" + WhatsappId, FacebookId: "Vacio" }]);
+        const account = await Account.create([{ UserId: UserId, WhatsappId: "whatsapp:" + WhatsappId, FacebookId: "Vacio", FacebookAccessToken: "configAccessToken", TWILIO_ACCOUNT_ID: "configTwilioID", TWILIO_AUTH_TOKEN: "confiTwilioToken"    }]);
     }
 }
 
@@ -197,7 +197,7 @@ async function getIdSocialNetwork(socketId, SocialNetwork) {
  * Crea una cuenta con el nombre de usuario y numero de telefono
  * @param {*} SocketId 
  */
-async function getTwilioAccount(SocketId) {
+async function getAccountBySocketId(SocketId) {
     return await Account.findOne({ SocketId: SocketId });
 }
 
@@ -218,5 +218,5 @@ exports.verifyAccount = verifyAccount;
 exports.getSocketId = getSocketId;
 exports.setSocketIdByUserId = setSocketIdByUserId;
 exports.getIdSocialNetwork = getIdSocialNetwork;
-exports.getTwilioAccount = getTwilioAccount;
+exports.getAccountBySocketId = getAccountBySocketId;
 exports.getAccount = getAccount;

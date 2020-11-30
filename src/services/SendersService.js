@@ -24,7 +24,7 @@ async function sendWhatsapp(body, from, to, twilioAccountId, twilioAuthToken) {
     return result;
 }
 
-async function sendFacebook(body, from, to, callback) {
+async function sendFacebook(body, from, to, facebookAccessToken, callback) {
     try {
         // Capturamos los datos del que genera el evento y el mensaje 
         var senderID = to;
@@ -47,7 +47,7 @@ async function sendFacebook(body, from, to, callback) {
         // Enviar el requisito HTTP a la plataforma de messenger
         request({
             "uri": "https://graph.facebook.com/v8.0/me/messages",
-            "qs": { "access_token": config.facebookAccessToken },
+            "qs": { "access_token": facebookAccessToken },
             "method": "POST",
             "json": request_body
         }, (err, res, body) => {
