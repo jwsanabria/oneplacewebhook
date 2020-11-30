@@ -26,7 +26,7 @@ async function sendWhatsapp(body, from, to, twilioAccountId, twilioAuthToken) {
 
 async function sendFacebook(body, from, to, facebookAccessToken, callback) {
     console.log("from:::" + from);
-    console.log("FacebookAccessToken:::" + facebookAccessToken);
+    console.log("facebookAccessToken:::" + facebookAccessToken);
     try {
         // Capturamos los datos del que genera el evento y el mensaje 
         var senderID = to;
