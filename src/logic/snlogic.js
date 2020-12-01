@@ -46,7 +46,7 @@ async function sendToSocialNetwork(Client, SocketId, Message, SocialNetwork) {
             console.log("Msg IN: " + Client);
 
             //Persiste el mensaje en BD
-            const result = await daoMongo.createMessage(messageId, account.WhatsappId, User, Message, config.messageTypeOutbound, SocialNetwork, account.TWILIO_ACCOUNT_ID);
+            const result = await daoMongo.createMessage(messageId, account.WhatsappId, account.WhatsappId, Message, config.messageTypeOutbound, SocialNetwork, account.TWILIO_ACCOUNT_ID);
             require('../index').emitMessage(objRespuesta, SocketId);
             console.log("Objeto a emitir en WA (SocketId, JSON)): " + SocketId + ", " + JSON.stringify(objRespuesta));
         } else {
