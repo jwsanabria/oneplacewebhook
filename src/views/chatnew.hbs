@@ -349,7 +349,7 @@
       });
 
       //Dibuja el frame de recientes en la parte izquierda la primera vez que carga la página
-      function PaintRecent(id, User, Client, Message, SocialNetwork, Time) {
+      function PaintRecent(id, Account, Client, Message, SocialNetwork, Time) {
         //console.log('pintando a ' + Client + ", " + Time + ", " + Message);
 
         const d = Date.parse(Time);
@@ -364,7 +364,7 @@
         }
 
         //let a = "<div onclick=\"getchat('" + User + "', '" + SocialNetwork + "', '" + Client + "');\" class=\"chat_list\" id=\"" + id + "\"><div class=\"chat_people\"><input id=\"msg_" + id + "\" type=\"hidden\" value=\"" + id + "\" /><input id=\"" + id + "_" + SocialNetwork + "\" type=\"hidden\" value=\"" + SocialNetwork + "\" /><input id=\"" + id + "_" + User + "\" type=\"hidden\" value=\"" + User + "\" /><div class=\"inline\"><div class=\"chat-img-container\"><img class= \"responsive \" src=\"./assets/imgs/" + snlogo + "\" alt=\"sunil\" /></div><div class=\"chat_ib\"><h5>" + Client + " <span class=\"chat_date\"></div>" + mo + " " + da + "</span></h5><p>" + Message.substring(0, 100) + "</p></div></div></div>";
-        let a = "<li onclick=\"getchat('" + User + "', '" + SocialNetwork + "', '" + Client + "');\" class=\"contact\" id=\"" + id + "\" draggable=\"true\" ><input id=\"msg_" + id + "\" type=\"hidden\" value=\"" + id + "\" /><input id=\"" + id + "_" + SocialNetwork + "\" type=\"hidden\" value=\"" + SocialNetwork + "\" /><input id=\"" + id + "_" + User + "\" type=\"hidden\" value=\"" + User + "\" />  <div class=\"wrap\"><span class=\"contact-status online\"></span><img src=\"./imgs/" + snlogo + "\" alt=\"\" /><div class=\"meta\"><p class=\"name\">" + clientbar + "</p><p class=\"preview\">" + Message.substring(0, 40) + "</p></div></div></li>";
+        let a = "<li onclick=\"getchat('" + Account + "', '" + SocialNetwork + "', '" + Client + "');\" class=\"contact\" id=\"" + id + "\" draggable=\"true\" ><input id=\"msg_" + id + "\" type=\"hidden\" value=\"" + id + "\" /><input id=\"" + id + "_" + SocialNetwork + "\" type=\"hidden\" value=\"" + SocialNetwork + "\" /><input id=\"" + id + "_" + Account + "\" type=\"hidden\" value=\"" + Account + "\" />  <div class=\"wrap\"><span class=\"contact-status online\"></span><img src=\"./imgs/" + snlogo + "\" alt=\"\" /><div class=\"meta\"><p class=\"name\">" + clientbar + "</p><p class=\"preview\">" + Message.substring(0, 40) + "</p></div></div></li>";
 
         $('#InboxLeft').prepend(a);
         //console.log('agreg: ' + a);
@@ -400,7 +400,7 @@
 
                 $('#InboxLeft').empty();
                 for (let i = 0; i < data.length; i++) {
-                  PaintRecent(data[i]._id, data[i].User, data[i].Client, data[i].Message, data[i].SocialNetwork, data[i].Time);
+                  PaintRecent(data[i]._id, data[i].UserId, data[i].Client, data[i].Message, data[i].SocialNetwork, data[i].Time);
                   if(data[i].UserId){
                     $('#hdnUserId').val(data[i].UserId);
                     console.log('hdnUserId: ' + data[i].UserId);
@@ -420,8 +420,8 @@
       };
     </script>
     <script>
-      function getchat(User, SocialNetwork, Client) {
-        console.log('User, SocialNetwork, Client' + User + ', ' + SocialNetwork + ', ' + Client);
+      function getchat(Account, SocialNetwork, Client) {
+        console.log('Account, SocialNetwork, Client: ' + Account + ', ' + SocialNetwork + ', ' + Client);
         //localStorage.setItem('social', SocialNetwork);
         //localStorage.setItem('client', Client);               
 
@@ -446,19 +446,9 @@
             'Content-Type': 'application/json',
             'authorization': this.token
           }
-        });                
+        });                        
 
-        $.get(urlServicios + "/account/" + $("#hdnUserId").val() + "", function (data, status) {
-          console.log('Account:');
-          console.log(data);
-          //Ahora toca sacar la cuenta de twilio por el ID
-          /*data.forEach(cursor => {
-            $('#hdnTwilioId').val(cursor.TwilioId);
-          });
-          */
-        });
-
-        $.get(urlServicios + "/messages/" + SocialNetwork + "/" + User + "/" + Client + "", function (data, status) {
+        $.get(urlServicios + "/messages/" + SocialNetwork + "/" + Account + "/" + Client + "", function (data, status) {
           $('#profilephoto').attr('src', './imgs/' + snlogo);
           $('#profileclient').text(clientbar);
 
