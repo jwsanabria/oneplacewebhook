@@ -137,7 +137,7 @@ async function verifyAccount(UserId, WhatsappId) {
     var isAccount = await Account.findOne({ UserId: UserId });
 
     if (!isAccount) {
-        const account = await Account.create([{ UserId: UserId, WhatsappId: "whatsapp:" + WhatsappId, FacebookId: "Vacio", FacebookAccessToken: "configAccessToken", TWILIO_ACCOUNT_ID: "configTwilioID", TWILIO_AUTH_TOKEN: "confiTwilioToken"    }]);
+        const account = await Account.create([{ UserId: UserId, WhatsappId: "whatsapp:" + WhatsappId, FacebookId: "Vacio", FacebookAccessToken: "configAccessToken", TWILIO_ACCOUNT_ID: "configTwilioID", TWILIO_AUTH_TOKEN: "confiTwilioToken" }]);
     }
 }
 
@@ -211,6 +211,18 @@ async function getAccount(UserId) {
     return isAccount;
 }
 
+
+async function setConversationNameByUserId(UserId, Client, ConversationName) {
+    const isLastMessage = await LastMessage.findOne({ UserId: UserId, Client: Client });
+
+    if (isLastMessage) {
+        const lastMessageResults = await LastMessage.updateOne(
+            { UserId: UserId, Client: Client },
+            { $set: { ConversationName: ConversationName } }
+        );
+    }
+}
+
 exports.createMessage = createMessage;
 exports.getContacts = getContacts;
 exports.getMessagesByClient = getMessagesByClient;
@@ -220,3 +232,4 @@ exports.setSocketIdByUserId = setSocketIdByUserId;
 exports.getIdSocialNetwork = getIdSocialNetwork;
 exports.getAccountBySocketId = getAccountBySocketId;
 exports.getAccount = getAccount;
+exports.setConversationNameByUserId = setConversationNameByUserId;

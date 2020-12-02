@@ -9,7 +9,8 @@ const LastMessageSchema = new Schema({
     Message: {type: String, required: true}, //Mensaje
     MessageType: {type: Number, required: true}, //De quién proviene ese mensaje: 1-Inbound, 2-Outbound.
     Time: {type: Date, default: Date.now}, //Hora de la interacción.
-    SocialNetwork: {type: Number, required: true} //1. FB, 2. Whatsapp.
+    SocialNetwork: {type: Number, required: true}, //1. FB, 2. Whatsapp.
+    ConversationName: {type: String, required: false} //Nombre del contacto
 });
 
 module.exports = mongoose.model('LastMessage', LastMessageSchema)
