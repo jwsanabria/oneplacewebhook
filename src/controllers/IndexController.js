@@ -132,9 +132,8 @@ const contactmessagesController = async (req, res) => {
     }
 }
 
-const messagesController = async (req, res) => {
-    //TODO: Obtener el usuario de la sesión
-    userId = req.params.useraccountid; //'Oneplace1'; //! Se debe establecer el UserId desde el token
+const messagesController = async (req, res) => {    
+    userId = req.params.useraccountid; 
     clientId = req.params.clientaccountid;
     socialNetwork = req.params.socialnetwork;
 
@@ -172,4 +171,23 @@ const useraccountController = async (req, res) => {
     }
 }
 
-module.exports = { indexController, chatController, postHookWhatsapp, getHookFacebook, postHookFacebook, contactmessagesController, messagesController, chatnewController, useraccountController }
+/**
+ * Función para cambiar el nombre de una conversación. Ponerle un nombre "amigable"
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
+const conversationnameController = async (req, res) => {    
+    userId = req.params.userid; 
+    clientId = req.params.clientaccountid;
+    conversationName = req.params.conversationname;
+
+    try {
+        const messages = await daoMongo.setConversationNameByUserId(userId, clientId, conversationName);
+        res.status(200).json(messages);
+    } catch (error) {
+        res.status(404).json({ error: error.toString() });
+    }
+}
+
+module.exports = { indexController, chatController, postHookWhatsapp, getHookFacebook, postHookFacebook, contactmessagesController, messagesController, chatnewController, useraccountController, conversationnameController }
