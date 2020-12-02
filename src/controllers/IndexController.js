@@ -133,12 +133,12 @@ const contactmessagesController = async (req, res) => {
 }
 
 const messagesController = async (req, res) => {    
-    userId = req.params.useraccountid; 
-    clientId = req.params.clientaccountid;
+    userAccountId = req.params.useraccountid; 
+    client = req.params.client;
     socialNetwork = req.params.socialnetwork;
 
     try {
-        const messages = await daoMongo.getMessagesByClient(userId, clientId, socialNetwork);
+        const messages = await daoMongo.getMessagesByClient(userAccountId, client, socialNetwork);
         res.status(200).json(messages);
     } catch (error) {
         res.status(404).json({ error: error.toString() });

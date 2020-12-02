@@ -7,7 +7,6 @@ const Account = require('../models/Account');
 const BDMessage = require('../models/Message');
 const { ExportCustomJobPage } = require('twilio/lib/rest/bulkexports/v1/export/exportCustomJob');
 const config = require('../config');
-const TwilioAccount = require('../models/TwilioAccount');
 
 //
 //Crear en la tabla cuentas por usuario el IdUsuario de la aplicación y relacionarlo con un teléfono para whatsapp.
@@ -150,8 +149,8 @@ async function verifyAccount(UserId, WhatsappId) {
  * @param {*} Client 
  * @param {*} SocialNetwork 
  */
-async function getMessagesByClient(User, Client, SocialNetwork) {
-    const messages = await BDMessage.find({ User: User, Client: Client, SocialNetwork: SocialNetwork }).sort({ Time: 1 });
+async function getMessagesByClient(UserId, Client, SocialNetwork) {
+    const messages = await BDMessage.find({ UserId: UserId, Client: Client, SocialNetwork: SocialNetwork }).sort({ Time: 1 });
 
     return messages;
 }
