@@ -22,8 +22,9 @@ async function sendToSocialNetwork(Client, SocketId, Message, SocialNetwork) {
         "Client": Client,  
         "User": "",      
         "ConversationName": lastmessage.ConversationName, 
-		"SocialNetwork": 1, 
-		"MessageType": 1 
+		"SocialNetwork": parseInt(SocialNetwork), 
+        "MessageType": config.messageTypeOutbound, 
+        "Time": Date.now
     }  
 
     if (SocialNetwork == config.messageNetworkFacebook) {        
@@ -31,9 +32,9 @@ async function sendToSocialNetwork(Client, SocketId, Message, SocialNetwork) {
         sendFacebook(Message, account.FacebookId, Client, account.FacebookAccessToken, async (messageId) => {
             const result = await daoMongo.createMessage(messageId, Client, account.FacebookId, Message, config.messageTypeOutbound, SocialNetwork, null);            
             
-            objRespuesta.MessageId = messageId;
-            objRespuesta.User = account.FacebookId;            
-            objRespuesta.SocialNetwork = parseInt(SocialNetwork);
+            objRespuesta.MessageId = result._id;
+            objRespuesta.User = account.FacebookId;                        
+            objRespuesta.Time = result.Time;
             
             console.log("Objeto a emitir en FB (SocketId, JSON)): " + SocketId + ", " + JSON.stringify(objRespuesta));
             require('../index').emitMessage(objRespuesta, SocketId);
@@ -50,10 +51,9 @@ async function sendToSocialNetwork(Client, SocketId, Message, SocialNetwork) {
             //Persiste el mensaje en BD
             const result = await daoMongo.createMessage(messageId, Client, account.WhatsappId, Message, config.messageTypeOutbound, SocialNetwork, account.TWILIO_ACCOUNT_ID);                       
 
-            objRespuesta.MessageId = messageId;
-            //objRespuesta.From = account.WhatsappId;
-            objRespuesta.User = account.WhatsappId //account.TWILIO_ACCOUNT_ID;            
-            objRespuesta.SocialNetwork = parseInt(SocialNetwork);
+            objRespuesta.MessageId = result._id;            
+            objRespuesta.User = account.WhatsappId;            
+            objRespuesta.Time = result.Time;
 
             console.log("Objeto a emitir en WA (SocketId, JSON)): " + SocketId + ", " + JSON.stringify(objRespuesta));
             require('../index').emitMessage(objRespuesta, SocketId);            

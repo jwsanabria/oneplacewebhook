@@ -34,8 +34,9 @@ const postHookWhatsapp = async (req, res) => {
         "Client":"",
         "User":"",
         "ConversationName":"",
-        "SocialNetwork":config.messageNetworkFacebook,
-        "MessageType":config.messageTypeInbound
+        "SocialNetwork":config.messageNetworkWhatsapp,
+        "MessageType":config.messageTypeInbound, 
+        "Time": Date.now
     }
 
     if (Object.keys(req.body).length === 0)
@@ -49,8 +50,9 @@ const postHookWhatsapp = async (req, res) => {
         objRespuesta.Message = req.body.Body;
         objRespuesta.User = req.body.To;
         objRespuesta.Client = req.body.From;
-        objRespuesta.MessageId = req.body.SmsMessageSid;
-        objRespuesta.ConversationName = lastmessage.ConversationName;        
+        objRespuesta.MessageId = result._id; //req.body.SmsMessageSid;
+        objRespuesta.ConversationName = lastmessage.ConversationName;      
+        objRespuesta.Time = result.Time;  
 
         //Emitir el mensaje por SocketIO
         require('../index').emitMessage(objRespuesta, account.SocketId);
@@ -95,7 +97,8 @@ const postHookFacebook = async (req, res) => {
         "User":"",
         "ConversationName":"",
         "SocialNetwork":config.messageNetworkFacebook,
-        "MessageType":config.messageTypeInbound
+        "MessageType":config.messageTypeInbound,
+        "Time": Date.now
     }
 
     // Verificar si el evento proviene del pagina asociada
@@ -115,7 +118,8 @@ const postHookFacebook = async (req, res) => {
                     objRespuesta.User = event.recipient.id;
                     objRespuesta.Client = event.sender.id;
                     objRespuesta.ConversationName = lastmessage.ConversationName;
-                    objRespuesta.MessageId = event.sender.id;
+                    objRespuesta.MessageId = result._id; //event.sender.id;
+                    objRespuesta.Time = result.Time;
 
                     //Emitir el mensaje por SocketIO
                     require('../index').emitMessage(objRespuesta, account.SocketId);
