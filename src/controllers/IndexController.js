@@ -48,7 +48,7 @@ const postHookWhatsapp = async (req, res) => {
         objRespuesta.Message = req.body.Body;
         objRespuesta.User = req.body.To;
         objRespuesta.Client = req.body.From;
-        objRespuesta.MessageId = result.SmsMessageSid;
+        objRespuesta.MessageId = req.body.SmsMessageSid;
 
 
         //Emitir el mensaje por SocketIO
@@ -106,12 +106,12 @@ const postHookFacebook = async (req, res) => {
                 if (event.message && !event.message.is_echo) {
                     const result = await daoMongo.createMessage(event.sender.id, event.sender.id, event.recipient.id, event.message.text, config.messageTypeInbound, config.messageNetworkFacebook, null);
                     console.log("ID Facebook: " + event.recipient.id);
-                    console.log("result " + result);
+                    console.log("result " + JSON.stringify(result));
                     const socketId = await daoMongo.getSocketId(event.recipient.id, config.messageNetworkFacebook);
                     objRespuesta.Message = event.message.text;
                     objRespuesta.User = event.recipient.id;
                     objRespuesta.Client = event.sender.id;
-                    objRespuesta.MessageId = result.id;
+                    objRespuesta.MessageId = event.sender.id;
 
                     //Emitir el mensaje por SocketIO
                     require('../index').emitMessage(objRespuesta, socketId);
