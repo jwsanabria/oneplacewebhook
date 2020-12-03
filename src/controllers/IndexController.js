@@ -193,11 +193,11 @@ const useraccountController = async (req, res) => {
  */
 const conversationnameController = async (req, res) => {    
     userId = req.params.userid; 
-    clientId = req.params.clientaccountid;
+    client = req.params.clientaccountid;
     conversationName = req.params.conversationname;
 
     try {
-        const messages = await daoMongo.setConversationNameByUserId(userId, clientId, conversationName);
+        const messages = await daoMongo.setConversationNameByUserId(userId, client, conversationName);
         res.status(200).json(messages);
     } catch (error) {
         res.status(404).json({ error: error.toString() });
