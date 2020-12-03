@@ -28,12 +28,28 @@ const chatController = (req, res) => {
 const postHookWhatsapp = async (req, res) => {
     console.log('postHookWhatsapp: ' + req.body.Body);
 
+    let objRespuesta = {
+        "MessageId":"",
+        "Message":"",
+        "Client":"",
+        "User":"",
+        "ConversationName":"",
+        "SocialNetwork":config.messageNetworkFacebook,
+        "MessageType":config.messageTypeInbound
+    }
+
     if (Object.keys(req.body).length === 0)
         res.status(500).send('error');
     else {
         //Almacena el mensaje en la BD.           
         const result = await daoMongo.createMessage(req.body.SmsMessageSid, req.body.From, req.body.To, req.body.Body, config.messageTypeInbound, config.messageNetworkWhatsapp, req.body.AccountSid);
         const socketId = await daoMongo.getSocketId(req.body.AccountSid, config.messageNetworkWhatsapp);
+
+        objRespuesta.Message = req.body.Body;
+        objRespuesta.User = req.body.To;
+        objRespuesta.Client = req.body.From;
+        objRespuesta.MessageId = result._id;
+
 
         //Emitir el mensaje por SocketIO
         require('../index').emitMessage(req.body, socketId);
@@ -72,17 +88,13 @@ const postHookFacebook = async (req, res) => {
     console.log('hookFacebook ' + JSON.stringify(req.body));
 
     let objRespuesta = {
-        "SmsMessageSid": "",
-        "NumMedia": "",
-        "SmsSid": "",
-        "SmsStatus": "",
-        "Body": "",
-        "To": "",
-        "NumSegments": "1",
-        "MessageSid": "",
-        "AccountSid": "",
-        "From": "",
-        "ApiVersion": ""
+        "MessageId":"",
+        "Message":"",
+        "Client":"",
+        "User":"",
+        "ConversationName":"",
+        "SocialNetwork":config.messageNetworkFacebook,
+        "MessageType":config.messageTypeInbound
     }
 
     // Verificar si el evento proviene del pagina asociada
@@ -95,9 +107,10 @@ const postHookFacebook = async (req, res) => {
                     const result = await daoMongo.createMessage(event.sender.id, event.sender.id, event.recipient.id, event.message.text, config.messageTypeInbound, config.messageNetworkFacebook, null);
                     console.log("ID Facebook: " + event.recipient.id);
                     const socketId = await daoMongo.getSocketId(event.recipient.id, config.messageNetworkFacebook);
-                    objRespuesta.Body = event.message.text;
-                    objRespuesta.To = event.recipient.id;
-                    objRespuesta.From = event.sender.id;
+                    objRespuesta.Message = event.message.text;
+                    objRespuesta.User = event.recipient.id;
+                    objRespuesta.Client = event.sender.id;
+                    objRespuesta.MessageId = result._id;
 
                     //Emitir el mensaje por SocketIO
                     require('../index').emitMessage(objRespuesta, socketId);
