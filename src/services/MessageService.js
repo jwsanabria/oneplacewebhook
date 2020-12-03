@@ -222,6 +222,11 @@ async function setConversationNameByUserId(UserId, Client, ConversationName) {
     }
 }
 
+async function getLastMessageByAccountIdAndClient(UserId, Client) {
+    var LM = await LastMessage.findOne({ UserId: UserId, Client: Client });
+    return LM;
+}
+
 exports.createMessage = createMessage;
 exports.getContacts = getContacts;
 exports.getMessagesByClient = getMessagesByClient;
@@ -232,3 +237,4 @@ exports.getIdSocialNetwork = getIdSocialNetwork;
 exports.getAccountBySocketId = getAccountBySocketId;
 exports.getAccount = getAccount;
 exports.setConversationNameByUserId = setConversationNameByUserId;
+exports.getLastMessageByAccountIdAndClient = getLastMessageByAccountIdAndClient;

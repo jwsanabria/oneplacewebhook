@@ -10,29 +10,31 @@ const { sendWhatsapp, sendFacebook } = require('../services/SendersService');
 async function sendToSocialNetwork(Client, SocketId, Message, SocialNetwork) {
     let messageId = undefined;
     const account = await daoMongo.getAccountBySocketId(SocketId);
+    const lastmessage = await daoMongo.getLastMessageByAccountIdAndClient(account.UserId, Client);
+    console.log("ConversationName: " , lastmessage.ConversationName); 
     
     //Notifica el mensaje según la red social
-    console.log("sendToSocialNetwork: " + Client + ", " + account + ", " + SocialNetwork);
-
-    let objRespuesta = {
-        "SmsMessageSid": "",
-        "NumMedia": "",
-        "SmsSid": "",
-        "SmsStatus": "",
-        "Body": Message,
-        "To": Client,
-        "NumSegments": "1",
-        "MessageSid": "",
-        "AccountSid": "",
-        "From": "",
-        "ApiVersion": ""
-    }  
+    console.log("sendToSocialNetwork: " + Client + ", " + account + ", " + SocialNetwork);   
     
-    if (SocialNetwork == config.messageNetworkFacebook) {
-        objRespuesta.From = account.FacebookId;
+    let objRespuesta = {
+        "MessageId": "",
+        "Message": Message,        
+        "Client": Client,  
+        "User": "",      
+        "ConversationName": lastmessage.ConversationName, 
+		"SocialNetwork": 1, 
+		"MessageType": 1 
+    }  
+
+    if (SocialNetwork == config.messageNetworkFacebook) {        
         console.log("Objeto a emitir: " + JSON.stringify(objRespuesta));
         sendFacebook(Message, account.FacebookId, Client, account.FacebookAccessToken, async (messageId) => {
-            const result = await daoMongo.createMessage(messageId, Client, account.FacebookId, Message, config.messageTypeOutbound, SocialNetwork, null);
+            const result = await daoMongo.createMessage(messageId, Client, account.FacebookId, Message, config.messageTypeOutbound, SocialNetwork, null);            
+            
+            objRespuesta.MessageId = messageId;
+            objRespuesta.User = account.FacebookId;            
+            objRespuesta.SocialNetwork = parseInt(SocialNetwork);
+            
             console.log("Objeto a emitir en FB (SocketId, JSON)): " + SocketId + ", " + JSON.stringify(objRespuesta));
             require('../index').emitMessage(objRespuesta, SocketId);
         });
@@ -40,13 +42,19 @@ async function sendToSocialNetwork(Client, SocketId, Message, SocialNetwork) {
     else {
         
         messageId = await sendWhatsapp(Message, account.WhatsappId, Client, account.TWILIO_ACCOUNT_ID, account.TWILIO_AUTH_TOKEN);
-        objRespuesta.From = account.WhatsappId;
+        
         console.log("Objeto a emitir: " + JSON.stringify(objRespuesta));
         if (messageId != undefined) {
             console.log("Msg IN: " + Client);
 
             //Persiste el mensaje en BD
-            const result = await daoMongo.createMessage(messageId, Client, account.WhatsappId, Message, config.messageTypeOutbound, SocialNetwork, account.TWILIO_ACCOUNT_ID);
+            const result = await daoMongo.createMessage(messageId, Client, account.WhatsappId, Message, config.messageTypeOutbound, SocialNetwork, account.TWILIO_ACCOUNT_ID);                       
+
+            objRespuesta.MessageId = messageId;
+            //objRespuesta.From = account.WhatsappId;
+            objRespuesta.User = account.WhatsappId //account.TWILIO_ACCOUNT_ID;            
+            objRespuesta.SocialNetwork = parseInt(SocialNetwork);
+
             console.log("Objeto a emitir en WA (SocketId, JSON)): " + SocketId + ", " + JSON.stringify(objRespuesta));
             require('../index').emitMessage(objRespuesta, SocketId);            
         } else {
