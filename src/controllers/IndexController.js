@@ -27,7 +27,7 @@ const chatController = (req, res) => {
  */
 const postHookWhatsapp = async (req, res) => {
     console.log('postHookWhatsapp: ' + req.body.Body);
-
+   
     let objRespuesta = {
         "MessageId":"",
         "Message":"",
@@ -43,16 +43,17 @@ const postHookWhatsapp = async (req, res) => {
     else {
         //Almacena el mensaje en la BD.           
         const result = await daoMongo.createMessage(req.body.SmsMessageSid, req.body.From, req.body.To, req.body.Body, config.messageTypeInbound, config.messageNetworkWhatsapp, req.body.AccountSid);
-        const socketId = await daoMongo.getSocketId(req.body.AccountSid, config.messageNetworkWhatsapp);
-
+        const account = await daoMongo.getAccountByIdNetwork(req.body.AccountSid, config.messageNetworkWhatsapp);        
+        const lastmessage = await daoMongo.getLastMessageByAccountIdAndClient(account.UserId, req.body.To);
+        
         objRespuesta.Message = req.body.Body;
         objRespuesta.User = req.body.To;
         objRespuesta.Client = req.body.From;
         objRespuesta.MessageId = req.body.SmsMessageSid;
-
+        objRespuesta.ConversationName = lastmessage.ConversationName;        
 
         //Emitir el mensaje por SocketIO
-        require('../index').emitMessage(objRespuesta, socketId);
+        require('../index').emitMessage(objRespuesta, account.SocketId);
 
         //devuelve ok al api. Este no valida un mensaje en específico, solo la respuesta 200 http
         res.status(200).send('ok');
@@ -107,14 +108,17 @@ const postHookFacebook = async (req, res) => {
                     const result = await daoMongo.createMessage(event.sender.id, event.sender.id, event.recipient.id, event.message.text, config.messageTypeInbound, config.messageNetworkFacebook, null);
                     console.log("ID Facebook: " + event.recipient.id);
                     console.log("result " + JSON.stringify(result));
-                    const socketId = await daoMongo.getSocketId(event.recipient.id, config.messageNetworkFacebook);
+                    const account = await daoMongo.getAccountByIdNetwork(event.recipient.id, config.messageNetworkFacebook);
+                    const lastmessage = await daoMongo.getLastMessageByAccountIdAndClient(account.UserId, event.sender.id);
+
                     objRespuesta.Message = event.message.text;
                     objRespuesta.User = event.recipient.id;
                     objRespuesta.Client = event.sender.id;
+                    objRespuesta.ConversationName = lastmessage.ConversationName;
                     objRespuesta.MessageId = event.sender.id;
 
                     //Emitir el mensaje por SocketIO
-                    require('../index').emitMessage(objRespuesta, socketId);
+                    require('../index').emitMessage(objRespuesta, account.SocketId);
                 } else {
                     console.log('No hay cuenta registrada ' + event.recipient.id);
                 }

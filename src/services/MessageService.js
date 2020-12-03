@@ -161,7 +161,7 @@ async function getMessagesByClient(UserId, Client, SocialNetwork) {
  * @param {*} idNetwork 
  * @param {*} SocialNetwork 
  */
-async function getSocketId(idNetwork, SocialNetwork) {
+async function getAccountByIdNetwork(idNetwork, SocialNetwork) {
     var account = undefined;
     if (SocialNetwork == config.messageNetworkFacebook) {
         account = await Account.findOne({ FacebookId: idNetwork });
@@ -169,7 +169,7 @@ async function getSocketId(idNetwork, SocialNetwork) {
         account = await Account.findOne({ TWILIO_ACCOUNT_ID: idNetwork });
     }
 
-    return account.SocketId;
+    return account;
 }
 
 async function setSocketIdByUserId(UserId, SocketId) {
@@ -231,7 +231,7 @@ exports.createMessage = createMessage;
 exports.getContacts = getContacts;
 exports.getMessagesByClient = getMessagesByClient;
 exports.verifyAccount = verifyAccount;
-exports.getSocketId = getSocketId;
+exports.getAccountByIdNetwork = getAccountByIdNetwork;
 exports.setSocketIdByUserId = setSocketIdByUserId;
 exports.getIdSocialNetwork = getIdSocialNetwork;
 exports.getAccountBySocketId = getAccountBySocketId;
