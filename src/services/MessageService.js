@@ -90,17 +90,13 @@ async function createMessage(MessageId, Client, User, Message, MessageType, Soci
                         return;
                     }
 
-                }
-
-                return msg;
+                }                
             } else {
                 await session.abortTransaction();
                 console.error("Account is not found. The message could not be created.");
                 console.error("Any operations that already occurred as part of this transaction will be rolled back.");
                 return;
             }
-
-
         }, transactionOptions);
 
         if (transactionResults) {
