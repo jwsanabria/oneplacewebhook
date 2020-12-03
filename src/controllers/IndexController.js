@@ -52,7 +52,7 @@ const postHookWhatsapp = async (req, res) => {
 
 
         //Emitir el mensaje por SocketIO
-        require('../index').emitMessage(req.body, socketId);
+        require('../index').emitMessage(objRespuesta, socketId);
 
         //devuelve ok al api. Este no valida un mensaje en específico, solo la respuesta 200 http
         res.status(200).send('ok');
