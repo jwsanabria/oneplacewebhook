@@ -91,6 +91,8 @@ async function createMessage(MessageId, Client, User, Message, MessageType, Soci
                     }
 
                 }
+
+                return msg;
             } else {
                 await session.abortTransaction();
                 console.error("Account is not found. The message could not be created.");
