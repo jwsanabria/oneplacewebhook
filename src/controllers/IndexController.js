@@ -50,9 +50,8 @@ const postHookWhatsapp = async (req, res) => {
         objRespuesta.Message = req.body.Body;
         objRespuesta.User = req.body.To;
         objRespuesta.Client = req.body.From;
-        objRespuesta.MessageId = result._id; //req.body.SmsMessageSid;
-        objRespuesta.ConversationName = lastmessage.ConversationName;      
-        objRespuesta.Time = result.Time;  
+        objRespuesta.MessageId = req.body.SmsMessageSid;
+        objRespuesta.ConversationName = lastmessage.ConversationName;               
 
         //Emitir el mensaje por SocketIO
         require('../index').emitMessage(objRespuesta, account.SocketId);
@@ -118,8 +117,7 @@ const postHookFacebook = async (req, res) => {
                     objRespuesta.User = event.recipient.id;
                     objRespuesta.Client = event.sender.id;
                     objRespuesta.ConversationName = lastmessage.ConversationName;
-                    objRespuesta.MessageId = result._id; //event.sender.id;
-                    objRespuesta.Time = result.Time;
+                    objRespuesta.MessageId = event.sender.id;                    
 
                     //Emitir el mensaje por SocketIO
                     require('../index').emitMessage(objRespuesta, account.SocketId);
