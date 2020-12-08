@@ -51,7 +51,7 @@ const postHookWhatsapp = async (req, res) => {
         objRespuesta.User = req.body.To;
         objRespuesta.Client = req.body.From;
         objRespuesta.MessageId = req.body.SmsMessageSid;
-        objRespuesta.ConversationName = lastmessage.ConversationName;               
+        objRespuesta.ConversationName = lastmessage.ConversationName === 'undefined'? "": lastmessage.ConversationName;               
 
         //Emitir el mensaje por SocketIO
         require('../index').emitMessage(objRespuesta, account.SocketId);
