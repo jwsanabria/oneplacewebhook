@@ -45,13 +45,13 @@ const postHookWhatsapp = async (req, res) => {
         //Almacena el mensaje en la BD.           
         const result = await daoMongo.createMessage(req.body.SmsMessageSid, req.body.From, req.body.To, req.body.Body, config.messageTypeInbound, config.messageNetworkWhatsapp, req.body.AccountSid);
         const account = await daoMongo.getAccountByIdNetwork(req.body.AccountSid, config.messageNetworkWhatsapp);        
-        const lastmessage = await daoMongo.getLastMessageByAccountIdAndClient(account.UserId, req.body.To);
+        const lastmessage = await daoMongo.getLastMessageByAccountIdAndClient(account.UserId, req.body.From);
         
         objRespuesta.Message = req.body.Body;
         objRespuesta.User = req.body.To;
         objRespuesta.Client = req.body.From;
         objRespuesta.MessageId = req.body.SmsMessageSid;
-        objRespuesta.ConversationName = lastmessage.ConversationName === 'undefined'? "": lastmessage.ConversationName;               
+        objRespuesta.ConversationName = lastmessage.ConversationName; //=== 'undefined'? "": lastmessage.ConversationName;               
 
         //Emitir el mensaje por SocketIO
         require('../index').emitMessage(objRespuesta, account.SocketId);
